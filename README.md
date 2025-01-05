@@ -12,7 +12,8 @@ ng serve
 
 ## Documantation
 UI -- Used Tailwind css and preline ui kit for designing the ui.
-Shared Folder
+
+## Shared Folder
 1. Classes 
     Configs.ts - This is a config helper resolver class. To extend this class in any component where that component expects configs data from route resolver. This class will provide the configs data from route resolver.
 2. Components
