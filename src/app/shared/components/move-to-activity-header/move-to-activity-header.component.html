@@ -1,0 +1,74 @@
+@defer {
+  @if (isVideoAvailable()) {
+    <div class=""
+      [ngClass]="{'flex justify-between p-3 mb-2 bg-gray-200': (contentType() === 'cv-details' && !isAlreadyShortListed()) || contentType() === 'video-cv-details' }">
+      <div class="flex justify-start">
+        @if(isRestoreShow()) {
+          <button type="button" class="cursor-pointer" (click)="onClickRestore()">
+            <div class="text-base rejected__section">
+              <span class="me-2">
+                <i class="icon-restore ico bg-gray-600 rounded-full text-[#fff] p-1"></i>
+              </span>
+              <span class="text-black font-bold text-md">Restore</span>
+            </div>
+          </button>
+        } @else if (!isAlreadyShortListed()) {
+          <div class="flex justify-between">
+            <button type="button" class="cursor-pointer" (click)="onClickShortlist()">
+              <div class="relative flex items-center">
+                <i class="icon-check bg-[#008c23] rounded-full p-2.5 text-[#fff] text-xs"></i>
+                <span class="text-black font-bold text-md mx-2">Shortlist</span>
+              </div>
+            </button>
+            <button type="button" class="cursor-pointer mx-2" (click)="onClickReject()">
+              <div class="relative flex items-center">
+                <i class="icon-times bg-[#E71313] rounded-full p-2.5 text-[#fff] text-xs"></i>
+                <span class="text-black font-bold text-md mx-2">Reject</span>
+              </div>
+            </button>
+          </div>
+        }
+      </div>
+    
+      <div class="flex justify-between w-3/3">
+        @if (contentType() === 'video-cv-details') {
+          <button class="bg-white text-[#b32d7d] py-2 px-4 rounded-md flex items-center text-sm" (click)="switchCvMode('cv-details')">
+            <span class="icon-bdjapp mr-2"></span>Bdjobs Resume
+          </button>
+        } @else if (applicant()?.videoResume) {
+          <button class="bg-white text-[#b32d7d] py-2 px-4 rounded-md flex items-center text-sm border-2 mb-2" (click)="switchCvMode('video-cv-details')">
+            <span class="icon-bdjapp mr-2"></span>Video CV
+          </button>
+        }
+
+        @if (contentType() === 'video-cv-details') {
+          <button class="bg-white text-black py-2 px-4 rounded-md flex items-center ml-2 text-sm">
+            @if(cvType()==".docx" || cvType()==".doc") {<span class="text-base icon-ms-word text-blue-600 me-1"></span>
+            Customized CV}
+            @else{<span class="text-base text-red-600 icon-pdf-file icn me-1"></span> Customized CV}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @switch (contentType()) {
+      @case ('cv-details') {
+        <app-iFrame-loader [previewUrl]="previewUrl()"></app-iFrame-loader>
+      }
+      @case ('video-cv-details') {
+        <app-video-cvdetails 
+            [jobId]="jobId()" 
+            [applyId]="applyId()" 
+            [applicantName]="applicantName()" 
+            [email]="email()"
+            [mobile]="mobile()" 
+            [photo]="photo()" 
+            [jobInfo]="jobInfo()"
+            (isVideoAvailable)="isVideoAvailable.set($event)">
+        </app-video-cvdetails>
+      }
+  }
+} @placeholder {
+  <div class="flex justify-center items-center h-full w-full bg-gray-200 rounded-md">Loading ...</div>
+}

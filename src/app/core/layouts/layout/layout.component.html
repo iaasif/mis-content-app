@@ -1,0 +1,100 @@
+<app-nav (navbarDataLoaded)="onNavbarDataLoaded($event)"></app-nav>
+<router-outlet />
+@if(showlivebtn===true){
+  <div class="fixed bottom-7 left-1/2 -translate-x-1/2">
+    <div class="relative flex justify-center items-center">
+      <div class="bg-red-600 py-3 rounded-md ">
+       
+          <div class=" bg-white w-[45%] text-red-600 font-semibold text-sm text-center rounded-md px-3 py-1 shadow ml-3">
+            Online Test
+          </div>
+          <a [href]="link" target="_blank">
+            <div class="text-white text-2xl font-bold text-center px-4 py-1 underline">
+              View LIVE Update
+            </div>
+          </a>
+          
+      </div>
+    </div>
+  </div>
+}
+
+@if(isPNPLJob()){
+  <div class="fixed right-2 top-1/2">
+    <div class="flex flex-col bg-white border shadow-sm rounded-x text-sm">
+      <div class="p-4 md:p-5">
+        <h3 class="font-bold text-gray-800 text-center">PNPL Service</h3>
+        <p class="mt-1 text-gray-500 text-center">Post Now Pay Later</p>
+        <div class="inline-flex rounded-md mx-5 mt-2 shadow-sm">
+          <button type="button" (click)="onClickPriceList()" class="py-1 px-3 inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+            Pricing
+          </button>
+          <button type="button" (click)="onClickStat()" class="py-1 px-3 inline-flex items-center gap-x-2 -ms-px first:rounded-s-lg first:ms-0 last:rounded-e-lg text-sm font-medium focus:z-10 border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+            Stat
+          </button>
+        </div>
+        @if(!isPricingSectionVisible){
+        <div class="flex flex-col my-2">
+          @for(price of priceList; track $index){
+            <div class="flex items-center mb-2">
+              <input 
+                type="radio" 
+                name="hs-default-radio" 
+                class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" 
+                [id]="'hs-radio-' + $index" 
+                [checked]="$index === 0"
+                (change)="onRadioChange($index+1)"
+              >
+              <label  [for]="'hs-radio-' + $index" 
+                class="text-sm text-gray-500 ms-2 dark:text-neutral-400">
+                {{ price.text }}<br> <span class="icon-taka icn"></span> {{ price.value }}
+              </label>
+            </div>
+          }
+        </div>
+      }@else{
+      <div class="flex flex-col mt-1">
+        <p class="text-center text-gray-500 mt-1">
+        {{purchase}}
+      </p>
+      </div>
+      }
+      </div>
+        <button type="button" (click)="pnplPurchase()" class="py-1 px-3 inline-flex items-center gap-x-2 -ms-px text-sm font-medium focus:z-10 border bg-green-800 text-white shadow-sm focus:outline-none disabled:opacity-50 disabled:pointer-events-none">
+            <div class="text-center w-full">Buy now <span class="icon-angle-right text-[0.7rem]"></span></div>
+        </button>
+    </div>
+  </div>
+}
+
+@if(navbarData?.salesPersonContact){
+<app-avatar [salesPerson]="navbarData"></app-avatar>
+}
+<app-footer></app-footer>
+<app-messagebox [class.hidden]="!isEnableMessage()"></app-messagebox>
+<app-confirmation-modal
+  [class.hidden]="!isEnableConfirmation()"
+  [modalTitle]="getModalTitle()"
+  [modalContent]="getModalContent()"
+  [isOpen]="isOpen()"
+  [closeButtonText]="getCloseButtonText()"
+  [saveButtonText]="getSaveButtonText()"
+  (closeModal)="toggleModal($event)"
+  (saveAction)="saveChanges($event)"
+>
+</app-confirmation-modal>
+
+<div
+  class="fixed inset-0 flex items-center justify-center z-[99999] bg-opacity-5 bg-[#f9f9f9] backdrop-blur-[2px]"
+  [class.hidden]="!isLoading()"
+>
+  <div class="loader"></div>
+</div>
+
+<app-modal-container
+  [componentRef]="selectedComponent()"
+  [attributes]="modalAttributes()"
+  [inputs]="inputs()"
+  [isClose]="isClose()"
+  (onClose)="onCloseEvent($event)"
+></app-modal-container>

@@ -1,0 +1,10 @@
+@if (isBrowser) {
+    @if (label) {
+        <p>{{label}}</p>
+    }
+    <div class="bdjobs-slider">
+        <ngx-slider 
+            [options]="options" [formControl]="control">
+        </ngx-slider>
+    </div>
+}
