@@ -1,12 +1,3 @@
-<!-- <button
-  type="button"
-  class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-  (click)="toggleModal()"
-  [ngClass]="{'hidden': !isOpenButtonVisible}"
->
-  {{ openButtonText }}
-</button> -->
-
 <div
   [ngClass]="{
     hidden: !isOpen,
@@ -28,6 +19,7 @@
     class="sm:max-w-lg sm:w-full m-3 sm:mx-auto"
     (click)="$event.stopPropagation()"
   >
+    @let config = modalConfig$ | async;
     <div
       class="flex flex-col pb-4 bg-white border shadow-sm rounded-xl pointer-events-auto"
     >
@@ -57,35 +49,33 @@
       </div>
       <div class="px-4 pb-4 overflow-y-auto flex flex-col gap-2 items-center">
         <h3 class="font-bold text-xl mb-4 text-gray-800">
-          {{ modalTitle }}
+          {{ config?.content?.title }}
         </h3>
         <p class="mt-1 text-gray-800">
-          {{ modalContent }}
+          {{ config?.content?.content }}
         </p>
       </div>
       <div class="flex justify-center items-center gap-x-2 py-3 px-4">
-        @if (isCloseButtonVisible) {
-
+        @if (config?.content?.isCloseButtonVisible) {
           <button
-          type="button"
-          class="btn-outline-red"
-          (click)="toggleModal()"
-          [ngClass]="{ hidden: !isCloseButtonVisible }"
-          >
-          {{ closeButtonText }}
-        </button>
-      }
-        @if (isSaveButtonVisible) {
-
+            type="button"
+            class="btn-outline-red"
+            (click)="toggleModal()"
+            [ngClass]="{ hidden: !config?.content?.isCloseButtonVisible }"
+            >
+            {{ config?.content?.closeButtonText }}
+          </button>
+        }
+        @if (config?.content?.isSaveButtonVisible) {
           <button
-          type="button"
-          class="btn-success"
-          (click)="saveChanges()"
-          [ngClass]="{ hidden: !isSaveButtonVisible }"
-          >
-          {{ saveButtonText }}
-        </button>
-      }
+            type="button"
+            class="btn-success"
+            (click)="saveChanges()"
+            [ngClass]="{ hidden: !config?.content?.isSaveButtonVisible }"
+            >
+            {{ config?.content?.saveButtonText }}
+          </button>
+        }
       </div>
     </div>
   </div>

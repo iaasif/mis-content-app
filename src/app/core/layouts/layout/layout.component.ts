@@ -11,25 +11,16 @@ import { NavComponent } from '../nav/nav.component';
 import { FooterComponent } from '../footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { CircularLoaderService } from '../../services/circularLoader/circular-loader.service';
-import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '../../services/modal/modal.service';
 import { ModalContainerComponent } from '../../../shared/components/modal-container/modal-container.component';
 import { ModalAttributes } from '../../../shared/utils/app.const';
-import { ImageUploaderModalComponent } from '../../../shared/components/image-uploader-modal/image-uploader-modal.component';
-import { MessageboxComponent } from '../../../shared/components/messagebox/messagebox.component';
-import { MessageBoxService } from '../../services/messageBox/message-box.service';
 import { ConfirmationModalComponent } from '../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { ConfirmationModalService } from '../../services/confirmationModal/confirmation-modal.service';
-import { VideoPlayerComponent } from '../../../shared/components/video-player/video-player.component';
-import { SalesPersonData } from '../nav/class/navbarResponse';
 import { VideoPlayerService } from '../../../shared/services/video-player.service';
 import { LocalstorageService } from '../../services/essentials/localstorage.service';
 import { JobNoLocalStorage } from '../../../shared/enums/app.enums';
-import { JobInfoService } from '../../../shared/services/job-info.service';
-import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { ReactiveFormsModule } from '@angular/forms';
-import { PnplService } from '../nav/services/pnpl.service';
 
 
 @Component({
@@ -39,11 +30,8 @@ import { PnplService } from '../nav/services/pnpl.service';
     RouterOutlet,
     NavComponent,
     FooterComponent,
-    AvatarComponent,
     ModalContainerComponent,
-    MessageboxComponent,
     ConfirmationModalComponent,
-    RadioComponent,
     ReactiveFormsModule
 ],
   templateUrl: './layout.component.html',
@@ -54,10 +42,8 @@ export class LayoutComponent implements OnInit {
   private circularLoaderService = inject(CircularLoaderService);
   private destroy$ = inject(DestroyRef);
   private modalService = inject(ModalService);
-  private messageBoxService = inject(MessageBoxService);
   private confirmationModalService = inject(ConfirmationModalService);
-  private videoPlayerService = inject(VideoPlayerService)
-  private pnplService = inject(PnplService);
+  private videoPlayerService = inject(VideoPlayerService);
   jobNo: string='';
   link: string='';
   isLoading = signal<boolean>(false);
@@ -87,25 +73,15 @@ export class LayoutComponent implements OnInit {
   isPricingSectionVisible=true;
   purchase='You haven’t purchased yet.';
 
-  public jobInfoService = inject(JobInfoService);
-  navbarData: SalesPersonData | null = null;
-
   constructor(private localStorageService: LocalstorageService) {
-    
     this.jobNo = this.localStorageService.getItem(JobNoLocalStorage);
-    
-    this.link = `https://corporate3.bdjobs.com/onlinetest-dashboard.asp?jobno=${this.jobNo}&pgLevelType=${this.examlevel}`;
-
-    
+    this.link = `https://corporate3.bdjobs.com/onlinetest-dashboard.asp?jobno=${this.jobNo}&pgLevelType=${this.examlevel}`;    
   }
+  
   ngOnInit() {
     this.listenOnLoading();
     this.listenOnModal();
-    this.listenOnMessageBox();
     this.listenConfirmationModal();
-    setTimeout(() => {
-      this.showLiveOnlineBtn();
-    },1000);
     this.onClickPriceList();
   }
 
@@ -140,22 +116,6 @@ export class LayoutComponent implements OnInit {
     this.inputs.update(() => ({}));
     this.videoPlayerService.resetVideoPlayerStatus()
   }
-  showLiveOnlineBtn(){
-    this.showlivebtn=this.jobInfoService.getJobInfo()?.data.showDeshboardLink;
-    this.examlevel=this.jobInfoService.getJobInfo()?.data.examLevel;
-
-    if(this.jobInfoService.getJobInfo()?.data.regionalJob===5){
-      this.isPNPLJob.update(()=>true);
-    }
-  }
-  
-  private listenOnMessageBox() {
-    this.messageBoxService.messageBoxData$
-      .pipe(takeUntilDestroyed(this.destroy$))
-      .subscribe((data) => {
-        this.isEnableMessage.update(() => data.isOpen);
-      });
-  }
 
   private listenConfirmationModal() {
     this.confirmationModalService.modalConfig$
@@ -171,9 +131,6 @@ export class LayoutComponent implements OnInit {
   saveChanges(event: boolean): void {
     this.isOpen.set(event);
   }
-  onNavbarDataLoaded(data: SalesPersonData) {
-    this.navbarData = data;
-  }
 
   onClickPriceList() {
     this.isPricingSectionVisible = false;
@@ -185,9 +142,6 @@ export class LayoutComponent implements OnInit {
 
   onRadioChange(index: number): void {
     this.selectedIndex = index;
-  }
-  pnplPurchase(){
-    this.pnplService.pnplPayment(this.selectedIndex);
   }
 
 }

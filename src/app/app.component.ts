@@ -5,6 +5,7 @@ import { IStaticMethods } from 'preline/preline';
 import { delay, filter, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
+import { LayoutComponent } from './core/layouts/layout/layout.component';
 declare global {
   interface Window {
     HSStaticMethods: IStaticMethods;
@@ -15,7 +16,7 @@ declare global {
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  imports: []
+  imports: [LayoutComponent]
 })
 export class AppComponent {
   title = 'Bdjobs-angular-boilerplate';
