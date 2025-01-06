@@ -1,10 +1,5 @@
 <div class="flex items-center gap-6">
   <div>
-    <!-- <input
-            class="hidden"
-            name="date_time"
-            [formControl]="control"
-            [owlDateTime]="dt1"> -->
     @if (label()) {
       <label class="control-label text-sm font-semibold text-gray-900">{{label()}}</label>
     } 
@@ -21,7 +16,6 @@
       <input
         [readOnly]="true"
         [owlDateTime]="dt1"
-        [owlDateTimeTrigger]="showDatePickerOnFocus() ? dt1 : dt2"
         placeholder="{{ placeholder() }}"
         [min]="minDate()"
         [max]="maxDate"  
@@ -31,7 +25,6 @@
         class="py-1.5 px-3 pe-11 block min-w-fit border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
         onkeypress="return false;"
       />
-
       <button
         type="button"
         class="absolute right-0 top-0 bottom-0 z-10 py-2 px-3"
@@ -47,8 +40,6 @@
       [hour12Timer]="hour12Timer()"
     >
     </owl-date-time>
-    <!-- TODO: review the following as it will create an unnecessary instance of OwlDateTimeComponent<T> -->
-    <owl-date-time class="hidden" #dt2></owl-date-time>
     }
   </div>
   @if(seperateTimer()) {

@@ -1,11 +1,10 @@
 
-import { ChangeDetectionStrategy, Component, inject, signal, DestroyRef, OnChanges, effect, Output, output, Input, SimpleChanges, computed } from '@angular/core';
-import { CustomSelect } from '../../enums/custom-select.data';
-import { CustomSelectData, VanueEditUpdateRequest, Venue } from '../../models/models';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, signal, DestroyRef, OnChanges, output, Input, SimpleChanges, computed } from '@angular/core';
+import { VanueEditUpdateRequest, Venue } from '../../models/models';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomSelectService } from '../../services/custom-select.service';
 import { LocalstorageService } from '../../../core/services/essentials/localstorage.service';
-import { CompanyIdLocalStorage,JobNoLocalStorage, UserId } from '../../enums/app.enums';
+import { CompanyIdLocalStorage,UserId } from '../../enums/app.enums';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InputComponent } from "../input/input.component";
 import { NgClass } from '@angular/common';
@@ -110,19 +109,6 @@ export class CustomSelectComponent implements OnChanges {
 
   editUpdateVanueData(): void{
     this.loadrService.setLoading(true);
-    // if (!this.venueNameControl().valid) {
-    //   this.nameErrorMsg='Please type venue name expect special characters';
-    //   this.loadrService.setLoading(false);
-    //   return;
-    // }else if(!this.venueAddressControl().valid){
-    //   this.addresserrorMsg='Please type venue address expect special characters';
-    //   this.loadrService.setLoading(false);
-    //   return;
-    // }else{
-    //   this.nameErrorMsg = '';
-    //   this.addresserrorMsg = '';
-    // }
-
     //if valid data
     if(this.venueAddressControl().value && this.venueNameControl().value){
       let payload: VanueEditUpdateRequest = {
