@@ -1,9 +1,8 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { reinitializePreline } from '../../utils/reinitializePreline';
 import { NgClass } from '@angular/common';
 import { NumericOnlyDirective } from '../../../core/directives/numeric-only.dir';
-import { error } from 'console';
 
 export type InputType = 'text' | 'password' | 'email' | 'number';
 
@@ -34,42 +33,45 @@ enum InputTypeStype {
   ],
 })
 export class InputComponent<T> implements AfterViewInit {
-  @Input() placeholder = '';
-  @Input() label = '';
-  @Input() type: InputType = 'text';
-  @Input() isRequired: boolean = false;
-  @Input() isDisabled: boolean = false;
-  @Input() minValue:number = 0;
-  @Input() maxValue:number = 999999999999;
-  @Input() control: FormControl<T> = new FormControl();
-  @Input() maxLength: number = 150;
-  @Input() classes: string = '';
-  @Input() validationText: string = '';
+  readonly placeholder = input<string>('');
+  readonly label = input<string>('');
+  readonly type = input<InputType>('text');
+  readonly isRequired = input<boolean>(false);
+  readonly isDisabled = input<boolean>(false);
+  readonly minValue = input<number>(0);
+  readonly maxValue = input<number>(999999999999);
+  readonly control = input<FormControl<T>>(new FormControl());
+  readonly maxLength = input<number>(150);
+  readonly classes = input<string>('');
+  readonly validationText = input<string>('');
  
   valid: boolean = true;
+  name = InputStype.normal;
+  styleClass: string = InputTypeStype.normal;
   
   ngOnInit() {
-    this.control.valueChanges.subscribe(value => {
+    this.control().valueChanges.subscribe(value => {
       this.handleValueChange(value);
     });
   }
 
   private handleValueChange(value: T): void {
-    if(this.type == 'text'){
-      if(this.control.value){
+    if(this.type() == 'text'){
+      const control = this.control();
+      if(control.value){
         this.valid = true;
         this.styleClass = InputTypeStype.normal;
         this.name = InputStype.normal;
       } else{
-        this.control.setErrors({ invalid: true });
+        control.setErrors({ invalid: true });
         this.valid = false;
         this.styleClass = InputTypeStype.error;
         this.name = InputStype.error;
       }
     }
     else {
-      if (+this.control.value > this.maxValue || +this.control.value < this.minValue) {
-        this.control.setErrors({ invalid: true });
+      if (+this.control().value > this.maxValue() || +this.control().value < this.minValue()) {
+        this.control().setErrors({ invalid: true });
         this.valid = false;
         this.styleClass = InputTypeStype.error;
         this.name = InputStype.error;
@@ -80,11 +82,6 @@ export class InputComponent<T> implements AfterViewInit {
       }
     }
   }
-
-
-  
-  name = InputStype.normal;
-  styleClass: string = InputTypeStype.normal;
 
   ngAfterViewInit(): void {
     reinitializePreline();

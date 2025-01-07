@@ -1,5 +1,5 @@
 <div class="upload-form max-w-96 mx-auto rounded-lg shadow-lg !border border-gray-300/70">
-  <h4 class="text-lg">{{uploadTitle}}</h4>
+  <h4 class="text-lg">{{uploadTitle()}}</h4>
   @if(!isPreview()) {
     <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)" class="p-4">
       <i class="ph ph-upload"></i>
@@ -11,19 +11,9 @@
       </span>
     </label>
   
-    <input id="file" type="file" name="file" (change)="onFileSelected($event)" [accept]="fileTypesToLimit"/>
+    <input id="file" type="file" name="file" (change)="onFileSelected($event, null)" [accept]="fileTypesToLimit()"/>
 
-   @if(outputBoxVisible){
-    <div class="mt-4 bg-gray-100 p-3 rounded-lg">
-      <p><strong>Selected File:</strong> {{ fileName }}</p>
-      <p><strong>Size:</strong> {{ fileSize }}</p>
-      <button type="button" (click)="cancel()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-        Upload
-      </button>
-    </div>
-   }
- 
-    <!-- <div class="result mb-5" [style.display]="outputBoxVisible ? 'flex' : 'none'">
+    <div class="result mb-5" [style.display]="outputBoxVisible ? 'flex' : 'none'">
       <div class="file-details ">
         <span class="file-name">{{ fileName }}</span>
         <span class="file-name">{{ progress() }}</span>
@@ -43,7 +33,7 @@
           <i class="icon-times bg-[#E71313] rounded-full p-2.5 text-[#fff] text-xs"></i>
         }
       </div>
-    </div> -->
+    </div>
   
     @if (notes) {
       <div>
@@ -52,5 +42,20 @@
     }
   }
 
- 
+  @if (isPreview()) {
+    <div class="flex flex-col items-center gap-4 my-3 ">
+      <div class=" max-w-lg mx-auto object-cover">
+        <img #preview alt="" style="max-width: 150px; object-fit: cover;">
+      </div>
+      <div class="flex items-center gap-4 ">
+        <button (click)="cancel()" type="button" style="height: 40px;margin-top: 20px;" class="btn-cancel">
+          Cancel
+        </button>
+        <button (click)="upload()" type="button" style="height: 40px;margin-top: 20px;" class="btn-success">
+          Upload
+        </button>
+    
+      </div>
+    </div>
+    }
 </div>
