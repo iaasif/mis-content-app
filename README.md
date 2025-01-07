@@ -23,8 +23,118 @@ UI -- Used Tailwind css and preline ui kit for designing the ui.
     4. Datepicker - datepicker components where you can select date from calendar or type date manually. You can pass the label, control, inline, and other attributes to the datepicker component. If inline is true, the datepicker will be displayed inline. If inline is false, the datepicker will be displayed in a dropdown. If no inline is passed, the default value will be false. also it supports timepicker options as an optional configuration seperateTimer.
     5. File Upload - This will allow you to upload file e.g excel, Image etc. there are validations for types, size and dimensions which you can pass as input. There are progress bar for showing the upload progress.
     6. IFrame loader - IFrame Loader component will load an ifram from the src url as input
-    7. Input - Input component will cover functionalities like numericOnly, with decimal, min value, max value etc. There is a directive called NumericOnlyDirective which is used as directive composition, so that you can just pass the arguments for the directive as regular input and not need to use the directive itself.
-    8. 
+    7. Input Component - A flexible, reusable input component for Angular applications with built-in validation and styling support.
+
+        ## Features
+
+        - Supports both text and numeric inputs
+        - Built-in validation
+        - Customizable styling
+        - Reactive forms integration
+        - Change detection optimization
+        - Numeric input restrictions
+        - Min/Max value validation
+        - Required field support
+        - Disabled state support
+
+        ## Installation
+
+        The component is standalone and can be imported directly into your modules or components:
+
+        ```typescript
+        import { InputComponent } from './shared/components/input/input.component';
+        ```
+
+        ## Usage
+
+        ### Basic Usage
+
+        ```html
+        <app-input
+        [control]="formControl"
+        label="Username"
+        placeholder="Enter username"
+        >
+        </app-input>
+        ```
+
+        ### Numeric Input
+
+        ```html
+        <app-input
+        [control]="numericFormControl"
+        type="number"
+        [minValue]="0"
+        [maxValue]="100"
+        label="Age"
+        placeholder="Enter age"
+        >
+        </app-input>
+        ```
+
+        ## Input Properties
+
+        | Property         | Type              | Default          | Description |
+        |-----------------|-------------------|------------------|-------------|
+        | placeholder     | string            | ''               | Placeholder text for the input |
+        | label           | string            | ''               | Label text for the input field |
+        | type            | InputType         | 'text'           | Input type ('text' or 'number') |
+        | isRequired      | boolean           | false            | Whether the field is required |
+        | isDisabled      | boolean           | false            | Whether the field is disabled |
+        | minValue        | number            | 0                | Minimum value (for numeric inputs) |
+        | maxValue        | number            | 999999999999     | Maximum value (for numeric inputs) |
+        | control         | FormControl<T>     | new FormControl()| Form control for the input |
+        | maxLength       | number            | 150              | Maximum length of input |
+        | classes         | string            | ''               | Additional CSS classes |
+        | validationText  | string            | ''               | Custom validation message |
+
+        ## Validation
+
+        The component includes built-in validation that:
+        - Validates text inputs for non-empty values
+        - Validates numeric inputs against min/max values
+        - Updates styling automatically based on validation state
+        - Supports custom validation messages
+
+        ## Example with All Properties
+
+        ```typescript
+        // In your component
+        import { FormControl } from '@angular/forms';
+
+        export class YourComponent {
+        inputControl = new FormControl('');
+        }
+        ```
+
+        ```html
+        <app-input
+        [control]="inputControl"
+        label="Full Name"
+        placeholder="Enter your full name"
+        type="text"
+        [isRequired]="true"
+        [isDisabled]="false"
+        [maxLength]="50"
+        classes="custom-class"
+        validationText="Please enter a valid name"
+        >
+        </app-input>
+        ```
+
+        ## Styling
+
+        The component automatically handles styling based on validation state:
+        - Normal state: Default styling
+        - Error state: Red highlighting and error messages
+        - Custom classes can be added through the `classes` input
+
+        ## Notes
+
+        - The component uses `ChangeDetectionStrategy.OnPush` for better performance
+        - It implements `AfterViewInit` for proper initialization
+        - Includes numeric-only directive for number inputs
+        - Automatically reinitializes Preline UI framework after view initialization
 
 
 
