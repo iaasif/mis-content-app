@@ -4,7 +4,6 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
-  Input,
   OnChanges,
   OnDestroy,
   OnInit,
@@ -12,6 +11,8 @@ import {
   signal,
   SimpleChanges,
   ViewChild,
+  input,
+  model
 } from '@angular/core';
 import { MultiSelectQueryEvent, SelectItem } from '../../models/models';
 import { FormControl, FormsModule } from '@angular/forms';
@@ -33,19 +34,19 @@ import { toObservable } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() searchLabel: string = '';
-  @Input() suggestions: SelectItem[] = [];
-  @Input() isFullWidth: boolean = false;
-  @Input() overLayVisibleOnlyOnFocus: boolean = false;
-  @Input() overLayVisibleOnlyOnSuggestions: boolean = false;
-  @Input() dbncTime: number = 300;
-  @Input() multiplSelection: boolean = true;
-  @Input() maxSelection: number = 0;
-  @Input() resetOnSelection: boolean = false;
-  @Input() checkBoxVisible: boolean = true;
-  @Input() control: FormControl<SelectItem[]> = new FormControl();
-  @Input() isSearchBox: boolean = true;
-  @Input() isSourceChanged: boolean = false;
+  readonly searchLabel = input<string>('');
+  suggestions = model<SelectItem[]>([]);
+  readonly isFullWidth = input<boolean>(false);
+  readonly overLayVisibleOnlyOnFocus = input<boolean>(false);
+  readonly overLayVisibleOnlyOnSuggestions = input<boolean>(false);
+  readonly dbncTime = input<number>(300);
+  readonly multiplSelection = input<boolean>(true);
+  readonly maxSelection = input<number>(0);
+  readonly resetOnSelection = input<boolean>(false);
+  readonly checkBoxVisible = input<boolean>(true);
+  readonly control = input<FormControl<SelectItem[]>>(new FormControl());
+  readonly isSearchBox = input<boolean>(true);
+  readonly isSourceChanged = input<boolean>(false);
 
   @Output() searchQuery: EventEmitter<MultiSelectQueryEvent> =
     new EventEmitter<MultiSelectQueryEvent>();
@@ -65,7 +66,7 @@ export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
     inputStream$
       .pipe(
         distinctUntilChanged(),
-        debounceTime(this.dbncTime),
+        debounceTime(this.dbncTime()),
         map((query) => query.trim()),
         // filter((str) => str.trim().length !== 0),
         takeUntil(this.isDestroyed$)
@@ -86,8 +87,8 @@ export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
         this.showOverLay();
       }
     }
-    if (changes?.['suggestions']?.currentValue && this.isSourceChanged === true) {
-      this.control.setValue([]);
+    if (changes?.['suggestions']?.currentValue && this.isSourceChanged() === true) {
+      this.control().setValue([]);
     }
   }
 
@@ -122,7 +123,7 @@ export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    if (this.isSuggestionsAvailable(this.suggestions)) {
+    if (this.isSuggestionsAvailable(this.suggestions())) {
       this.setIsOverLayVisible(true);
     }
   }
@@ -134,11 +135,11 @@ export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getOverLayVisibleOnlyOnFocus(): boolean {
-    return this.overLayVisibleOnlyOnFocus;
+    return this.overLayVisibleOnlyOnFocus();
   }
 
   getOverLayVisibleOnlyOnSuggestions(): boolean {
-    return this.overLayVisibleOnlyOnSuggestions;
+    return this.overLayVisibleOnlyOnSuggestions();
   }
 
   // use only when overLayVisibleOnlyOnFocus = true
@@ -159,9 +160,10 @@ export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleSelection(item: SelectItem) {
     item.isSelected = !item.isSelected;
-    const selectedItems: SelectItem[] = [...(this.control?.value || [])];
+    const selectedItems: SelectItem[] = [...(this.control()?.value || [])];
     if (item.isSelected) {
-      if (this.maxSelection && selectedItems.length === this.maxSelection) {
+      const maxSelection = this.maxSelection();
+      if (maxSelection && selectedItems.length === maxSelection) {
         item.isSelected = false;
         return;
       }
@@ -173,13 +175,14 @@ export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    if (this.control) {
-      this.control.setValue(selectedItems);
+    const control = this.control();
+    if (control) {
+      control.setValue(selectedItems);
     }
 
-    if (!this.multiplSelection && this.resetOnSelection) {
+    if (!this.multiplSelection() && this.resetOnSelection()) {
       this.searchQueryInput.set("");
-      this.suggestions = [];
+      this.suggestions.set([]);
     }
 
     this.onSelect.emit(selectedItems);

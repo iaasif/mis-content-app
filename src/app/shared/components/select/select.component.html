@@ -1,36 +1,30 @@
 <div class="relative w-full">
-  <!-- Label for the select dropdown -->
-  @if (label) {
-  <label [for]="name" class="block text-xs font-medium leading-6 text-gray-900">
-    {{ label }}
+  @if (label()) {
+  <label [for]="name()" class="block text-xs font-medium leading-6 text-gray-900">
+    {{ label() }}
   </label>
   }
 
-  <!-- Select element with custom Tailwind styling -->
   <select
-    [name]="name"
-    [id]="name"
-    [required]="isRequired"
-    [formControl]="control"
+    [name]="name()"
+    [id]="name()"
+    [required]="isRequired()"
+    [formControl]="control()"
     class="my-1 relative py-2 px-3 pe-9 flex text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-neutral-900 dark:border-neutral-700"
   >
-    <!-- Option for 'Please select an option' -->
-    @if (falseOption) {
-    <option value="" disabled selected hidden>Please select an option</option>
+    @if (falseOption()) {
+      <option value="" disabled selected hidden>Please select an option</option>
    
     } @else {
-     <!-- Placeholder option (shown if no selection is made) -->
-  <option value="" disabled selected hidden >
-    {{ placeholder }}
-  </option>
-   
+      <option value="" disabled selected hidden >
+        {{ placeholder() }}
+      </option>
     }
- 
-    <!-- Dynamic options loop -->
+
     @for (option of options(); track $index) {
-    <option [selected]="option.isSelected" [value]="option.value">
-      {{ option.label ? option.label : "" }}
-    </option>
+      <option [selected]="option.isSelected" [value]="option.value">
+        {{ option.label ? option.label : "" }}
+      </option>
     }
   </select>
 </div>

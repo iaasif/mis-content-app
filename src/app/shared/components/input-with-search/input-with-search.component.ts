@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, DestroyRef, ElementRef, inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, OnInit, ViewChild, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -11,20 +11,20 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './input-with-search.component.scss',
 })
 export class InputWithSearchComponent implements OnInit{
-  @Input() label = '';
-  @Input() placeholder = '';
-  @Input() isRequired: boolean = false;
-  @Input() isDisabled: boolean = false;
-  @Input() name = '';
-  @Input() control: FormControl = new FormControl();
-  @Input() isIcon = false;
-  @Input() searchBtnLabel = '';
-  @Input() maxlength: number = 95; // Maximum length for the input value, default set to 95.
+  readonly label = input('');
+  readonly placeholder = input('');
+  readonly isRequired = input<boolean>(false);
+  readonly isDisabled = input<boolean>(false);
+  readonly name = input('');
+  readonly control = input<FormControl>(new FormControl());
+  readonly isIcon = input(false);
+  readonly searchBtnLabel = input('');
+  readonly maxlength = input<number>(95); // Maximum length for the input value, default set to 95.
   @ViewChild('inpt') inpt!: ElementRef<HTMLInputElement>;
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.control.valueChanges
+    this.control().valueChanges
     .pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe((value) => {
@@ -35,8 +35,9 @@ export class InputWithSearchComponent implements OnInit{
   }
 
   onSearchBtnClick(value: string) {
-    if (this.control) {
-      this.control.setValue(value);
+    const control = this.control();
+    if (control) {
+      control.setValue(value);
     }
   }
 

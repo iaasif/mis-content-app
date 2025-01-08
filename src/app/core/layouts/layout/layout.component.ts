@@ -29,7 +29,6 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [
     RouterOutlet,
     NavComponent,
-    FooterComponent,
     ModalContainerComponent,
     ConfirmationModalComponent,
     ReactiveFormsModule

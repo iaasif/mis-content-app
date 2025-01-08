@@ -1,9 +1,9 @@
-@if(shouldPlay){
+@if(shouldPlay()){
   <div [ngStyle]="getContainerStyles()">
     @if (!isValidSource()) {
       <vg-player (onPlayerReady)="onPlayerReady($event)" [class]="getPlayerSizeClass()">
         <video [vgMedia]="$any(media)" #media id="singleVideo" controls preload="auto">
-          <source [src]="videoSource" [type]="videoType">
+          <source [src]="videoSource()" [type]="videoType">
         </video>
       </vg-player>
     } @else {

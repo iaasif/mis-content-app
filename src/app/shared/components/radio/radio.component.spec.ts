@@ -43,7 +43,7 @@ describe('RadioComponent', () => {
   it('Should have selected value intially if value is set from formcontrol', () => {
     const formControl = new FormControl(2);
 
-    component.control = formControl;
+    component.control.set(formControl);
     changeDetectorRef.markForCheck();
     fixture.detectChanges();
 

@@ -1,24 +1,24 @@
-import { NgClass, NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, Input } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgStyle } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 
 @Component({
   selector: 'app-text-editor',
   standalone: true,
-  imports: [ReactiveFormsModule, NgxEditorModule, NgClass,NgStyle],
+  imports: [ReactiveFormsModule, NgxEditorModule, NgStyle],
   templateUrl: './text-editor.component.html',
   styleUrl: './text-editor.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextEditorComponent {
-  @Input() placeholder = 'Type here...';
-  @Input() label = 'Label';
-  type = input<InputTypeTextEditor>('Advance');
-  @Input() isRequired: boolean = false;
-  @Input() name = "";
-  @Input() height = '250px';
-  @Input() control: any;
+  readonly placeholder = input('Type here...');
+  readonly label = input('Label');
+  readonly type = input<InputTypeTextEditor>('Advance');
+  readonly isRequired = input<boolean>(false);
+  readonly name = input("");
+  readonly height = input('250px');
+  readonly control = input<any>();
 
   toolbar = computed(() => {
     if (this.type() === 'Advance') {

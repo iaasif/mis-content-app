@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, input, model } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SelectRadioData } from '../../models/models';
 import { NgClass } from '@angular/common';
@@ -14,9 +14,9 @@ import { NgClass } from '@angular/common';
 
 export class RadioComponent {
 
-  @Input() isRequired: boolean = false;
-  @Input() isDisabled: boolean = false;
-  @Input() control = new FormControl();
+  readonly isRequired = input<boolean>(false);
+  readonly isDisabled = input<boolean>(false);
+  control = model(new FormControl());
   radioItems = input<SelectRadioData[]>([]);
   isHtmlLabel = input<boolean>(false);
   isHorizontalOption = input<boolean>(true);

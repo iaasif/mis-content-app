@@ -6,9 +6,9 @@
                     type="radio"
                     data-radioid="gender"
                     [name]="item.name"
-                    [required]="isRequired"
-                    [readOnly]="isDisabled"
-                    [formControl]="control"
+                    [required]="isRequired()"
+                    [readOnly]="isDisabled()"
+                    [formControl]="control()"
                     [value]="item.id"
                     [id]="generateId(item)"
                     class="checkbox appearance-none focus:outline-none border rounded-full border-gray-400 absolute cursor-pointer w-full h-full checked:border-none" />

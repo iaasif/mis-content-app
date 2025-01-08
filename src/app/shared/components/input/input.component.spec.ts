@@ -27,7 +27,7 @@ describe('InputComponent', () => {
   it('Should render placeholder text as passed input', () => {
     const placeholderValue = "This is the Test Placeholder";
 
-    component.placeholder = placeholderValue;
+    fixture.componentRef.setInput('placeholder', placeholderValue);
     changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -37,8 +37,7 @@ describe('InputComponent', () => {
 
   it('Should render input as Required when required is equal true and vice versa', () => {
     const isRequired = false;
-
-    component.isRequired = isRequired;
+    fixture.componentRef.setInput('isRequired', isRequired);
     changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -49,7 +48,7 @@ describe('InputComponent', () => {
   it('Should render type of input passed from parent', () => {
     const type = 'password';
 
-    component.type = type;
+    fixture.componentRef.setInput('type', type);
     changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -60,7 +59,7 @@ describe('InputComponent', () => {
   it('Should render label if label is passed from parent', ()=> {
     const label = 'Test Label';
 
-    component.label = label;
+    fixture.componentRef.setInput('label', label);
     changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -71,7 +70,7 @@ describe('InputComponent', () => {
   it('Should not render label if label is not passed from parent', ()=> {
     const label = '';
 
-    component.label = label;
+    fixture.componentRef.setInput('label', label);
     changeDetectorRef.markForCheck();
     fixture.detectChanges();
 

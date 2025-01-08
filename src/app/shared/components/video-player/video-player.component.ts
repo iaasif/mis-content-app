@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
+import { Component, DestroyRef, inject, OnChanges, OnInit, signal, SimpleChanges, input } from '@angular/core';
 import { VgApiService, VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
@@ -20,15 +20,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './video-player.component.html',
   styleUrl: './video-player.component.scss',
 })
-export class VideoPlayerComponent implements  OnInit,OnChanges {
+export class VideoPlayerComponent implements OnChanges {
   isValidSource=signal<boolean>(false);
   videoType: 'video/mp4' | 'video/webm' = 'video/mp4';
   preload: string = 'auto';
   api: VgApiService = new VgApiService();
-  @Input() videoSource='';
-  @Input() playerSize:'large' | 'medium' | 'small' = 'small'; 
-  @Input() shouldPlay: boolean = false;
-  @Input() position: 'left' | 'center' | 'right' = 'center';
+  readonly videoSource = input('');
+  readonly playerSize = input<'large' | 'medium' | 'small'>('small'); 
+  readonly shouldPlay = input<boolean>(false);
+  readonly position = input<'left' | 'center' | 'right'>('center');
   private videoPlayerService= inject(VideoPlayerService)
   private destroyRef = inject(DestroyRef);
   
@@ -41,11 +41,9 @@ export class VideoPlayerComponent implements  OnInit,OnChanges {
     }
   }
 
-  ngOnInit() {}
-
   onPlayerReady(api: VgApiService) {
     this.api = api;
-    if (this.shouldPlay) {
+    if (this.shouldPlay()) {
       this.api.getDefaultMedia().subscriptions.loadedData
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -65,10 +63,10 @@ export class VideoPlayerComponent implements  OnInit,OnChanges {
     if (this.api) {
       const videoElement = this.api.getDefaultMedia().elem as HTMLVideoElement;
       videoElement.pause();
-      videoElement.src = this.videoSource;
+      videoElement.src = this.videoSource();
       videoElement.load();
 
-      if (this.shouldPlay) {
+      if (this.shouldPlay()) {
         this.api.getDefaultMedia().subscriptions.loadedData
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
@@ -86,7 +84,7 @@ export class VideoPlayerComponent implements  OnInit,OnChanges {
   }
 
   getPlayerSizeClass(): string {
-    switch (this.playerSize) {
+    switch (this.playerSize()) {
       case 'large':
         return 'player-large';
       case 'medium':
@@ -98,7 +96,7 @@ export class VideoPlayerComponent implements  OnInit,OnChanges {
     }
   }
   private getJustifyContent() {
-    switch (this.position) {
+    switch (this.position()) {
       case 'left':
         return 'flex-start';
       case 'center':

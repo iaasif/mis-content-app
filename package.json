@@ -22,6 +22,7 @@
     "@tailwindcss/forms": "^0.5.9",
     "@videogular/ngx-videogular": "^10.0.1",
     "ngx-editor": "^18.0.0",
+    "ngx-pagination": "^6.0.3",
     "ngx-skeleton-loader": "^9.0.0",
     "ngx-toastr": "^19.0.0",
     "preline": "^2.7.0",

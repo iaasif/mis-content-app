@@ -1,7 +1,8 @@
-import { NgClass, NgComponentOutlet } from '@angular/common';
+import { NgComponentOutlet, NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   ElementRef,
   EventEmitter,
@@ -16,7 +17,7 @@ export type ModalType = 'success' | 'error' | 'warning' | 'info';
 @Component({
   selector: 'app-modal-container',
   standalone: true,
-  imports: [NgComponentOutlet, NgClass],
+  imports: [NgComponentOutlet, NgStyle],
   templateUrl: './modal-container.component.html',
   styleUrls: ['./modal-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +28,12 @@ export class ModalContainerComponent {
   inputs = input<Record<string, any>>({});
   isClose = input<boolean>(false);
   @Output() onClose = new EventEmitter<boolean>();
-
+  modalWidth = computed(() => {
+    if (this.attributes()['modalWidth']) {
+      return this.attributes()['modalWidth']
+    }
+    return '600px';
+  })
   modalCloseEl = viewChild<ElementRef>('closeElem');
 
   oncloseEvent = () => this.onClose.emit(true);
