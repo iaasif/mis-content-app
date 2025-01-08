@@ -6,8 +6,6 @@ import { delay, filter, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { LayoutComponent } from './core/layouts/layout/layout.component';
-import { ModalService } from './core/services/modal/modal.service';
-import { TestComponent } from './features/test/test.component';
 declare global {
   interface Window {
     HSStaticMethods: IStaticMethods;
@@ -23,7 +21,6 @@ declare global {
 export class AppComponent {
   title = 'Bdjobs-angular-boilerplate';
   formControlTest = new FormControl(false);
-  private modalService = inject(ModalService);
 
   private scriptLoader = inject(ScriptLoaderService);
   private destroyRef = inject(DestroyRef);
@@ -39,13 +36,6 @@ export class AppComponent {
     typeof window !== 'undefined' &&
     (await this.scriptLoader.loadScript('assets/js/preline.js'));
       window.HSStaticMethods.autoInit();
-  }
 
-  onclickOpen() {
-    this.modalService.setModalConfigs({
-      attributes:{},
-      inputs:{},
-      componentRef:TestComponent  
-    })
   }
 }
