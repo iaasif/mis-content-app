@@ -13,7 +13,6 @@ import { RouterOutlet } from '@angular/router';
 import { CircularLoaderService } from '../../services/circularLoader/circular-loader.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '../../services/modal/modal.service';
-import { ModalContainerComponent } from '../../../shared/components/modal-container/modal-container.component';
 import { ModalAttributes } from '../../../shared/utils/app.const';
 import { ConfirmationModalComponent } from '../../../shared/components/confirmation-modal/confirmation-modal.component';
 import { ConfirmationModalService } from '../../services/confirmationModal/confirmation-modal.service';
@@ -21,6 +20,7 @@ import { VideoPlayerService } from '../../../shared/services/video-player.servic
 import { LocalstorageService } from '../../services/essentials/localstorage.service';
 import { JobNoLocalStorage } from '../../../shared/enums/app.enums';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ModalContainerWoPComponent } from '../../../shared/components/modal-container/modal-container.component';
 
 
 @Component({
@@ -29,7 +29,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [
     RouterOutlet,
     NavComponent,
-    ModalContainerComponent,
+    ModalContainerWoPComponent,
     ConfirmationModalComponent,
     ReactiveFormsModule
 ],

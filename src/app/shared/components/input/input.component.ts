@@ -26,15 +26,15 @@ enum InputTypeStype {
   styleUrl: './input.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
-    { 
+    {
       directive: NumericOnlyDirective, 
       inputs: ['isDecimalAllowed', 'minValue', 'maxValue', 'isNumericOnly']
     }
   ],
 })
 export class InputComponent<T> implements AfterViewInit {
-  readonly placeholder = input<string>('');
-  readonly label = input<string>('');
+  readonly placeholder = input('');
+  readonly label = input('')
   readonly type = input<InputType>('text');
   readonly isRequired = input<boolean>(false);
   readonly isDisabled = input<boolean>(false);
@@ -44,11 +44,10 @@ export class InputComponent<T> implements AfterViewInit {
   readonly maxLength = input<number>(150);
   readonly classes = input<string>('');
   readonly validationText = input<string>('');
- 
-  valid: boolean = true;
-  name = InputStype.normal;
-  styleClass: string = InputTypeStype.normal;
+  readonly isExtraAttempt = input<boolean>(false);
   
+  valid: boolean = true;
+
   ngOnInit() {
     this.control().valueChanges.subscribe(value => {
       this.handleValueChange(value);
@@ -56,32 +55,41 @@ export class InputComponent<T> implements AfterViewInit {
   }
 
   private handleValueChange(value: T): void {
-    if(this.type() == 'text'){
-      const control = this.control();
-      if(control.value){
-        this.valid = true;
-        this.styleClass = InputTypeStype.normal;
-        this.name = InputStype.normal;
-      } else{
-        control.setErrors({ invalid: true });
-        this.valid = false;
-        this.styleClass = InputTypeStype.error;
-        this.name = InputStype.error;
-      }
+    const numericValue = +value;
+
+    const isRequired = this.isRequired();
+    if (!isRequired && (value === null || value === undefined || value === '')) {
+      this.control().setErrors(null);
+      this.styleClass = InputTypeStype.normal;
+      this.name = InputStype.normal;
+      this.valid = true;
+      return;
     }
-    else {
-      if (+this.control().value > this.maxValue() || +this.control().value < this.minValue()) {
-        this.control().setErrors({ invalid: true });
-        this.valid = false;
-        this.styleClass = InputTypeStype.error;
-        this.name = InputStype.error;
-      } else {
-        this.valid = true;
-        this.styleClass = InputTypeStype.normal;
-        this.name = InputStype.normal;
-      }
+
+    if (isRequired && (!value || value === '')) {
+      this.control().setErrors({ required: true });
+      this.styleClass = InputTypeStype.error;
+      this.name = InputStype.error;
+      this.valid = false;
+      return;
     }
+    
+    if (numericValue > this.maxValue() || numericValue < this.minValue()) {
+      this.control().setErrors({ invalid: true });
+      this.styleClass = InputTypeStype.error;
+      this.name = InputStype.error;
+      this.valid = false;
+      return;
+    }
+
+    this.control().setErrors(null);
+    this.styleClass = InputTypeStype.normal;
+    this.name = InputStype.normal;
+    this.valid = true;
   }
+  
+  name = InputStype.normal;
+  styleClass: string = InputTypeStype.normal;
 
   ngAfterViewInit(): void {
     reinitializePreline();

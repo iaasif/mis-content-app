@@ -1,4 +1,4 @@
-import { NgComponentOutlet, NgStyle } from '@angular/common';
+import { NgClass, NgComponentOutlet, NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,17 +12,42 @@ import {
   viewChild,
 } from '@angular/core';
 import { ModalAttributes } from '../../utils/app.const';
+import { animate, style, transition, trigger } from '@angular/animations';
 export type ModalType = 'success' | 'error' | 'warning' | 'info';
 
 @Component({
   selector: 'app-modal-container',
   standalone: true,
-  imports: [NgComponentOutlet, NgStyle],
+  imports: [NgComponentOutlet, NgStyle,NgClass],
   templateUrl: './modal-container.component.html',
   styleUrls: ['./modal-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations:[
+    trigger('fadeInBackdrop', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-in-out', style({ opacity: 1 })) 
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in-out', style({ opacity: 0 })) 
+      ])
+    ]),
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.9)' }),
+        animate('200ms ease-in-out', style({ opacity: 1, transform: 'scale(1)' })) 
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in-out', style({ opacity: 0, transform: 'scale(0.9)' })) 
+      ])
+    ])
+  
+  ]
 })
-export class ModalContainerComponent {
+export class ModalContainerWoPComponent {
+  setModalConfigs(arg0: { attributes: {}; componentRef: any; }) {
+    throw new Error('Method not implemented.');
+  }
   componentRef = input<Type<any>>(null as unknown as Type<any>);
   attributes = input<Record<string, string | boolean>>(ModalAttributes);
   inputs = input<Record<string, any>>({});
@@ -30,13 +55,15 @@ export class ModalContainerComponent {
   @Output() onClose = new EventEmitter<boolean>();
   modalWidth = computed(() => {
     if (this.attributes()['modalWidth']) {
-      return this.attributes()['modalWidth']
+      return this.attributes()['modalWidth'];
     }
-    return '600px';
-  })
+    return '900px';
+  });
   modalCloseEl = viewChild<ElementRef>('closeElem');
 
-  oncloseEvent = () => this.onClose.emit(true);
+  closeModal() { 
+    this.onClose.emit(true);
+  }
 
   constructor() {
     effect(() => {

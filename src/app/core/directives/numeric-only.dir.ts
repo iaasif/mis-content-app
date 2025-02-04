@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input, input } from '@angular/core';
+import { Directive, HostListener, input } from '@angular/core';
 
 @Directive({
   selector: 'input[appNumericOnly]',
@@ -9,18 +9,44 @@ export class NumericOnlyDirective {
   isDecimalAllowed = input(true);
   minValue = input<number>(0);
   maxValue = input<number>(999999999999);
+  isForInputEvent = input(false);
   private allowedKeys: string[] = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+  previousValue = '';
 
-
-
-  @HostListener('keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    if (this.allowedKeys.indexOf(event.key) !== -1 || !this.isNumericOnly()) {
-      return;
+  @HostListener('keypress', ['$event']) 
+  onKeyPress(event: KeyboardEvent) {
+    if (this.isForInputEvent()) {
+      const isValidEntry = (event.keyCode == 8 || event.keyCode == 0) ? null : event.keyCode >= 48 && event.keyCode <= 57
+      if (!isValidEntry) {
+        return false;
+      }
+    } else { // For input type text
+      if (this.allowedKeys.indexOf(event.key) !== -1 || !this.isNumericOnly()) {
+        return false;
+      }
+      const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
+      if (!event.key.match(pattern)) {
+        event.preventDefault();
+        return false;
+      }
     }
-    const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
-    if (!event.key.match(pattern)) {
-      event.preventDefault();
+    return true;
+  }
+
+
+  @HostListener('input', ['$event'])
+  onInput(event: KeyboardEvent) {
+    if (this.isForInputEvent()) {
+      const inputElement = event.target as HTMLInputElement;
+      const value = +inputElement.value;
+      if (!this.isValidRange(event)) {
+        inputElement.value = this.previousValue;
+      } else {
+        if (inputElement.value.startsWith('0') && inputElement.value.length > 1) {
+          inputElement.value = inputElement.value.slice(1);
+        }
+        this.previousValue = inputElement.value;
+      }
     }
   }
 
@@ -34,10 +60,10 @@ export class NumericOnlyDirective {
     }
   }
 
-  checkMinMaxValue(event: Event) {
-    //console.log(+(event.target as HTMLInputElement).value)
-      if (this.minValue() && ((this.maxValue() > +(event.target as HTMLInputElement).value &&  +(event.target as HTMLInputElement).value > this.minValue()))) {
-        return;
-      }
+  isValidRange(event: Event) {
+    if ((this.maxValue() >= +(event.target as HTMLInputElement).value &&  +(event.target as HTMLInputElement).value >= this.minValue())) {
+      return true;
+    }
+    return false;
   } 
 }
