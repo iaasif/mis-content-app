@@ -21,13 +21,15 @@ export class NumericOnlyDirective {
         return false;
       }
     } else { // For input type text
-      if (this.allowedKeys.indexOf(event.key) !== -1 || !this.isNumericOnly()) {
-        return false;
-      }
-      const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
-      if (!event.key.match(pattern)) {
-        event.preventDefault();
-        return false;
+      if(this.isNumericOnly()) {
+        if (this.allowedKeys.indexOf(event.key) !== -1 || !this.isNumericOnly()) {
+          return false;
+        }
+        const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
+        if (!event.key.match(pattern)) {
+          event.preventDefault();
+          return false;
+        }
       }
     }
     return true;
