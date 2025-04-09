@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LayoutComponent } from './layout.component';
-import { MessageBoxService } from '../../services/messageBox/message-box.service';
 import { ConfirmationModalService } from '../../services/confirmationModal/confirmation-modal.service';
 import { ModalService } from '../../services/modal/modal.service';
 import { CircularLoaderService } from '../../services/circularLoader/circular-loader.service';
@@ -15,7 +14,6 @@ describe('LayoutComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LayoutComponent],
       providers: [
-        MessageBoxService,
         ConfirmationModalService,
         ModalService,
         CircularLoaderService,
