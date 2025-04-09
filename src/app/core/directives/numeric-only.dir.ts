@@ -10,6 +10,8 @@ export class NumericOnlyDirective {
   minValue = input<number>(0);
   maxValue = input<number>(999999999999);
   isForInputEvent = input(false);
+  showMinValueForValidation = input(0);
+  minDigitTobeChecked = input(0);
   private allowedKeys: string[] = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
   previousValue = '';
 
@@ -41,8 +43,8 @@ export class NumericOnlyDirective {
     if (this.isForInputEvent()) {
       const inputElement = event.target as HTMLInputElement;
       const value = +inputElement.value;
-      if (!this.isValidRange(event)) {
-        inputElement.value = this.previousValue;
+      if (!this.isValidRange(event) && this.minDigitTobeChecked() <= inputElement.value.length) {
+        inputElement.value = this.showMinValueForValidation() ? this.showMinValueForValidation().toString() : this.previousValue;
       } else {
         if (inputElement.value.startsWith('0') && inputElement.value.length > 1) {
           inputElement.value = inputElement.value.slice(1);

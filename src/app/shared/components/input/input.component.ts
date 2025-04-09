@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, input } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, input, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { reinitializePreline } from '../../utils/reinitializePreline';
 import { NgClass } from '@angular/common';
@@ -13,9 +13,9 @@ enum InputStype  {
 };
 
 enum InputTypeStype {
-  normal = 'block w-full rounded-md border-0 py-1.5 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
-  error = 'py-3 px-4 block w-full border-red-500 rounded-lg text-sm focus:border-red-500 focus:ring-red-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400',
-  success = 'py-3 px-4 block w-full border-teal-500 rounded-lg text-sm focus:border-teal-500 focus:ring-teal-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400'
+  normal = 'block w-full rounded-md border-0 py-1.5 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-[#008A22] sm:text-sm sm:leading-6',
+  error = 'py-3 px-4 block w-full border-red-500 rounded-lg text-sm focus:border-red-500 focus:ring-red-500',
+  success = 'py-3 px-4 block w-full border-teal-500 rounded-lg text-sm focus:border-teal-500 focus:ring-teal-500'
 }
 
 @Component({
@@ -32,7 +32,7 @@ enum InputTypeStype {
     }
   ],
 })
-export class InputComponent<T> implements AfterViewInit {
+export class InputComponent<T> implements AfterViewInit, OnInit {
   readonly placeholder = input('');
   readonly label = input('')
   readonly type = input<InputType>('text');
@@ -46,7 +46,7 @@ export class InputComponent<T> implements AfterViewInit {
   readonly validationText = input<string>('');
   readonly isExtraAttempt = input<boolean>(false);
   
-  valid: boolean = true;
+  valid = true;
 
   ngOnInit() {
     this.control().valueChanges.subscribe(value => {
