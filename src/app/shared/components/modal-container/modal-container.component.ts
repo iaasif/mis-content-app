@@ -45,9 +45,6 @@ export type ModalType = 'success' | 'error' | 'warning' | 'info';
   ]
 })
 export class ModalContainerWoPComponent {
-  setModalConfigs(arg0: { attributes: {}; componentRef: any; }) {
-    throw new Error('Method not implemented.');
-  }
   componentRef = input<Type<any>>(null as unknown as Type<any>);
   attributes = input<Record<string, string | boolean>>(ModalAttributes);
   inputs = input<Record<string, any>>({});
