@@ -1,11 +1,4 @@
 import { Type } from '@angular/core';
-import { IStaticMethods } from 'preline/preline';
-
-declare global {
-  export interface Window {
-    HSStaticMethods: IStaticMethods;
-  }
-}
 
 export interface SelectItem {
   label: string;
