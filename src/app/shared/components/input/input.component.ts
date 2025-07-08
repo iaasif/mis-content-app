@@ -1,6 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, input, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { reinitializePreline } from '../../utils/reinitializePreline';
 import { NgClass } from '@angular/common';
 import { NumericOnlyDirective } from '../../../core/directives/numeric-only.dir';
 
@@ -32,7 +31,7 @@ enum InputTypeStype {
     }
   ],
 })
-export class InputComponent<T> implements AfterViewInit, OnInit {
+export class InputComponent<T> implements OnInit {
   readonly placeholder = input('');
   readonly label = input('')
   readonly type = input<InputType>('text');
@@ -90,8 +89,4 @@ export class InputComponent<T> implements AfterViewInit, OnInit {
   
   name = InputStype.normal;
   styleClass: string = InputTypeStype.normal;
-
-  ngAfterViewInit(): void {
-    reinitializePreline();
-  }
 }
