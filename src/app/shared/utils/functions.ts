@@ -1,10 +1,18 @@
+import { isPlatformBrowser } from '@angular/common';
+import { inject, PLATFORM_ID } from '@angular/core';
+
 type FormattedDateTime = {
   formattedDate: string;
   formattedTime: string;
 };
 
-export function redirectExternal(url: string): void {
+export function redirectExternal(url: string) {
+  const platformId = inject(PLATFORM_ID);
+  if (isPlatformBrowser(platformId)) {
     window.location.href = url;
+  } else {
+    // SSR: do nothing or log
+  }
 }
 
 export function groupByProperty(array: any[], property: string) {
