@@ -1,8 +1,6 @@
 @use 'ngx-toastr/toastr';
 @use "@danielmoncada/angular-datetime-picker/assets/style/picker.min.css";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer components {
   // buttons

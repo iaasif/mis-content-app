@@ -25,7 +25,6 @@ import { ModalContainerWoPComponent } from '../../../shared/components/modal-con
 
 @Component({
   selector: 'app-layout',
-  standalone: true,
   imports: [
     RouterOutlet,
     NavComponent,
@@ -35,7 +34,7 @@ import { ModalContainerWoPComponent } from '../../../shared/components/modal-con
 ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutComponent implements OnInit {
   private circularLoaderService = inject(CircularLoaderService);
