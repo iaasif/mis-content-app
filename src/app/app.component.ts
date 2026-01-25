@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
   imports: [LayoutComponent]
 })
 export class AppComponent {
-  title = 'Bdjobs-angular-boilerplate';
+  title = 'mis-content-app';
   formControlTest = new FormControl(false);
 
   constructor(private toastr: ToastrService) {
