@@ -7,27 +7,37 @@
       </div>
       <p class="mt-1 text-xs text-slate-600">{{ items().length }} open listings</p>
     </div>
-    <div class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+    <div
+      class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
       Updated
     </div>
   </div>
 
   <div class="divide-y divide-slate-200">
     @for (item of items(); track $index) {
-      <a [href]="item.url" class="group block">
-        <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
-          <div class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700">
-            {{ item.id }}
-          </div>
-          <div class="min-w-0 flex-1">
+    <a [href]="item.url" class="group block">
+      <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
+        <div
+          class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700">
+          {{ item.id }}
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex justify-between">
             <div class="text-base font-semibold text-slate-900 group-hover:underline">
               {{ item.title }}
             </div>
-            <div class="mt-1 text-xs text-slate-500">View details</div>
+          @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
+              <div class="flex gap-x-2 underline">
+              <div>English</div>
+              <div>বাংলা</div>
+            </div>
+          }
           </div>
-          <div class="text-slate-400 group-hover:text-slate-700">-&gt;</div>
+          <div class="mt-1 text-xs text-slate-500">View details</div>
         </div>
-      </a>
+        <div class="text-slate-400 group-hover:text-slate-700">-&gt;</div>
+      </div>
+    </a>
     }
   </div>
 </div>
