@@ -1,34 +1,23 @@
 <div class="container mx-auto">
-    <div class="py-6">
-        <img src="images/bdjobsLogo.svg" alt="">
-    </div>
-    <div class="text-center mx-auto border-2 w-full py-2">Hot Job / Tender Manager <span class="text-red-700">( &commat; bdjobs.com )</span></div>
+  <div class="py-6">
+    <img src="images/bdjobsLogo.svg" alt="">
+  </div>
+  <div class="text-center mx-auto border-2 w-full py-2 font-semibold text-xl">Hot Job / Tender Manager <span class="text-red-700">( &commat;
+      bdjobs.com )</span></div>
 
-
-    <div>
-       <app-hot-jobs-and-tender
-  title="Hot Jobs"
-  [items]="hotJobs"
->
-  <ng-template let-job>
-    <div class="p-2 border-b">
-      <div class="font-semibold">{{ job.title }}</div>
-      <div class="text-sm text-gray-500">ID: {{ job.id }}</div>
+  <div class="flex w-full mx-auto bg-[#f5f1eb] gap-x-3 mt-10">
+    <div class="w-1/2">
+      <app-hot-jobs-and-tender title="Hot Jobs" [items]="hotJobs" hoverBg="hover:bg-[#f9dddd]" bgColor="bg-[#f5f1eb]" titleBg="bg-[#ffa79e]"
+       borderColor="border-[#74a662]" >
+      </app-hot-jobs-and-tender>
     </div>
-  </ng-template>
-</app-hot-jobs-and-tender>
 
-<app-hot-jobs-and-tender
-  title="Tenders"
-  [items]="tenders"
->
-  <ng-template let-job>
-    <div class="p-2 border-b">
-      <div class="font-semibold">{{ job.title }}</div>
-      <div class="text-sm text-gray-500">Tender: {{ job.id }}</div>
+    <div class="w-1/2">
+      <app-hot-jobs-and-tender title="Tenders" [items]="tenders" hoverBg="hover:bg-[#bfd8a7]" titleBg="bg-[#74a662]"
+        bgColor="bg-[#f5f1eb]" borderColor="border-[#ffa79e]" ></app-hot-jobs-and-tender>
     </div>
-  </ng-template>
-</app-hot-jobs-and-tender>
 
-    </div>
+    
+  </div>
+
 </div>
