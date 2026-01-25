@@ -1,1 +1,13 @@
-<p>hot-jobs-and-tender works!</p>
+<div class="mb-6 border rounded">
+  <div class="px-4 py-2 font-bold border-b">
+    {{ title() }}
+  </div>
+
+  <div class="px-4 py-2">
+    @for (job of items(); track $index) {
+      <ng-container
+        *ngTemplateOutlet="itemTemplate; context: { $implicit: job }"
+      ></ng-container>
+    }
+  </div>
+</div>

@@ -5,5 +5,30 @@
     <div class="text-center mx-auto border-2 w-full py-2">Hot Job / Tender Manager <span class="text-red-700">( &commat; bdjobs.com )</span></div>
 
 
-    
+    <div>
+       <app-hot-jobs-and-tender
+  title="Hot Jobs"
+  [items]="hotJobs"
+>
+  <ng-template let-job>
+    <div class="p-2 border-b">
+      <div class="font-semibold">{{ job.title }}</div>
+      <div class="text-sm text-gray-500">ID: {{ job.id }}</div>
+    </div>
+  </ng-template>
+</app-hot-jobs-and-tender>
+
+<app-hot-jobs-and-tender
+  title="Tenders"
+  [items]="tenders"
+>
+  <ng-template let-job>
+    <div class="p-2 border-b">
+      <div class="font-semibold">{{ job.title }}</div>
+      <div class="text-sm text-gray-500">Tender: {{ job.id }}</div>
+    </div>
+  </ng-template>
+</app-hot-jobs-and-tender>
+
+    </div>
 </div>
