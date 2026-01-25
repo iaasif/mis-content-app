@@ -14,6 +14,6 @@ export class AppComponent {
   formControlTest = new FormControl(false);
 
   constructor(private toastr: ToastrService) {
-    this.toastr.success('Hello world!', 'Toastr fun!');
+    // this.toastr.success('Hello world!', 'Toastr fun!');
   }
 }

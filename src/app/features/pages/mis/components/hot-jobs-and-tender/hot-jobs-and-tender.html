@@ -1,15 +1,15 @@
-<div class="mb-6 border rounded" [class]="bgColor()">
-  <div class="px-4 py-2 font-bold border-b text-center text-xl" [class]="titleBg()">
+<div class="mb-6 border rounded" [class]="[bgColor(),borderColor()]">
+  <div class="px-4 py-2 font-bold  text-center text-xl" [class]="titleBg()">
     {{ title() }}
   </div>
 
   <div class="">
     @for (item of items(); track $index) {
-  <div class="border  p-4" [class]="[hoverBg(),borderColor()]" >
+  <div class="border p-4" [class]="[hoverBg(),borderColor()]" >
       <a [href]="item.url" class="">
       <div class="flex">
         <div class="px-4">{{item.id}}</div>
-      <div class="underline font-semibold">{{item.title}}</div>
+      <div class="underline font-semibold text-lg">{{item.title}}</div>
       </div>
     </a>
     </div>
