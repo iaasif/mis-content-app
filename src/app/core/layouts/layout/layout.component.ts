@@ -7,8 +7,6 @@ import {
   signal,
   Type,
 } from '@angular/core';
-import { NavComponent } from '../nav/nav.component';
-import { FooterComponent } from '../footer/footer.component';
 import { RouterOutlet } from '@angular/router';
 import { CircularLoaderService } from '../../services/circularLoader/circular-loader.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,7 +25,7 @@ import { ModalContainerWoPComponent } from '../../../shared/components/modal-con
   selector: 'app-layout',
   imports: [
     RouterOutlet,
-    NavComponent,
+    
     ModalContainerWoPComponent,
     ConfirmationModalComponent,
     ReactiveFormsModule

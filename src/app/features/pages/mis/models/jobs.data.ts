@@ -1,5 +1,6 @@
 export interface IJobs {
     id: number,
     title: string,
-    url: string
+    url: string,
+    isnew:boolean
 }
