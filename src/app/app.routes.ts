@@ -3,7 +3,7 @@ import { MisHome } from './features/pages/mis-home/mis-home';
 
 export const routes: Routes = [
     {
-        path:'/',
+        path: '',
         component: MisHome
     }
 ];

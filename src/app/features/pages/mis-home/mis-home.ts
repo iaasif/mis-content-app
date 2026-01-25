@@ -4,7 +4,8 @@ import { Component } from '@angular/core';
   selector: 'app-mis-home',
   imports: [],
   templateUrl: './mis-home.html',
-  styleUrl: './mis-home.scss'
+  styleUrl: './mis-home.scss',
+  standalone:true
 })
 export class MisHome {
 
