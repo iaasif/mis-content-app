@@ -2,19 +2,19 @@ export const Hotjobs = [
   {
     id: 1,
     title: 'New Hot Job',
-    url: '',
+    url: 'https://mis.bdjobs.com/mis/hotjobmanager/HotJobsEditor.asp?PageMode=Insert&id=',
     isnew: false,
   },
   {
     id: 2,
     title: 'Edit Hot Job',
-    url: '',
+    url: 'https://mis.bdjobs.com/mis/hotjobmanager/HotJobList.asp?id=',
     isnew: false,
   },
   {
     id: 3,
     title: 'Rearrange Hot Job ( 4 Column) Drag and Drop)   New',
-    url: '',
+    url: 'https://mis.bdjobs.com/mis/hotjobmanager/arrangejobs4col_dragNdrop.asp?id=',
     isnew: true,
   },
   {
@@ -38,7 +38,7 @@ export const Hotjobs = [
   {
     id: 7,
     title: 'View Hot Jobs',
-    url: '',
+    url: 'https://www.bdjobs.com/',
     isnew: false,
   },
 ]
