@@ -1,10 +1,10 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IJobs } from '../../models/jobs.data';
 
 @Component({
   selector: 'app-hot-jobs-and-tender',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './hot-jobs-and-tender.html',
   styleUrl: './hot-jobs-and-tender.css'
 })
