@@ -8,7 +8,7 @@ import { NgxPaginationModule, PaginationControlsDirective } from 'ngx-pagination
   standalone: true,
   imports: [NgxPaginationModule, NgClass,FormsModule],
   templateUrl: './pagination.component.html',
-  styleUrl: './pagination.component.scss',
+  styleUrl: './pagination.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent {

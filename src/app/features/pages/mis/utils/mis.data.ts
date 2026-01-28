@@ -2,7 +2,7 @@ export const Hotjobs = [
   {
     id: 1,
     title: 'New Hot Job',
-    url: 'https://mis.bdjobs.com/mis/hotjobmanager/HotJobsEditor.asp?PageMode=Insert&id=',
+    url: 'new',
     enUrl: '',
     bnUrl: '',
     isnew: false,
@@ -61,7 +61,7 @@ export const Tenders = [
   {
     id: 1,
     title: 'New Tender',
-    url: 'https://mis.bdjobs.com/mis/hotjobmanager/TendersEditor.asp?PageMode=Insert&id=',
+    url: 'new',
     enUrl: '',
     bnUrl: '',
     isnew: false,

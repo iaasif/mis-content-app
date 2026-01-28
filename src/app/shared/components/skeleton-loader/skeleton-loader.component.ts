@@ -6,7 +6,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   standalone: true,
   imports: [NgxSkeletonLoaderModule],
   templateUrl: './skeleton-loader.component.html',
-  styleUrl: './skeleton-loader.component.scss'
+  styleUrl: './skeleton-loader.component.css'
 })
 export class CardSkeletonLoaderComponent {
 

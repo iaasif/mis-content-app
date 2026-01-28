@@ -22,7 +22,7 @@ enum InputTypeStype {
   standalone: true,
   imports: [ReactiveFormsModule,NgClass],
   templateUrl: './input.component.html',
-  styleUrl: './input.component.scss',
+  styleUrl: './input.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
     {

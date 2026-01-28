@@ -20,7 +20,7 @@ export type ModalType = 'success' | 'error' | 'warning' | 'info';
   standalone: true,
   imports: [NgComponentOutlet, NgStyle,NgClass],
   templateUrl: './modal-container.component.html',
-  styleUrls: ['./modal-container.component.scss'],
+  styleUrls: ['./modal-container.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations:[
     trigger('fadeInBackdrop', [

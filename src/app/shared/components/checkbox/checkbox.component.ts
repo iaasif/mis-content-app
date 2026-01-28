@@ -5,7 +5,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   selector: 'app-checkbox',
   imports: [ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
-  styleUrl: './checkbox.component.scss',
+  styleUrl: './checkbox.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CheckboxComponent {

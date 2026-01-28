@@ -12,7 +12,7 @@ import { SelectItem } from '../../models/models';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './select.component.html',
-  styleUrl: './select.component.scss',
+  styleUrl: './select.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 

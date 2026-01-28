@@ -10,7 +10,7 @@ import { NgClass } from '@angular/common';
   standalone: true,
   imports: [NgxSliderModule, ReactiveFormsModule, NumericOnlyDirective, NgClass],
   templateUrl: './range-slider.component.html',
-  styleUrl: './range-slider.component.scss',
+  styleUrl: './range-slider.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 

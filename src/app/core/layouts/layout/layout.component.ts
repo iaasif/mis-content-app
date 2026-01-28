@@ -19,19 +19,20 @@ import { LocalstorageService } from '../../services/essentials/localstorage.serv
 import { JobNoLocalStorage } from '../../../shared/enums/app.enums';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ModalContainerWoPComponent } from '../../../shared/components/modal-container/modal-container.component';
+import { MisNav } from "../../../features/pages/mis/components/mis-nav/mis-nav";
 
 
 @Component({
   selector: 'app-layout',
   imports: [
     RouterOutlet,
-    
     ModalContainerWoPComponent,
     ConfirmationModalComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MisNav
 ],
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss',
+  styleUrl: './layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayoutComponent implements OnInit {

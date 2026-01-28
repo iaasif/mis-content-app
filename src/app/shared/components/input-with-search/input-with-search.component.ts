@@ -8,7 +8,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [NgClass, ReactiveFormsModule],
   templateUrl: './input-with-search.component.html',
-  styleUrl: './input-with-search.component.scss',
+  styleUrl: './input-with-search.component.css',
 })
 export class InputWithSearchComponent implements OnInit{
   readonly label = input('');

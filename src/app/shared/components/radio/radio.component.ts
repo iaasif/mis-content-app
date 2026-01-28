@@ -8,7 +8,7 @@ import { NgClass } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, NgClass],
   templateUrl: './radio.component.html',
-  styleUrl: './radio.component.scss',
+  styleUrl: './radio.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 

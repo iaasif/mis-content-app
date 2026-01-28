@@ -9,7 +9,7 @@ export const DefaultMaxSize = 100000;
   standalone: true,
   imports: [],
   templateUrl: './file-upload.component.html',
-  styleUrl: './file-upload.component.scss'
+  styleUrl: './file-upload.component.css'
 })
 export class FileUploadComponent implements AfterViewChecked, OnChanges {
   outputBoxVisible: boolean = false; 

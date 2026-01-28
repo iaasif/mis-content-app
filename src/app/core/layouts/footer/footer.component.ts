@@ -6,7 +6,7 @@ import { FooterBottomComponent } from '../footer-bottom/footer-bottom.component'
   standalone: true,
   imports: [FooterBottomComponent],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.scss',
+  styleUrl: './footer.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {

@@ -30,7 +30,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './multi-select.component.html',
-  styleUrl: './multi-select.component.scss',
+  styleUrl: './multi-select.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultiSelectComponent implements OnInit, OnChanges, OnDestroy {

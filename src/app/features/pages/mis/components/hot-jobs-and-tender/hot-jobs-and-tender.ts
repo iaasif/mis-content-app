@@ -6,7 +6,7 @@ import { IJobs } from '../../models/jobs.data';
   selector: 'app-hot-jobs-and-tender',
   imports: [CommonModule],
   templateUrl: './hot-jobs-and-tender.html',
-  styleUrl: './hot-jobs-and-tender.scss'
+  styleUrl: './hot-jobs-and-tender.css'
 })
 export class HotJobsAndTender {
   title = input<string>('');

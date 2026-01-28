@@ -18,7 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CommonModule
   ],
   templateUrl: './video-player.component.html',
-  styleUrl: './video-player.component.scss',
+  styleUrl: './video-player.component.css',
 })
 export class VideoPlayerComponent implements OnChanges {
   isValidSource=signal<boolean>(false);

@@ -6,7 +6,7 @@ import { HotJobsAndTender } from "../hot-jobs-and-tender/hot-jobs-and-tender";
   selector: 'app-mis-home',
   imports: [HotJobsAndTender],
   templateUrl: './mis-home.html',
-  styleUrl: './mis-home.scss',
+  styleUrl: './mis-home.css',
   standalone:true
 })
 export class MisHome {

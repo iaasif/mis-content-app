@@ -8,7 +8,7 @@ import { tap } from 'rxjs';
   standalone: true,
   imports: [NgClass, AsyncPipe],
   templateUrl: './confirmation-modal.component.html',
-  styleUrl: './confirmation-modal.component.scss',
+  styleUrl: './confirmation-modal.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmationModalComponent {

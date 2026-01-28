@@ -8,7 +8,7 @@ import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
   standalone: true,
   imports: [ReactiveFormsModule, NgxEditorModule, NgStyle],
   templateUrl: './text-editor.component.html',
-  styleUrl: './text-editor.component.scss',
+  styleUrl: './text-editor.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextEditorComponent {

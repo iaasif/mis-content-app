@@ -22,7 +22,7 @@ enum InputTypeStype {
   standalone: true,
   imports: [NgClass, InputComponent, ReactiveFormsModule],
   templateUrl: './custom-select.component.html',
-  styleUrl: './custom-select.component.scss',
+  styleUrl: './custom-select.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomSelectComponent implements OnChanges {
