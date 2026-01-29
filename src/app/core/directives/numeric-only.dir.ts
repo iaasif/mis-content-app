@@ -9,6 +9,7 @@ export class NumericOnlyDirective {
   isDecimalAllowed = input(true);
   minValue = input<number>(0);
   maxValue = input<number>(999999999999);
+  isInputTypeNumber = input(false);
   isForInputEvent = input(false);
   showMinValueForValidation = input(0);
   minDigitTobeChecked = input(0);
@@ -39,11 +40,25 @@ export class NumericOnlyDirective {
 
 
   @HostListener('input', ['$event'])
-  onInput(event: KeyboardEvent) {
-    if (this.isForInputEvent()) {
-      const inputElement = event.target as HTMLInputElement;
+   onInput(event: Event): boolean {
+    const inputEvent = event as InputEvent;
+    if (!this.isInputTypeNumber()) {
+      const inputElement = inputEvent.target as HTMLInputElement;
+      const value = inputElement.value;
+      if(this.isNumericOnly()) {
+        if ((inputEvent.data === null && inputEvent.inputType !== "insertText")) {
+          return false;
+        }
+        const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
+        if (inputEvent.data !== null && !inputEvent.data.match(pattern)) {
+          inputElement.value = value.replace(/[^0-9.]/g, "");
+        }
+      }
+      return false;
+    } else {
+      const inputElement = inputEvent.target as HTMLInputElement;
       const value = +inputElement.value;
-      if (!this.isValidRange(event) && this.minDigitTobeChecked() <= inputElement.value.length) {
+      if (!this.isValidRange(inputEvent) && this.minDigitTobeChecked() <= inputElement.value.length) {
         inputElement.value = this.showMinValueForValidation() ? this.showMinValueForValidation().toString() : this.previousValue;
       } else {
         if (inputElement.value.startsWith('0') && inputElement.value.length > 1) {
@@ -51,6 +66,7 @@ export class NumericOnlyDirective {
         }
         this.previousValue = inputElement.value;
       }
+      return false;
     }
   }
 
@@ -70,4 +86,19 @@ export class NumericOnlyDirective {
     }
     return false;
   } 
+  @HostListener('beforeinput', ['$event'])
+  handleBeforeInput(event: InputEvent):void {
+    if (!this.isInputTypeNumber() && this.isNumericOnly()) {
+      const newChar = event.data; 
+      const allowedPattern = this.isDecimalAllowed()
+        ? /^[0-9.]$/
+        : /^[0-9]$/;
+        
+        if (newChar !== null && newChar !== '' && !allowedPattern.test(newChar)) {
+          // if (event.cancelable) {
+            event.preventDefault();
+          // }
+        }
+    }
+  }
 }
