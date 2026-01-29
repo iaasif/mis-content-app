@@ -1,15 +1,163 @@
-<div class="flex items-center justify-between">
-    <div class="text-2xl">Hot Job Manager</div>
-    <div class="flex gap-x-2">
-        <div>add</div>
-        <div>edit</div>
-        <div>delete this company</div>
-    </div>
-</div>
-
-<div class="flex">
+<div class="rounded-2xl border border-amber-200 bg-white/90 shadow-sm backdrop-blur">
+  <!-- Header -->
+  <div class="flex items-start justify-between gap-4 border-b border-amber-200 px-6 py-4">
     <div>
-        company name 
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+        <h3 class="text-xl font-semibold tracking-wide text-slate-900">Hot Job Manager</h3>
+      </div>
+      <p class="mt-1 text-xs text-slate-600">Add or edit hot job listings</p>
     </div>
-    <app-input [type]="'text'" ></app-input>
+    <div class="flex gap-2">
+      <button class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100">
+        Add
+      </button>
+      <button class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100">
+        Edit
+      </button>
+      <button class="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100">
+        Delete Company
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <div class="space-y-5 p-6">
+    <!-- Company Name -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Company Name</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Show Company Name As -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Show Company Name As</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Company Name (Bengali) -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">কোম্পানির নাম</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <div class="border-t border-slate-200 pt-5"></div>
+
+    <!-- Job Title -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Job Title</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Job Title (Bengali) -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">চাকরির শিরনাম</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <div class="border-t border-slate-200 pt-5"></div>
+
+    <!-- Hot Jobs URL -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Hot Jobs URL</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Comments -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Comments</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Category Job IDs -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
+      <label class="text-sm font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
+      <div class="space-y-1">
+        <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+        <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-200 pt-5"></div>
+
+    <!-- Display Logo -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Display Logo?</label>
+      <app-radio></app-radio>
+    </div>
+
+    <!-- select company logo  -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Select company logo</label>
+      <app-input [type]="'text'" [isNumericOnly]="true"></app-input>
+    </div>
+
+    <!-- Number of Jobs -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Number of Jobs</label>
+      <app-input [type]="'text'" [isNumericOnly]="true"></app-input>
+    </div>
+
+    <!-- Display As -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Hot jobs type</label>
+      <app-radio [radioItems]="hotJobsType()"></app-radio>
+    </div>
+
+    <!-- Display Position -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Display Position</label>
+        <app-dropdown-component [options]="position()" class="w-2xl"></app-dropdown-component>
+    </div>
+
+    <div class="border-t border-slate-200 pt-5"></div>
+
+    <!-- Published Date -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Published Date</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Job Deadline -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Job Deadline</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Premium Start Date -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Premium Start Date</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Premium End Date -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Premium End Date</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <div class="border-t border-slate-200 pt-5"></div>
+
+    <!-- Posted By -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Posted By</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+
+    <!-- Source Person -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Source Person</label>
+      <app-input [type]="'text'" [isNumericOnly]="false"></app-input>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
+    <button class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+      Cancel
+    </button>
+    <button class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-amber-600">
+      Save Changes
+    </button>
+  </div>
 </div>

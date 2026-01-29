@@ -75,3 +75,9 @@ export interface ModalConfig {
 }
 
 export type TooltipTag = 'h1' | 'h2' | 'h3' | 'p' | 'span'
+
+export interface DropdownOption {
+  label: string;
+  value: string | number;
+  disabled?: boolean;
+}
