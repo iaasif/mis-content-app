@@ -1,3 +1,5 @@
+import { DropdownOption, SelectRadioData } from "../../../../shared/models/models";
+
 export const Hotjobs = [
   {
     id: 1,
@@ -10,7 +12,7 @@ export const Hotjobs = [
   {
     id: 2,
     title: 'Edit Hot Job',
-    url: 'https://mis.bdjobs.com/mis/hotjobmanager/HotJobList.asp?id=',
+    url: 'edit',
     enUrl: '',
     bnUrl: '',
     isnew: false,
@@ -139,3 +141,52 @@ export const Tenders = [
     isnew: false,
   },
 ]
+
+
+export const Posted: SelectRadioData[] = [
+  {
+    id: '1',
+    label: 'Today',
+    name: 'posted',
+    
+    
+  },
+  {
+    id: '2',
+    label: 'Last 2 days',
+    name: 'posted',
+    
+    
+  },
+
+  {
+    id: '3',
+    label: 'Last 3 days',
+    name: 'posted',
+    
+    
+  },
+  {
+    id: '4',
+    label: 'Last 4 days',
+    name: 'posted',
+    
+    
+  },
+  {
+    id: '5',
+    label: 'Last 5 days',
+    name: 'posted',
+    
+    
+  },
+
+]
+
+export const priorities: DropdownOption[] = [
+{ label: 'Low', value: 1 },
+{ label: 'Medium', value: 2 },
+{ label: 'High', value: 3 },
+{ label: 'Urgent', value: 4 },
+{ label: 'Critical', value: 5 }
+];

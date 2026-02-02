@@ -1,1 +1,16 @@
-<p>edit-job works!</p>
+<div class="flex">
+<div class="flex items-center">
+    <div>compnay list</div>
+    <input type="text" placeholder="search company">
+
+</div>
+
+  <div class="flex items-center">
+    <div>job Type</div>
+    <div class="">
+        <app-dropdown-component [options]="position()" class="w-2xl"></app-dropdown-component>
+    </div>
+
+    <div>From date</div>
+    <div>To date</div>
+</div>
