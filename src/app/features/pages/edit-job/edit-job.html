@@ -1,16 +1,30 @@
-<div class="flex">
-<div class="flex items-center">
-    <div>compnay list</div>
-    <input type="text" placeholder="search company">
+<div class="container">
+    <div class="flex items-center gap-x-10">
+        <div class="flex items-center gap-x-4">
+            <div>Compnay List</div>
+            <input type="text" placeholder="search company">
+        </div>
 
-</div>
+        <div class="flex items-center gap-x-4">
+            <div>Job Type</div>
+            <div class="">
+                <app-dropdown-component [options]="position()" class="w-2xl"></app-dropdown-component>
+            </div>
+        </div>
 
-  <div class="flex items-center">
-    <div>job Type</div>
-    <div class="">
-        <app-dropdown-component [options]="position()" class="w-2xl"></app-dropdown-component>
+        <div class="flex items-center gap-x-4">
+            <div>From Date</div>
+            <ngxsmk-datepicker mode="single" [showRanges]="true" [value]="FromDate()"
+                (valueChange)="FromDate.set($event)"></ngxsmk-datepicker>
+        </div>
+
+        <div class="flex items-center gap-x-4">
+            <div>To Date</div>
+            <ngxsmk-datepicker mode="single" [showRanges]="true" [value]="ToDate()"
+                (valueChange)="ToDate.set($event)"></ngxsmk-datepicker>
+        </div>
     </div>
-
-    <div>From date</div>
-    <div>To date</div>
+    <div class="w-full">
+        <div class="flex justify-center rounded-lg bg-green-400 w-fit px-5 py-2 cursor-pointer mx-auto">Submit</div>
+    </div>
 </div>
