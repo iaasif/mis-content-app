@@ -13,5 +13,8 @@ export class EditJob {
   position = signal(priorities);
   FromDate = signal<DatepickerValue>(null);
   ToDate = signal<DatepickerValue>(null);
-
+  
+  test(){
+    console.log(this.FromDate(),this.ToDate())
+  }
 } 
