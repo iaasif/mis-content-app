@@ -31,13 +31,14 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   readonly maxFileSizeInKb = input(DefaultMaxSize / 1024);
   readonly maxWidth = input.required<number>();
   readonly maxHeight = input.required<number>();
-  readonly payload = input.required<Record<string, number | string | File>>();
+  readonly payload = input.required<Record<string, number | string | File | undefined>>();
   readonly uploadTitle = input<string>('Image Upload');
   @Output() onSuccess = new EventEmitter<string>();
   @Output() onFileSelect = new EventEmitter<File>();
   @Output() uploadInProgress = new EventEmitter<boolean>();
   private toastr = inject(ToastrService);
   notes!: string;
+  apiUrl = "https://api.bdjobs.com/ImageGenerator/api/Image/resize-store"
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileTypesToLimit'] || changes['maxFileSizeInKb'] || changes['maxWidth'] || changes['maxHeight']) {
@@ -154,6 +155,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
           formData.append(key, this.payload()[key] as string);
         }
       }
+      // previous link 'https://exam1.bdjobs.com/ExamImages/Corporate/Test_Img_Saving-tst.aspx',
       const xhr = new XMLHttpRequest();
       xhr.open(
         'POST',

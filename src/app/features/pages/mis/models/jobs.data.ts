@@ -6,3 +6,9 @@ export interface IJobs {
     enUrl: string,
     bnUrl: string
 }
+
+export interface ImgPayload {
+    id: string,
+    imageName: string,
+    Image : File
+}

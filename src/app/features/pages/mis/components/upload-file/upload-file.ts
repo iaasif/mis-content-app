@@ -8,10 +8,14 @@ import { FileUploadComponent } from "../../../../../shared/components/file-uploa
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
-  x :Record<string,string> ={
-    'name': 'asif'
+
+  x :Record<string, string | File | undefined> ={
+    'id': 'asif',
+    'ImageName':"HotJobLogo",
+    'Image':this.selectedFile
   }
 
+  selectedFile?: File;
   handleFileSelect(file: File) {
     console.log('Got file from child:', file);
   
@@ -23,6 +27,5 @@ export class UploadFile {
     console.log("fff-->",this.selectedFile)
   }
   
-  selectedFile?: File;
   
 }
