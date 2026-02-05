@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 
 @Component({
@@ -11,4 +11,18 @@ export class UploadFile {
   x :Record<string,string> ={
     'name': 'asif'
   }
+
+  handleFileSelect(file: File) {
+    console.log('Got file from child:', file);
+  
+    // store it
+    this.selectedFile = file;
+  
+    // or call upload / API
+    // this.upload(file);
+    console.log("fff-->",this.selectedFile)
+  }
+  
+  selectedFile?: File;
+  
 }

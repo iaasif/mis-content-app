@@ -2,7 +2,7 @@ import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, OnChange
 import { ToastrService } from 'ngx-toastr';
 import { delay, of } from 'rxjs';
 
-export const DefaultMaxSize = 100000;
+export const DefaultMaxSize = 9000000;
 
 @Component({
   selector: 'app-file-upload',
@@ -12,7 +12,7 @@ export const DefaultMaxSize = 100000;
   styleUrl: './file-upload.component.css'
 })
 export class FileUploadComponent implements AfterViewChecked, OnChanges {
-  outputBoxVisible: boolean = false; 
+  outputBoxVisible: boolean = false;
   progress = signal<string>('0%');
   uploadResult = '';
   fileName = '';
@@ -25,7 +25,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel'
   ];
-  isImage = signal<boolean>(true); 
+  isImage = signal<boolean>(true);
 
   readonly fileTypesToLimit = input<string>('');
   readonly maxFileSizeInKb = input(DefaultMaxSize / 1024);
@@ -44,9 +44,9 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
       this.setValidationsNote(changes);
     }
   }
-  
+
   ngAfterViewChecked(): void {
-    if(!this.isImage()){
+    if (!this.isImage()) {
       return;
     }
     if (this.img() instanceof ElementRef) {
@@ -92,7 +92,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     }
     let fileNames = file.name.split('.');
     const fileTypesToLimit = this.fileTypesToLimit();
-    if (fileTypesToLimit.length && !fileTypesToLimit.includes(fileNames[fileNames.length-1])) {
+    if (fileTypesToLimit.length && !fileTypesToLimit.includes(fileNames[fileNames.length - 1])) {
       this.toastr.error(`Please select ${fileTypesToLimit}`);
       return false;
     }
@@ -103,31 +103,30 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   onFileSelected(event: any, inputFile: File | null) {
     const selectedFile = event.target.files[0];
     if (!this.checkFileValidation(selectedFile)) {
-      return; 
+      return;
     }
-  
+
     this.outputBoxVisible = false;
     this.uploadResult = '';
     this.fileName = '';
     this.fileSize = '';
-  
+
     this.file = inputFile || selectedFile;
     this.fileName = this.file.name;
     this.fileSize = `${(this.file.size / 1024).toFixed(2)} KB`;
-  
+
     // Decide if it is an image or not
     // If it's in allowedMimeTypes => currently used for Excel
- 
+
     if (this.allowedMimeTypes.includes(this.file.type)) {
-    
+
       this.isImage.update(() => false);
     } else {
       this.isPreview.update(() => true);
     }
-  
+
     this.onFileSelect.emit(this.file);
   }
-  
 
   getBase64(file: File) {
     var reader = new FileReader();
@@ -135,14 +134,12 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     reader.onload = function () {
       console.log(reader.result);
     };
- }
-
+  }
 
   toggleUploadProgress(isVisible: boolean) {
     this.outputBoxVisible = isVisible;
     this.uploadInProgress.emit(isVisible);
   }
-
 
   upload() {
     if (this.file instanceof File) {
@@ -202,7 +199,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   cancel() {
     this.file = null as unknown as File;
     this.isPreview.update(() => false);
-    this.toggleUploadProgress(false); 
+    this.toggleUploadProgress(false);
   }
 
   handleDragOver(event: DragEvent) {
