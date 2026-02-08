@@ -9,6 +9,22 @@ export interface IJobs {
 
 export interface ImgPayload {
     id: string,
-    imageName: string,
+    ImageName: string,
     Image : File
 }
+
+export interface ApiResponse {
+    id: string
+    profile: string
+    variants: Variant[]
+  }
+  
+  export interface Variant {
+    width: number
+    height: number
+    contentType: string
+    extension: string
+    objectName: string
+    gcsPath: string
+    publicUrl: string
+  }

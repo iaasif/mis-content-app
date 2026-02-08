@@ -1,0 +1,22 @@
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ApiResponse, ImgPayload } from '../models/jobs.data';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UploadFileService {
+
+  http = inject(HttpClient);
+  apiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
+
+  /** Builds FormData from ImgPayload so the file is sent in the request body (not in headers). */
+  uploadImg(payload: ImgPayload): Observable<ApiResponse> {
+    const form = new FormData();
+    form.append('id', payload.id);
+    form.append('imageName', payload.ImageName);
+    form.append('Image', payload.Image, payload.Image.name);
+    return this.http.post<ApiResponse>(this.apiUrl, form);
+  }
+}

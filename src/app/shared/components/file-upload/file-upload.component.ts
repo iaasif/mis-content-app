@@ -1,4 +1,5 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, OnChanges, Output, output, signal, SimpleChanges, viewChild, input } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, OnChanges, Output, signal, SimpleChanges, viewChild, input } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { delay, of } from 'rxjs';
 
@@ -37,6 +38,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   @Output() onFileSelect = new EventEmitter<File>();
   @Output() uploadInProgress = new EventEmitter<boolean>();
   private toastr = inject(ToastrService);
+  private http = inject(HttpClient);
   notes!: string;
   apiUrl = "https://api.bdjobs.com/ImageGenerator/api/Image/resize-store"
 
@@ -142,7 +144,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     this.uploadInProgress.emit(isVisible);
   }
 
-  upload() {
+  upload2() {
     if (this.file instanceof File) {
       this.toggleUploadProgress(true);
       const formData = new FormData();
@@ -196,6 +198,31 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
 
       xhr.send(formData);
     }
+  }
+  /** The file is sent in the request body as FormData (headers cannot contain binary data). */
+  upload() {
+    if (!this.file) return;
+    this.toggleUploadProgress(true);
+    const form = new FormData();
+    form.append('id', String(this.payload()['id'] ?? '877866'));
+    form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
+    form.append('Image', this.file, this.file.name);
+    this.http.post<{ id: string; profile?: string }>(this.apiUrl, form).subscribe({
+      next: (res) => {
+        console.log('res',res)
+        this.uploadResult = 'Uploaded';
+        this.uploadStatus.update(() => 200);
+        this.isPreview.update(() => false);
+        this.onSuccess.emit(res.profile ?? res.id);
+        this.toggleUploadProgress(false);
+      },
+      error: (err) => {
+        console.log('err',err)
+        this.uploadResult = err.error?.message ?? 'File upload failed!';
+        this.uploadStatus.update(() => err.status ?? 500);
+        this.toggleUploadProgress(false);
+      },
+    });
   }
 
   cancel() {
