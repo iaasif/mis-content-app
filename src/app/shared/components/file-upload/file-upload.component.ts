@@ -1,5 +1,5 @@
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, OnChanges, Output, signal, SimpleChanges, viewChild, input, output } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, NgZone, OnChanges, Output, signal, SimpleChanges, viewChild, input, output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { delay, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
@@ -43,6 +43,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   @Output() uploadInProgress = new EventEmitter<boolean>();
   private toastr = inject(ToastrService);
   private http = inject(HttpClient);
+  private ngZone = inject(NgZone);
   notes!: string;
   apiUrl = "https://api.bdjobs.com/ImageGenerator/api/Image/resize-store"
   response = output<UploadApiResponse>()
@@ -240,13 +241,14 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          console.log('res',res)
-          this.response.emit(res)
-          this.uploadResult = 'Uploaded';
-          this.uploadStatus.set(200);
-          this.isPreview.set(false);
-          this.onSuccess.emit(res.profile ?? res.id);
-          this.toggleUploadProgress(false);
+          this.ngZone.run(() => {
+            this.response.emit(res);
+            this.uploadResult = 'Uploaded';
+            this.uploadStatus.set(200);
+            this.isPreview.set(false);
+            this.onSuccess.emit(res.profile ?? res.id);
+            this.toggleUploadProgress(false);
+          });
         },
         error: (err) => {
           this.uploadResult = err.error?.message ?? 'File upload failed!';

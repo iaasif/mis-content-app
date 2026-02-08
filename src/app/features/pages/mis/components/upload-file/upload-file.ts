@@ -1,6 +1,7 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
+import { UploadApiResponse } from '../../models/jobs.data';
 
 @Component({
   selector: 'app-upload-file',
@@ -17,19 +18,17 @@ export class UploadFile {
   }
 
   selectedFile?: File;
+  uploadResponse=signal<UploadApiResponse | null>(null) 
 
   handleFileSelect(file: File) {
     console.log('Got file from child:', file);
-  
-    // store it
     this.selectedFile = file;
-  
-    // or call upload / API
-    // this.upload(file);
     console.log("fff-->",this.selectedFile)
   }
 
-  getRes():void{
-    // console.log(res)
+
+  getRes(res: UploadApiResponse): void {
+    this.uploadResponse.set(res);
+    console.log('parent ', this.uploadResponse)
   }
 }

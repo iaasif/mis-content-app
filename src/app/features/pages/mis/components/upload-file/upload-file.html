@@ -1,10 +1,11 @@
 <div class="flex justify-around">
     <div class=" ">
         <div>
-            <app-file-upload [uploadIcon]="'images/img-upload.png'"  [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" (response)="getRes()"></app-file-upload>
-        </div>
+            <app-file-upload [uploadIcon]="'images/img-upload.png'"  [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" (response)="getRes($event)"></app-file-upload>
+        </div>a
+        {{uploadResponse()}}
         <div>
-            <app-text-filed></app-text-filed>
+            <app-text-filed> </app-text-filed>
         </div>
     </div>
     
