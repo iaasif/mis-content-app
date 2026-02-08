@@ -137,4 +137,5 @@
   .upload-form .result .progress-bar .progress {
     height: 100%;
     background-color: #0c7ce5;
+    transition: width 0.2s ease-out;
   }

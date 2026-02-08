@@ -47,6 +47,20 @@
       <div class=" max-w-lg mx-auto object-cover">
         <img #preview alt="" style="max-width: 150px; object-fit: cover;">
       </div>
+
+      @if (outputBoxVisible) {
+        <div class="result mb-5 w-full">
+          <div class="file-details">
+            <span class="file-name">{{ fileName }}</span>
+            <span class="file-name">{{ progress() }}</span>
+            <div class="progress-bar">
+              <div class="progress" [style.width]="progress()"></div>
+            </div>
+            <span class="file-size">{{ fileSize }}</span>
+          </div>
+        </div>
+      }
+
       <div class="flex items-center gap-4 ">
         <button (click)="cancel()" type="button" style="height: 40px;margin-top: 20px;" class="btn-cancel">
           Cancel
@@ -54,7 +68,6 @@
         <button (click)="upload()" type="button" style="height: 40px;margin-top: 20px;" class="btn-success">
           Upload
         </button>
-    
       </div>
     </div>
     }
