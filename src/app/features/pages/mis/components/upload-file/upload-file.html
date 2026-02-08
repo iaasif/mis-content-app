@@ -1,5 +1,5 @@
-<div class="flex justify-around">
-    <div class=" ">
+<div class="flex justify-around w-full">
+    <div class="w-1/2">
         <div>
             <app-file-upload [uploadIcon]="'images/img-upload.png'"  [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" (response)="getRes($event)"></app-file-upload>
         </div>a
@@ -10,7 +10,7 @@
     </div>
     
     
-    <div class="flex">
+    <div class="w-1/2">
         <div>
             <app-file-upload [uploadIcon]="'images/html-up.png'" [uploadTitle]="'Html'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" onFileSelected=""></app-file-upload>
         </div>
