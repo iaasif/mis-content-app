@@ -26,6 +26,8 @@ export class UploadFile {
     // this.upload(file);
     console.log("fff-->",this.selectedFile)
   }
+
+  
   
   
 }
