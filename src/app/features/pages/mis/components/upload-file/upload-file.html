@@ -1,14 +1,17 @@
 <div class="flex justify-around">
-    <div class="flex gap-x-10">
+    <div class=" ">
         <div>
-            <app-file-upload [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" onFileSelected=""></app-file-upload>
+            <app-file-upload [uploadIcon]="'images/img-upload.png'"  [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" (response)="getRes()"></app-file-upload>
+        </div>
+        <div>
+            <app-text-filed></app-text-filed>
         </div>
     </div>
     
     
-    <div class="flex gap-x-10">
+    <div class="flex">
         <div>
-            <app-file-upload [uploadTitle]="'Html'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" onFileSelected=""></app-file-upload>
+            <app-file-upload [uploadIcon]="'images/html-up.png'" [uploadTitle]="'Html'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" onFileSelected=""></app-file-upload>
         </div>
     </div>
 </div>

@@ -1,9 +1,10 @@
 import { Component, EventEmitter } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
+import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
 
 @Component({
   selector: 'app-upload-file',
-  imports: [FileUploadComponent],
+  imports: [FileUploadComponent, TextFiled],
   templateUrl: './upload-file.html',
   styleUrl: './upload-file.css',
 })
@@ -16,6 +17,7 @@ export class UploadFile {
   }
 
   selectedFile?: File;
+
   handleFileSelect(file: File) {
     console.log('Got file from child:', file);
   
@@ -27,7 +29,7 @@ export class UploadFile {
     console.log("fff-->",this.selectedFile)
   }
 
-  
-  
-  
+  getRes():void{
+    // console.log(res)
+  }
 }

@@ -3,7 +3,7 @@
   @if(!isPreview()) {
     <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)" class="p-4">
       <i class="ph ph-upload"></i>
-      <img class="h-18 w-18" src="images/img-upload.png" alt="">
+      <img class="h-18 w-18" [src]="uploadIcon()" alt="">
       <span class="text-lg font-semibold">
         Drag & drop or
         <span>browse</span>

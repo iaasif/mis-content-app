@@ -13,9 +13,9 @@ export interface ImgPayload {
     Image : File
 }
 
-export interface ApiResponse {
+export interface UploadApiResponse {
     id: string
-    profile: string
+    profile: string | undefined
     variants: Variant[]
   }
   

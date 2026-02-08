@@ -1,8 +1,10 @@
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, OnChanges, Output, signal, SimpleChanges, viewChild, input } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, OnChanges, Output, signal, SimpleChanges, viewChild, input, output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { delay, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
+import { ApiResponse } from '../../models/response';
+import { UploadApiResponse } from '../../../features/pages/mis/models/jobs.data';
 
 export const DefaultMaxSize = 9000000;
 
@@ -35,6 +37,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   readonly maxHeight = input.required<number>();
   readonly payload = input.required<Record<string, number | string | File | undefined>>();
   readonly uploadTitle = input<string>('Image Upload');
+  readonly uploadIcon = input<string>();
   @Output() onSuccess = new EventEmitter<string>();
   @Output() onFileSelect = new EventEmitter<File>();
   @Output() uploadInProgress = new EventEmitter<boolean>();
@@ -42,6 +45,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   private http = inject(HttpClient);
   notes!: string;
   apiUrl = "https://api.bdjobs.com/ImageGenerator/api/Image/resize-store"
+  response = output<UploadApiResponse>()
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileTypesToLimit'] || changes['maxFileSizeInKb'] || changes['maxWidth'] || changes['maxHeight']) {
@@ -211,7 +215,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
     form.append('Image', this.file, this.file.name);
     this.http
-      .post<{ id: string; profile?: string }>(this.apiUrl, form, {
+      .post<UploadApiResponse>(this.apiUrl, form, {
         reportProgress: true,
         observe: 'events',
       })
@@ -230,12 +234,14 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
         }),
         filter((event) => event.type === HttpEventType.Response),
         map((event) =>
-          (event as HttpResponse<{ id: string; profile?: string }>).body
+          (event as HttpResponse<UploadApiResponse>).body
         )
       )
       .subscribe({
         next: (res) => {
           if (!res) return;
+          console.log('res',res)
+          this.response.emit(res)
           this.uploadResult = 'Uploaded';
           this.uploadStatus.set(200);
           this.isPreview.set(false);
