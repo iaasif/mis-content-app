@@ -105,7 +105,8 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   }
 
   onFileSelected(event: any, inputFile: File | null) {
-    const selectedFile = event.target.files[0];
+    // Use inputFile when provided (e.g. from drop); otherwise use file input (e.g. from browse)
+    const selectedFile = inputFile ?? event.target?.files?.[0];
     if (!this.checkFileValidation(selectedFile)) {
       return;
     }
@@ -115,7 +116,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     this.fileName = '';
     this.fileSize = '';
 
-    this.file = inputFile || selectedFile;
+    this.file = selectedFile;
     this.fileName = this.file.name;
     this.fileSize = `${(this.file.size / 1024).toFixed(2)} KB`;
 
@@ -258,12 +259,15 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   handleDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
   }
 
   handleDrop(event: DragEvent) {
     event.preventDefault();
-    if (event.dataTransfer) {
-      const file: File = event.dataTransfer.files[0];
+    event.stopPropagation();
+    if (event.dataTransfer?.files?.length) {
       this.onFileSelected(event, event.dataTransfer.files[0]);
     }
   }
