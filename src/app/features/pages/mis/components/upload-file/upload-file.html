@@ -1,11 +1,16 @@
-<div class="flex justify-around w-full">
-    <div class="w-1/2 border  border-b-blue-800">
+<div class="flex justify-around w-full mt-4">
+    <div class="w-1/2 border  border-blue-800 rounded-lg p-3">
         <div>
             <app-file-upload [uploadIcon]="'images/img-upload.png'"  [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" (response)="getRes($event)"></app-file-upload>
         </div>
-        <div class="">
-            <app-text-filed> </app-text-filed>
-        </div>
+        @if(linkList().length>0){
+            @for(link of linkList(); track $index){
+                <div class="py-1">
+                    <app-text-filed [data]="link"> </app-text-filed>
+                </div>
+            }
+        }
+       
     </div>
     
     
