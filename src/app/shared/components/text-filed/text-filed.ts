@@ -1,10 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, inject, input, PLATFORM_ID, signal } from '@angular/core';
 import { platformBrowser } from '@angular/platform-browser';
+// import { ClipboardModule } from 'ngx-clipboard';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+
 
 @Component({
   selector: 'app-text-filed',
-  imports: [],
+  imports: [ClipboardModule],
   templateUrl: './text-filed.html',
   styleUrl: './text-filed.css',
 })
@@ -14,7 +17,7 @@ export class TextFiled {
 
 
   text = input('')
-  text2 = 'https://storage.googleapis.com/bdjobs/CompanyLogos/Hotjobs/877866_300x300_pexels-kim-438153-1159976.jpg'
+  text2 = signal('asas')
   isShowTick=signal(false);
 
   onClickCopy():void{
