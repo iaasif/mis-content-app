@@ -20,6 +20,12 @@ export class UploadFile {
     'CompanyName': 'cp name'
   }
 
+  y: Record<string, string | File | undefined> = {
+    'id': 'asif',
+    'File': this.selectedFile,
+    'CompanyName': 'cp name'
+  }
+
   selectedFile?: File;
   uploadResponse=signal<UploadApiResponse | null>(null) 
   linkList = signal<Variant[]>([])
