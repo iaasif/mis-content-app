@@ -1,8 +1,8 @@
-import { UploadFileType } from './../../utils/mis.data';
+import { COMPANY_NAME, UploadFileType } from './../../utils/mis.data';
 import { Component, signal } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
-import { UploadApiResponse, Variant } from '../../models/jobs.data';
+import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/jobs.data';
 
 @Component({
   selector: 'app-upload-file',
@@ -11,35 +11,29 @@ import { UploadApiResponse, Variant } from '../../models/jobs.data';
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
-  uploadFileType = UploadFileType
+  readonly uploadFileType = UploadFileType;
 
-  x :Record<string, string | File | undefined> ={
-    'id': 'asif',
-    'ImageName':"HotJobLogo",
-    'Image': this.selectedFile,
-    'CompanyName': 'cp name'
+  readonly imagePayload: Record<string, string | File | undefined> = {
+    id: 'asif',
+    imageName: 'HotJobLogo',
+    CompanyName: COMPANY_NAME,
+  };
+
+  readonly htmlPayload: Record<string, string | File | undefined> = {
+    id: 'asif',
+    CompanyName: COMPANY_NAME,
+  };
+
+  imageResponse = signal<UploadImgApiResponse | null>(null);
+  htmlResponse = signal<UploadHtmlResponse | null>(null);
+  linkList = signal<Variant[]>([]);
+
+  onImageResponse(res: UploadImgApiResponse): void {
+    this.imageResponse.set(res);
+    this.linkList.set(res.variants ?? []);
   }
 
-  y: Record<string, string | File | undefined> = {
-    'id': 'asif',
-    'File': this.selectedFile,
-    'CompanyName': 'cp name'
-  }
-
-  selectedFile?: File;
-  uploadResponse=signal<UploadApiResponse | null>(null) 
-  linkList = signal<Variant[]>([])
-
-  handleFileSelect(file: File) {
-    console.log('Got file from child:', file);
-    this.selectedFile = file;
-    console.log("fff-->",this.selectedFile)
-  }
-
-
-  getRes(res: UploadApiResponse): void {
-    this.uploadResponse.set(res);
-    this.linkList.set(this.uploadResponse()!.variants)
-    console.log('parent ', this.uploadResponse())
+  onHtmlResponse(res: UploadHtmlResponse): void {
+    this.htmlResponse.set(res);
   }
 }

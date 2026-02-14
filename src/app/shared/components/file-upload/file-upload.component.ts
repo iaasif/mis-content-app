@@ -2,10 +2,12 @@ import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, NgZone, OnChanges, Output, signal, SimpleChanges, viewChild, input, output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { filter, map, tap } from 'rxjs/operators';
-import { UploadApiResponse } from '../../../features/pages/mis/models/jobs.data';
-import { UploadFileType } from '../../../features/pages/mis/utils/mis.data';
+import { UploadHtmlResponse, UploadImgApiResponse } from '../../../features/pages/mis/models/jobs.data';
+import { COMPANY_NAME, UploadFileType } from '../../../features/pages/mis/utils/mis.data';
 
 export const DefaultMaxSize = 9000000;
+
+let fileInputIdCounter = 0;
 
 @Component({
   selector: 'app-file-upload',
@@ -15,6 +17,9 @@ export const DefaultMaxSize = 9000000;
   styleUrl: './file-upload.component.css'
 })
 export class FileUploadComponent implements AfterViewChecked, OnChanges {
+  /** Unique id for this instance so multiple file-uploads don't share the same input (label for / input id). */
+  readonly fileInputId = `app-file-upload-input-${++fileInputIdCounter}`;
+
   uploadFileType = input<UploadFileType>()
 
   outputBoxVisible: boolean = false;
@@ -46,8 +51,16 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   private http = inject(HttpClient);
   private ngZone = inject(NgZone);
   notes!: string;
-  apiUrl = "https://api.bdjobs.com/ImageGenerator/api/Image/resize-store"
-  response = output<UploadApiResponse>()
+
+  private readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
+  private readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
+
+  private apiUrl(): string {
+    return this.uploadFileType() === 'html' ? this.htmlApiUrl : this.imageApiUrl;
+  }
+
+  response = output<UploadImgApiResponse>()
+  responseHtmlUp = output<UploadHtmlResponse>()
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['fileTypesToLimit'] || changes['maxFileSizeInKb'] || changes['maxWidth'] || changes['maxHeight']) {
@@ -213,12 +226,23 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     this.toggleUploadProgress(true);
     this.progress.set('0%');
     const form = new FormData();
-    form.append('id', String(this.payload()['id'] ?? '877866'));
-    form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
-    form.append('Image', this.file, this.file.name);
-    form.append('CompanyName', String(this.payload()['CompanyName'] ?? 'cc'))
+    const type = this.uploadFileType();
+
+    if (type === 'html') {
+      form.append('id', String(this.payload()['id'] ?? '877866'));
+      form.append('CompanyName', COMPANY_NAME);
+      form.append('File', this.file, this.file.name);
+    } else if (type === 'image') {
+      form.append('id', String(this.payload()['id'] ?? '877866'));
+      form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
+      form.append('Image', this.file, this.file.name);
+      form.append('CompanyName', COMPANY_NAME);
+    }
+
+    type ResponseType = UploadImgApiResponse | UploadHtmlResponse;
+
     this.http
-      .post<UploadApiResponse>(this.apiUrl, form, {
+      .post<ResponseType>(this.apiUrl(), form, {
         reportProgress: true,
         observe: 'events',
       })
@@ -236,19 +260,29 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
           }
         }),
         filter((event) => event.type === HttpEventType.Response),
-        map((event) =>
-          (event as HttpResponse<UploadApiResponse>).body
-        )
+        map((event) => (event as HttpResponse<ResponseType>).body)
       )
       .subscribe({
         next: (res) => {
           if (!res) return;
           this.ngZone.run(() => {
-            this.response.emit(res);
+            if (type === 'html') {
+              this.responseHtmlUp.emit(res as UploadHtmlResponse);
+            } else if (type === 'image') {
+              this.response.emit(res as UploadImgApiResponse);
+            }
             this.uploadResult = 'Uploaded';
             this.uploadStatus.set(200);
             this.isPreview.set(false);
-            this.onSuccess.emit(res.profile ?? res.id);
+            let successValue: string;
+            if (type === 'html') {
+              const r = res as UploadHtmlResponse;
+              successValue = r.publicUrl ?? r.id;
+            } else {
+              const r = res as UploadImgApiResponse;
+              successValue = r.profile ?? r.id;
+            }
+            this.onSuccess.emit(successValue);
             this.toggleUploadProgress(false);
           });
         },

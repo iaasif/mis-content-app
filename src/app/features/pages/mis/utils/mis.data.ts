@@ -1,4 +1,5 @@
 import { DropdownOption, SelectRadioData } from "../../../../shared/models/models";
+export const COMPANY_NAME = "my-company"
 
 export const Hotjobs = [
   {
@@ -158,7 +159,6 @@ export const Posted: SelectRadioData[] = [
     
     
   },
-
   {
     id: '3',
     label: 'Last 3 days',

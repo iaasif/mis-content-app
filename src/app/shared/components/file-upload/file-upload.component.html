@@ -1,7 +1,7 @@
 <div class="upload-form max-w-96 mx-auto rounded-lg shadow-lg !border border-gray-300/70">
   <h4 class="text-lg">{{uploadTitle()}}</h4>
   @if(!isPreview()) {
-    <label for="file" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)" class="p-4">
+    <label [attr.for]="fileInputId" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)" class="p-4">
       <i class="ph ph-upload"></i>
       <img class="h-18 w-18" [src]="uploadIcon()" alt="">
       <span class="text-lg font-semibold">
@@ -11,7 +11,7 @@
       </span>
     </label>
   
-    <input id="file" type="file" name="file" (change)="onFileSelected($event, null)" [accept]="fileTypesToLimit()"/>
+    <input [id]="fileInputId" type="file" name="file" (change)="onFileSelected($event, null)" [accept]="fileTypesToLimit()"/>
 
     <div class="result mb-5" [style.display]="outputBoxVisible ? 'flex' : 'none'">
       <div class="file-details ">

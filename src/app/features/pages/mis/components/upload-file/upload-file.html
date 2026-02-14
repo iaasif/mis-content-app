@@ -1,22 +1,36 @@
-<div class="flex justify-around w-full mt-4">
-    <div class="w-1/2 border  border-blue-800 rounded-lg p-3">
-        <div>
-            <app-file-upload [uploadFileType]="uploadFileType.image" [uploadIcon]="'images/img-upload.png'"  [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="x" (response)="getRes($event)"></app-file-upload>
-        </div>
-        @if(linkList().length>0){
-            @for(link of linkList(); track $index){
-                <div class="py-1">
-                    <app-text-filed [data]="link"> </app-text-filed>
+<div class="flex justify-around w-full mt-4 gap-4">
+    <div class="w-1/2 border border-blue-800 rounded-lg p-3">
+        <app-file-upload
+            [uploadFileType]="uploadFileType.image"
+            [uploadIcon]="'images/img-upload.png'"
+            [uploadTitle]="'Image upload'"
+            [maxHeight]="20000"
+            [maxWidth]="20000"
+            [payload]="imagePayload"
+            (response)="onImageResponse($event)"
+        />
+        @if (linkList().length > 0) {
+            @for (link of linkList(); track $index) {
+                <div class="py-1 mt-2">
+                    <app-text-filed [data]="link" />
                 </div>
             }
         }
-       
     </div>
-    
-    
-    <div class="w-1/2">
-        <div>
-            <app-file-upload [uploadFileType]="uploadFileType.html" [uploadIcon]="'images/html-up.png'"  [maxHeight]="20000" [maxWidth]="20000" [payload]="y" onFileSelected="" ></app-file-upload>
-        </div>
+    <div class="w-1/2 border border-blue-800 rounded-lg p-3">
+        <app-file-upload
+            [uploadFileType]="uploadFileType.html"
+            [uploadIcon]="'images/html-up.png'"
+            [uploadTitle]="'HTML upload'"
+            [maxHeight]="20000"
+            [maxWidth]="20000"
+            [payload]="htmlPayload"
+            (responseHtmlUp)="onHtmlResponse($event)"
+        />
+        @if (htmlResponse(); as res) {
+            <div class="py-1 mt-2">
+                <app-text-filed [data]="res" />
+            </div>
+        }
     </div>
 </div>
