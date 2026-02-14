@@ -1,10 +1,9 @@
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, NgZone, OnChanges, Output, signal, SimpleChanges, viewChild, input, output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { delay, of } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { ApiResponse } from '../../models/response';
 import { UploadApiResponse } from '../../../features/pages/mis/models/jobs.data';
+import { UploadFileType } from '../../../features/pages/mis/utils/mis.data';
 
 export const DefaultMaxSize = 9000000;
 
@@ -16,6 +15,8 @@ export const DefaultMaxSize = 9000000;
   styleUrl: './file-upload.component.css'
 })
 export class FileUploadComponent implements AfterViewChecked, OnChanges {
+  uploadFileType = input<UploadFileType>()
+
   outputBoxVisible: boolean = false;
   progress = signal<string>('0%');
   uploadResult = '';
@@ -215,6 +216,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     form.append('id', String(this.payload()['id'] ?? '877866'));
     form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
     form.append('Image', this.file, this.file.name);
+    form.append('CompanyName', String(this.payload()['CompanyName'] ?? 'cc'))
     this.http
       .post<UploadApiResponse>(this.apiUrl, form, {
         reportProgress: true,

@@ -1,3 +1,4 @@
+import { UploadFileType } from './../../utils/mis.data';
 import { Component, signal } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
@@ -10,11 +11,13 @@ import { UploadApiResponse, Variant } from '../../models/jobs.data';
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
+  uploadFileType = UploadFileType
 
   x :Record<string, string | File | undefined> ={
     'id': 'asif',
     'ImageName':"HotJobLogo",
-    'Image':this.selectedFile
+    'Image': this.selectedFile,
+    'CompanyName': 'cp name'
   }
 
   selectedFile?: File;

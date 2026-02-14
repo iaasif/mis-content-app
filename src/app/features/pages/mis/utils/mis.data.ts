@@ -190,3 +190,8 @@ export const priorities: DropdownOption[] = [
 { label: 'Urgent', value: 4 },
 { label: 'Critical', value: 5 }
 ];
+
+export enum UploadFileType  {
+  html = "html",
+  image = "image"
+}
