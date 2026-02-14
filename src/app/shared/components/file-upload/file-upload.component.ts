@@ -283,6 +283,12 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
               `${Math.round((100 * event.loaded) / event.total)}%`
             );
           }
+        })
+        ,
+        this.hotToast.observe({
+          loading: 'Please Wait Uploading...',
+          success: 'Uploaded!',
+          error: 'Could not Uploaded. Try again',
         }),
         filter((event) => event.type === HttpEventType.Response),
         map((event) => (event as HttpResponse<ResponseType>).body)
