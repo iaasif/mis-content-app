@@ -7,6 +7,7 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import { ToastrConfig } from './shared/utils/app.const';
 import { HTTPInterceptor } from './core/services/interceptors/http.interceptor';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideHotToastConfig } from '@ngxpert/hot-toast';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimations(),
     provideToastr(ToastrConfig),
+    provideHotToastConfig(), // @ngxpert/hot-toast providers
     { provide: HTTP_INTERCEPTORS, useClass: HTTPInterceptor, multi: true }, provideClientHydration(withEventReplay())
   ]
 };

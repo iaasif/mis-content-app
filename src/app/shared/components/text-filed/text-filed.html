@@ -20,7 +20,7 @@
           </svg>
         }
       </div>
-      <button [cdkCopyToClipboard]="this.data().publicUrl" class="cursor-pointer" (cdkCopyToClipboardCopied)="onClickCopy()">Copy Link</button>
+      <button type="button" [cdkCopyToClipboard]="this.data().publicUrl" class="cursor-pointer" (click)="$event.stopPropagation()" (cdkCopyToClipboardCopied)="onClickCopy()">Copy Link</button>
     </div>
   </div>
   

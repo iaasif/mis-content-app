@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { filter, map, tap } from 'rxjs/operators';
 import { UploadHtmlResponse, UploadImgApiResponse } from '../../../features/pages/mis/models/jobs.data';
 import { COMPANY_NAME, UploadFileType } from '../../../features/pages/mis/utils/mis.data';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 export const DefaultMaxSize = 9000000;
 
@@ -17,6 +18,8 @@ let fileInputIdCounter = 0;
   styleUrl: './file-upload.component.css'
 })
 export class FileUploadComponent implements AfterViewChecked, OnChanges {
+  private hotToast = inject(HotToastService);
+
   /** Unique id for this instance so multiple file-uploads don't share the same input (label for / input id). */
   readonly fileInputId = `app-file-upload-input-${++fileInputIdCounter}`;
 
@@ -84,7 +87,8 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
         const maxHeight = this.maxHeight();
         if (maxWidth && maxHeight && (width > maxWidth || height > maxHeight)) {
           this.isPreview.update(() => false);
-          this.toastr.error(`Maximum width is ${maxWidth}px & Maximum height is ${maxHeight}px`);
+          this.hotToast.error(`Maximum width is ${maxWidth}px & Maximum height is ${maxHeight}px`);
+          
         }
       };
     }
@@ -104,19 +108,39 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     }
   }
 
+  private static readonly HTML_EXTENSIONS = ['html'];
+  private static readonly IMAGE_EXTENSIONS = ['img', 'png', 'jpg', 'jpeg'];
+
   private checkFileValidation(file: File) {
     if (!file) {
-      this.toastr.error("Please select a file");
+      this.hotToast.error("Please select a file");
       return false;
     }
     if ((file.size / 1024) > this.maxFileSizeInKb()) {
-      this.toastr.error("File size is too Big");
+      this.hotToast.error("File size is too Big");
       return false;
     }
-    let fileNames = file.name.split('.');
+
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const type = this.uploadFileType();
+    const lightRedToast = { toastClass: 'ngx-toastr light-red-toast' };
+    if (type === 'html') {
+      if (!FileUploadComponent.HTML_EXTENSIONS.includes(ext)) {
+      this.hotToast.error('Please upload a valid html!');
+        return false;
+      }
+    } else if (type === 'image') {
+      if (!FileUploadComponent.IMAGE_EXTENSIONS.includes(ext)) {
+        this.hotToast.error('Please upload a valid img file!');
+
+        return false;
+      }
+    }
+
+    const fileNames = file.name.split('.');
     const fileTypesToLimit = this.fileTypesToLimit();
     if (fileTypesToLimit.length && !fileTypesToLimit.includes(fileNames[fileNames.length - 1])) {
-      this.toastr.error(`Please select ${fileTypesToLimit}`);
+      this.hotToast.error(`Please select ${fileTypesToLimit}`);
       return false;
     }
 
@@ -223,6 +247,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   /** The file is sent in the request body as FormData (headers cannot contain binary data). */
   upload() {
     if (!this.file) return;
+    if (!this.checkFileValidation(this.file)) return;
     this.toggleUploadProgress(true);
     this.progress.set('0%');
     const form = new FormData();

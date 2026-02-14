@@ -24,6 +24,22 @@
   font-size: 16px !important;
 }
 
+.toast-container .light-green-toast {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+.toast-container .light-green-toast .toast-close-button {
+  color: #065f46 !important;
+}
+
+.toast-container .light-red-toast {
+  background-color: #fecaca !important;
+  color: #991b1b !important;
+}
+.toast-container .light-red-toast .toast-close-button {
+  color: #991b1b !important;
+}
+
 .loader {
   border: 8px solid #cbd5e1;
   border-top: 8px solid #b32d7d;

@@ -1,8 +1,8 @@
-
 import { isPlatformBrowser } from '@angular/common';
 import { Component, inject, input, PLATFORM_ID, signal } from '@angular/core';
-import { ClipboardModule,Clipboard } from '@angular/cdk/clipboard';
+import { ClipboardModule, Clipboard } from '@angular/cdk/clipboard';
 import { Variant } from '../../../features/pages/mis/models/jobs.data';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 /** Any object with publicUrl so both image variants and HTML upload response can use the copy UI. */
 export type TextFiledData = Variant | { publicUrl: string };
@@ -16,17 +16,20 @@ export type TextFiledData = Variant | { publicUrl: string };
 export class TextFiled {
   private clipboard = inject(Clipboard);
   private platformId = inject(PLATFORM_ID);
+  private hotToast = inject(HotToastService);
+
   isBrowser = isPlatformBrowser(this.platformId);
 
   data = input<TextFiledData>({} as TextFiledData);
-  isShowTick=signal(false);
+  isShowTick = signal(false);
 
-  onClickCopy():void{
-    if(this.isBrowser){
-      this.isShowTick.set(true)
+  onClickCopy(): void {
+    if (this.isBrowser) {
+      this.isShowTick.set(true);
       this.clipboard.copy(this.data().publicUrl);
+      this.hotToast.success('Link copied!!');
       setTimeout(() => {
-        this.isShowTick.set(false)
+        this.isShowTick.set(false);
       }, 4000);
     }
   }
