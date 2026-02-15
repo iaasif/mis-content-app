@@ -157,7 +157,7 @@ export const HotJobType :  SelectRadioData[] = [
     value:'Normal'  
   },
 ]
-export const Posted: SelectRadioData[] = [
+export const HotJobCategory: SelectRadioData[] = [
   
   {
     id: '3',
