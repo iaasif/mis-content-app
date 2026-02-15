@@ -14,6 +14,7 @@ import { NgClass } from '@angular/common';
 
 export class RadioComponent {
 
+  groupName = input<string>('');
   readonly isRequired = input<boolean>(false);
   readonly isDisabled = input<boolean>(false);
   control = model(new FormControl());

@@ -35,6 +35,7 @@ export interface SelectRadioData {
   id: number | string | boolean;
   name: string;
   label: string;
+  value: string; // Add this property
 }
 
 export interface Pagination {

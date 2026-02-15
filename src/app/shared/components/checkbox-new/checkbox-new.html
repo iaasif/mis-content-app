@@ -1,0 +1,18 @@
+@for (item of checkboxItems(); track $index) {
+    <label [for]="generateId(item)" class="flex items-center gap-2 cursor-pointer">
+      <input
+        type="checkbox"
+        [id]="generateId(item)"
+        [value]="item.value"
+        [checked]="isChecked(item.value)"
+        (change)="onCheckboxChange(item.value, $event)"
+        [required]="isRequired()"
+        [disabled]="isDisabled()"
+      />
+      @if (isHtmlLabel()) {
+        <span [innerHTML]="item.label"></span>
+      } @else {
+        <span>{{item.label}}</span>
+      }
+    </label>
+  }

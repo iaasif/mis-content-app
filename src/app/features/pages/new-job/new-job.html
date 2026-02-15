@@ -101,7 +101,12 @@
     <!-- Display As -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
       <label class="text-sm font-semibold text-slate-700">Hot jobs type</label>
-      <app-radio [radioItems]="hotJobsType()"></app-radio>
+      <app-radio [groupName]="'asif'" [radioItems]="hotJobsType()"></app-radio>
+    </div>
+    <!-- Display As -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+      <label class="text-sm font-semibold text-slate-700">Hot jobs type</label>
+     <app-checkbox-new [checkboxItems]="posted()" ></app-checkbox-new>
     </div>
 
     <!-- Display Position -->

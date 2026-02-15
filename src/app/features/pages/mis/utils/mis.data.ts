@@ -143,42 +143,42 @@ export const Tenders = [
   },
 ]
 
-
-export const Posted: SelectRadioData[] = [
+export const HotJobType :  SelectRadioData[] = [
   {
     id: '1',
-    label: 'Today',
-    name: 'posted',
-    
-    
+    label: 'Premium',
+    name: 'Premium',  
+    value:'Premium'  
   },
   {
     id: '2',
-    label: 'Last 2 days',
-    name: 'posted',
-    
-    
+    label: 'Normal',
+    name: 'Normal',
+    value:'Normal'  
   },
+]
+export const Posted: SelectRadioData[] = [
+  
   {
     id: '3',
-    label: 'Last 3 days',
-    name: 'posted',
-    
+    label: 'Blue Collar',
+    name: 'blueCollar',
+    value:'blueCollar'  
     
   },
   {
     id: '4',
-    label: 'Last 4 days',
-    name: 'posted',
-    
-    
+    label: 'Complementary',
+    name: 'Complementary',
+    value:'Complementary'  
+
   },
   {
     id: '5',
-    label: 'Last 5 days',
-    name: 'posted',
-    
-    
+    label: 'Hotjob CM',
+    name: 'Hotjob CM',
+    value:'Hotjob CM'  
+
   },
 
 ]
