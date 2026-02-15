@@ -262,6 +262,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
       form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
       form.append('Image', this.file, this.file.name);
       form.append('CompanyName', COMPANY_NAME);
+      form.append('IsHotJobs','true');
     }
 
     type ResponseType = UploadImgApiResponse | UploadHtmlResponse;

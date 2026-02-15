@@ -14,13 +14,13 @@ export class UploadFile {
   readonly uploadFileType = UploadFileType;
 
   readonly imagePayload: Record<string, string | File | undefined> = {
-    id: 'asif',
+    id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
     CompanyName: COMPANY_NAME,
   };
 
   readonly htmlPayload: Record<string, string | File | undefined> = {
-    id: 'asif',
+    id: 'idformPayloadHTML',
     CompanyName: COMPANY_NAME,
   };
 
