@@ -1,12 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { HotJobForm } from '../../models/jobs.data';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { COMPANY_NAME, HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
 import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
-import { UploadFile } from "../upload-file/upload-file";
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
-
 
 @Component({
   selector: 'app-add-compnay',
