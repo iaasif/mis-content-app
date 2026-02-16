@@ -21,7 +21,7 @@ export const Hotjobs = [
   {
     id: 3,
     title: 'Rearrange Hot Job ( 4 Column) Drag and Drop)   New',
-    url: 'https://mis.bdjobs.com/mis/hotjobmanager/arrangejobs4col_dragNdrop.asp?id=',
+    url: 'rearrange',
     enUrl: '',
     bnUrl: '',
     isnew: true,
@@ -195,3 +195,86 @@ export enum UploadFileType  {
   html = "html",
   image = "image"
 }
+
+export const RearrangeData = [
+  {
+    companytitle: "TechCorp Solutions",
+    jobtitle: "Senior Software Engineer",
+    postedon: "2024-01-15",
+    dbserial: 1001,
+    j: {
+      id: 2045,
+      desc: "Leading development of cloud-native applications using React and Node.js"
+    }
+  },
+  {
+    companytitle: "DataVision Inc",
+    jobtitle: "Data Scientist",
+    postedon: "2024-01-18",
+    dbserial: 1002,
+    j: {
+      id: 2044,
+      desc: "Analyze complex datasets and build machine learning models for business insights"
+    }
+  },
+  {
+    companytitle: "CreativeMinds Agency",
+    jobtitle: "UX/UI Designer",
+    postedon: "2024-01-12",
+    dbserial: 1003,
+    j: {
+      id: 2043,
+      desc: "Design intuitive user interfaces and improve user experience for mobile apps"
+    }
+  },
+  {
+    companytitle: "CloudScale Systems",
+    jobtitle: "DevOps Engineer",
+    postedon: "2024-01-20",
+    dbserial: 1004,
+    j: {
+      id: 2042,
+      desc: "Manage CI/CD pipelines and cloud infrastructure on AWS"
+    }
+  },
+  {
+    companytitle: "FinTech Global",
+    jobtitle: "Financial Analyst",
+    postedon: "2024-01-10",
+    dbserial: 1005,
+    j: {
+      id: 2041,
+      desc: "Analyze market trends and prepare financial reports for stakeholders"
+    }
+  },
+  {
+    companytitle: "HealthTech Innovations",
+    jobtitle: "Product Manager",
+    postedon: "2024-01-22",
+    dbserial: 1006,
+    j: {
+      id: 2040,
+      desc: "Lead product development for healthcare management software"
+    }
+  },
+  {
+    companytitle: "SecureNet Solutions",
+    jobtitle: "Cybersecurity Specialist",
+    postedon: "2024-01-17",
+    dbserial: 1007,
+    j: {
+      id: 2039,
+      desc: "Implement security measures and conduct vulnerability assessments"
+    }
+  },
+  {
+    companytitle: "GreenEnergy Corp",
+    jobtitle: "Sustainability Consultant",
+    postedon: "2024-01-19",
+    dbserial: 1008,
+    j: {
+      id: 2038,
+      desc: "Advise on sustainable practices and renewable energy solutions"
+    }
+  }
+];
