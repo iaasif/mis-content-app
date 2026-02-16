@@ -1,0 +1,63 @@
+<div class="example-container">
+  <h2>Column 1</h2>
+  <div
+    cdkDropList
+    #list1="cdkDropList"
+    [cdkDropListData]="col1"
+    [cdkDropListConnectedTo]="[list2, list3, list4]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (item of col1; track item) {
+      <div class="example-box" cdkDrag>{{ item }}</div>
+    }
+  </div>
+</div>
+
+<div class="example-container">
+  <h2>Column 2</h2>
+  <div
+    cdkDropList
+    #list2="cdkDropList"
+    [cdkDropListData]="col2"
+    [cdkDropListConnectedTo]="[list1, list3, list4]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (item of col2; track item) {
+      <div class="example-box" cdkDrag>{{ item }}</div>
+    }
+  </div>
+</div>
+
+<div class="example-container">
+  <h2>Column 3</h2>
+  <div
+    cdkDropList
+    #list3="cdkDropList"
+    [cdkDropListData]="col3"
+    [cdkDropListConnectedTo]="[list1, list2, list4]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (item of col3; track item) {
+      <div class="example-box" cdkDrag>{{ item }}</div>
+    }
+  </div>
+</div>
+
+<div class="example-container">
+  <h2>Column 4</h2>
+  <div
+    cdkDropList
+    #list4="cdkDropList"
+    [cdkDropListData]="col4"
+    [cdkDropListConnectedTo]="[list1, list2, list3]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (item of col4; track item) {
+      <div class="example-box" cdkDrag>{{ item }}</div>
+    }
+  </div>
+</div>
