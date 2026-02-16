@@ -1,18 +1,15 @@
 import { Component, signal } from '@angular/core';
 import { HotJobForm, HotJobFormControls } from '../../models/jobs.data';
-import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
+import { DatepickerValue } from 'ngxsmk-datepicker';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
-import { CheckboxNew } from '../../../../../shared/components/checkbox-new/checkbox-new';
-import { DropdownComponent } from '../../../../../shared/components/dropdown-component/dropdown-component';
 import { RouterLink } from '@angular/router';
-import { RadioComponent } from '../../../../../shared/components/radio/radio.component';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
 
 
 @Component({
   selector: 'app-add-compnay',
-  imports: [RouterLink,ReactiveFormsModule, DropdownComponent,NgxsmkDatepickerComponent,InputComponent, InputComponent, RadioComponent, DropdownComponent, CheckboxNew, FormsModule],
+  imports: [RouterLink, ReactiveFormsModule, InputComponent, InputComponent, FormsModule],
   templateUrl: './add-compnay.html',
   styleUrl: './add-compnay.css',
 })
