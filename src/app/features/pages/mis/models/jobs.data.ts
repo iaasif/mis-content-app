@@ -77,3 +77,11 @@ export type HotJobFormControls = {
   postedBy: FormControl<string>;
   sourcePerson: FormControl<string>;
 };
+
+export type newCompanyForm = {
+  companyName: string;
+  companyNameBn: string;
+  companyLogo: boolean;
+  logoSource: null | string;
+  logoSize: number;
+} 

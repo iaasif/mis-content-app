@@ -4,7 +4,7 @@
         <div>
             <div class="flex items-center gap-2">
                 <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
-                <h3 class="text-xl font-semibold tracking-wide text-slate-900">Add a new Company</h3>
+                <h3 class="text-xl font-semibold tracking-wide text-slate-900">Add New Company</h3>
             </div>
             <p class="mt-1 text-xs text-slate-600">Add or edit hot job listings</p>
         </div>
@@ -47,8 +47,9 @@
             <!-- Company Name (Bengali) -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo From Local Drive</label>
-                <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
-                </app-input>
+                <app-file-upload 
+                   [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload"
+                   ></app-file-upload>
             </div>
 
             <!-- Company Name (Bengali) -->
