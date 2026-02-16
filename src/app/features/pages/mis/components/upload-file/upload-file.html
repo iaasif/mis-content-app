@@ -8,6 +8,7 @@
             [maxWidth]="20000"
             [payload]="imagePayload"
             (response)="onImageResponse($event)"
+            [imgUrl]="imageApiUrl"
         />
         @if (linkList().length > 0) {
             @for (link of linkList(); track $index) {
@@ -26,6 +27,7 @@
             [maxWidth]="20000"
             [payload]="htmlPayload"
             (responseHtmlUp)="onHtmlResponse($event)"
+            [htmlUrl]="htmlApiUrl"
         />
         @if (htmlResponse(); as res) {
             <div class="py-1 mt-2">

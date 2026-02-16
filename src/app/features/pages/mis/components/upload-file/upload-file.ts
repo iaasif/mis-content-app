@@ -12,6 +12,8 @@ import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/
 })
 export class UploadFile {
   readonly uploadFileType = UploadFileType;
+  readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
+  readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
 
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',

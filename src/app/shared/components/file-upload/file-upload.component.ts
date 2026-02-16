@@ -54,12 +54,11 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   private http = inject(HttpClient);
   private ngZone = inject(NgZone);
   notes!: string;
-
-  private readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
-  private readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
-
+  imgUrl = input<string>('');
+  htmlUrl = input<string>('');
+  
   private apiUrl(): string {
-    return this.uploadFileType() === 'html' ? this.htmlApiUrl : this.imageApiUrl;
+    return this.uploadFileType() === 'html' ? this.htmlUrl() : this.imgUrl();
   }
 
   response = output<UploadImgApiResponse>()
@@ -189,61 +188,6 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     this.uploadInProgress.emit(isVisible);
   }
 
-  // upload2() {
-  //   if (this.file instanceof File) {
-  //     this.toggleUploadProgress(true);
-  //     const formData = new FormData();
-
-  //     formData.append('ImgFile', this.file);
-  //     const propKeys = Object.keys(this.payload());
-  //     if (propKeys.length) {
-  //       for (let index = 0; index < propKeys.length; index++) {
-  //         const key = propKeys[index];
-  //         formData.append(key, this.payload()[key] as string);
-  //       }
-  //     }
-  //     // previous link 'https://exam1.bdjobs.com/ExamImages/Corporate/Test_Img_Saving-tst.aspx',
-  //     const xhr = new XMLHttpRequest();
-  //     xhr.open(
-  //       'POST',
-  //       'https://exam1.bdjobs.com/ExamImages/Corporate/Test_Img_Saving-tst.aspx',
-  //       true
-  //     );
-
-  //     xhr.onreadystatechange = () => {
-  //       if (xhr.readyState === XMLHttpRequest.DONE) {
-  //         if (xhr.status === 200 || xhr.status === 201) {
-  //           this.uploadResult = 'Uploaded';
-  //           this.isPreview.update(() => false);
-  //           const url = `https://exam1.bdjobs.com/ExamImages/Corporate/JID_${this.payload()['hJID']}/${this.payload()['hImgName']}.jpg`;
-  //           of(url)
-  //             .pipe(delay(1000))
-  //             .subscribe({
-  //               next: (url) => {
-  //                 this.onSuccess.emit(url);
-  //                 this.uploadInProgress.emit(false);
-  //               },
-  //             });
-  //         } else if (xhr.status === 400) {
-  //           this.uploadResult = JSON.parse(xhr.response)!.message;
-  //         } else {
-  //           this.uploadResult = 'File upload failed!';
-  //         }
-  //         this.uploadStatus.update(() => (xhr.status === 0 ? 1 : xhr.status));
-  //       }
-  //     };
-
-  //     xhr.upload.onprogress = (progressEvent) => {
-  //       this.toggleUploadProgress(true);
-  //       if (progressEvent.lengthComputable) {
-  //         const progress = (progressEvent.loaded / progressEvent.total) * 100;
-  //         this.progress.update(() => `${Math.round(progress)}%`);
-  //       }
-  //     };
-
-  //     xhr.send(formData);
-  //   }
-  // }
   /** The file is sent in the request body as FormData (headers cannot contain binary data). */
   upload() {
     if (!this.file) return;
