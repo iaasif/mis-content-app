@@ -1,5 +1,4 @@
 <div class="rounded-2xl border border-amber-200 bg-white/90 shadow-sm backdrop-blur">
-    <!-- Header -->
     <div class="flex items-start justify-between gap-4 border-b border-amber-200 px-6 py-4">
         <div>
             <div class="flex items-center gap-2">
@@ -24,17 +23,15 @@
         </div>
     </div>
 
-    <!-- Form Content -->
     <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
         <div class="space-y-5 p-6">
-            <!-- Company Name -->
+
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Company Name</label>
                 <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false">
                 </app-input>
             </div>
 
-            <!-- Company Name (Bengali) -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
                 <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
@@ -43,8 +40,6 @@
 
             <div class="border-t border-slate-200 pt-5"></div>
 
-
-            <!-- Company Name (Bengali) -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo From Local Drive</label>
                 <app-file-upload 
@@ -52,7 +47,6 @@
                    ></app-file-upload>
             </div>
 
-            <!-- Company Name (Bengali) -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo Source at Online</label>
                 <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
@@ -61,7 +55,6 @@
             <div class="border-t border-slate-200 pt-5"></div>
 
 
-            <!-- Company Name (Bengali) -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo size</label>
                 <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
@@ -79,7 +72,7 @@
                     <img class="w-10 h-10" src="/images/defaultImg.svg" alt="">
                 </div>
             </div>
-            <!-- Inline Submit/Reset Buttons (Inside Form) -->
+            
             <div class="pt-4 flex gap-3">
                 <button type="submit"
                     class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
@@ -94,7 +87,6 @@
         </div>
     </form>
 
-    <!-- Footer Actions -->
     <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
         <button type="button"
             class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
