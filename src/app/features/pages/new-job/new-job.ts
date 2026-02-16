@@ -7,14 +7,15 @@ import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-ne
 import { FormControl,FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
 import { HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-new-job',
-  imports: [ReactiveFormsModule, DropdownComponent,NgxsmkDatepickerComponent,InputComponent, InputComponent, RadioComponent, DropdownComponent, CheckboxNew, FormsModule
+  imports: [RouterLink,ReactiveFormsModule, DropdownComponent,NgxsmkDatepickerComponent,InputComponent, InputComponent, RadioComponent, DropdownComponent, CheckboxNew, FormsModule
   ],
   templateUrl: './new-job.html',
   styleUrl: './new-job.css'
-})
+})  
 export class NewJob {
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
