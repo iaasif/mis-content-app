@@ -15,35 +15,67 @@
 
   <div class="divide-y divide-slate-200">
     @for (item of items(); track $index) {
-    <a [href]="item.url" class="group block">
-      <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
-        <div
-          class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700">
-          {{ item.id }}
-        </div>
-        <div class="min-w-0 flex-1">
-          <div class="flex justify-between">
-            <div class="text-base font-semibold text-slate-900 group-hover:underline">
-              {{ item.title }}
+      @if (isExternal(item.url) || !item.url) {
+        <a [href]="item.url" class="group block">
+          <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
+            <div
+              class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700">
+              {{ item.id }}
             </div>
-          @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
-              <div class="flex gap-x-2 underline">
-              <div>English</div>
-              <div>বাংলা</div>
-            </div>
-            }
-            </div>
-            <div class="mt-1 text-xs text-slate-500">View details</div>
+            <div class="min-w-0 flex-1">
+              <div class="flex justify-between">
+                <div class="text-base font-semibold text-slate-900 group-hover:underline">
+                  {{ item.title }}
+                </div>
+                @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
+                <div class="flex gap-x-2 underline">
+                  <div>English</div>
+                  <div>বাংলা</div>
+                </div>
+                }
+              </div>
+              <div class="mt-1 text-xs text-slate-500">View details</div>
             </div>
             <div class="text-slate-400 group-hover:text-slate-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="size-4.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7"
+                stroke="currentColor" class="size-4.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
               </svg>
             </div>
+          </div>
+        </a>
+      } @else {
+        <a [routerLink]="item.url" class="group block">
+          <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
+            <div
+              class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700">
+              {{ item.id }}
             </div>
-            </a>
+            <div class="min-w-0 flex-1">
+              <div class="flex justify-between">
+                <div class="text-base font-semibold text-slate-900 group-hover:underline">
+                  {{ item.title }}
+                </div>
+                @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
+                <div class="flex gap-x-2 underline">
+                  <div>English</div>
+                  <div>বাংলা</div>
+                </div>
+                }
+              </div>
+              <div class="mt-1 text-xs text-slate-500">View details</div>
+            </div>
+            <div class="text-slate-400 group-hover:text-slate-700">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7"
+                stroke="currentColor" class="size-4.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      }
     }
   </div>
 </div>

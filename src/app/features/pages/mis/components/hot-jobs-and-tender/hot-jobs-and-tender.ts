@@ -1,10 +1,11 @@
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { IJobs } from '../../models/jobs.data';
 
 @Component({
   selector: 'app-hot-jobs-and-tender',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './hot-jobs-and-tender.html',
   styleUrl: './hot-jobs-and-tender.css'
 })
@@ -16,4 +17,7 @@ export class HotJobsAndTender {
   titleBg = input('')
   borderColor = input('')
 
+  isExternal(url: string | undefined): boolean {
+    return !!url && (url.startsWith('http') || url.startsWith('https'));
+  }
 }
