@@ -1,8 +1,9 @@
 import { COMPANY_NAME, UploadFileType } from './../../utils/mis.data';
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
 import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/jobs.data';
+import { StoreDataService } from '../../services/store-data-service';
 
 @Component({
   selector: 'app-upload-file',
@@ -10,7 +11,12 @@ import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/
   templateUrl: './upload-file.html',
   styleUrl: './upload-file.css',
 })
-export class UploadFile {
+export class UploadFile implements OnInit {
+  storeDataService = inject(StoreDataService);
+  ngOnInit(): void {
+    
+  }
+
   readonly uploadFileType = UploadFileType;
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
   readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
@@ -32,10 +38,15 @@ export class UploadFile {
 
   onImageResponse(res: UploadImgApiResponse): void {
     this.imageResponse.set(res);
-    this.linkList.set(res.variants ?? []);
+
+    const variants = res.variants ?? []
+    ;
+    this.linkList.set(variants);
+    this.storeDataService.storeImgData(variants);
   }
 
   onHtmlResponse(res: UploadHtmlResponse): void {
     this.htmlResponse.set(res);
+    this.storeDataService.storeHtmlData(res);
   }
 }

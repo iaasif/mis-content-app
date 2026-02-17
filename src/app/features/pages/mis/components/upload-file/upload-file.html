@@ -10,8 +10,8 @@
             (response)="onImageResponse($event)"
             [imgUrl]="imageApiUrl"
         />
-        @if (linkList().length > 0) {
-            @for (link of linkList(); track $index) {
+        @if (storeDataService.imgUrls().length > 0) {
+            @for (link of storeDataService.imgUrls(); track $index) {
                 <div class="py-1 mt-2">
                     <app-text-filed [data]="link" />
                 </div>
@@ -29,10 +29,12 @@
             (responseHtmlUp)="onHtmlResponse($event)"
             [htmlUrl]="htmlApiUrl"
         />
-        @if (htmlResponse(); as res) {
-            <div class="py-1 mt-2">
-                <app-text-filed [data]="res" />
-            </div>
+        @if (storeDataService.htmlUrls(); as res) {
+            @for (link of res; track $index) {
+                <div class="py-1 mt-2">
+                    <app-text-filed [data]="link" />
+                </div>
+            }
         }
     </div>
 </div>
