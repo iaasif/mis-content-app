@@ -17,4 +17,39 @@ export class EditJob {
   test():void{
     console.log(this.FromDate(),this.ToDate())
   }
+  data = data;
 } 
+
+const data= [
+  {
+    id:1,
+    jobTitle:"corporate sales manager ",
+    publishedDate:"2022-01-01",
+    expiryDate:"2022-01-01",
+    jobdeadline:"2022-01-01",
+    displaypostion:10,
+    totalJob :1,
+    comments:"",
+    
+  },
+  {
+    id:2,
+    jobTitle:"corporatee corporate sales manager corporate sales manager corporate sales manager corporate sales manager ee ",
+    publishedDate:"2022-01-01",
+    expiryDate:"2022-01-01",
+    jobdeadline:"2022-01-01",
+    displaypostion:10,
+    totalJob :1,
+    comments:"",
+  },
+  {
+    id:3,
+    jobTitle:"corporate asdfdasss",
+    publishedDate:"2022-01-01",
+    expiryDate:"2022-01-01",
+    jobdeadline:"2022-01-01",
+    displaypostion:10,
+    totalJob :1,
+    comments:"",
+  }
+]
