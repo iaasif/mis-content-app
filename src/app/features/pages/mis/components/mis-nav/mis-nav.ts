@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { COMPANY_NAME } from '../../utils/mis.data';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MultiSelectComponent } from "../../../../../shared/components/multi-select/multi-select.component";
 
 type Company = { id: number; name: string };
 
@@ -24,7 +25,7 @@ const companyList: Company[] = [
 @Component({
   selector: 'app-mis-nav',
   standalone: true,
-  imports: [RouterLink, CommonModule, FormsModule],
+  imports: [RouterLink, CommonModule, FormsModule, MultiSelectComponent],
   templateUrl: './mis-nav.html',
   styleUrl: './mis-nav.css',
 })
