@@ -11,12 +11,9 @@ import { StoreDataService } from '../../services/store-data-service';
   templateUrl: './upload-file.html',
   styleUrl: './upload-file.css',
 })
-export class UploadFile implements OnInit {
+export class UploadFile {
   storeDataService = inject(StoreDataService);
-  ngOnInit(): void {
-    
-  }
-
+ 
   readonly uploadFileType = UploadFileType;
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
   readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';

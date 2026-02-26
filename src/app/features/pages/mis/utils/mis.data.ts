@@ -1,5 +1,5 @@
 import { DropdownOption, SelectRadioData } from "../../../../shared/models/models";
-export const COMPANY_NAME = "my-company"
+export let COMPANY_NAME = ""
 
 export const Hotjobs = [
   {
