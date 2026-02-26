@@ -12,6 +12,8 @@ import { StoreDataService } from '../../services/store-data-service';
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
+  companyName = signal(COMPANY_NAME);
+
   storeDataService = inject(StoreDataService);
  
   readonly uploadFileType = UploadFileType;
@@ -21,12 +23,12 @@ export class UploadFile {
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
-    CompanyName: COMPANY_NAME,
+    CompanyName: COMPANY_NAME(),
   };
 
   readonly htmlPayload: Record<string, string | File | undefined> = {
     id: 'idformPayloadHTML',
-    CompanyName: COMPANY_NAME,
+    CompanyName: COMPANY_NAME(),
   };
 
   imageResponse = signal<UploadImgApiResponse | null>(null);

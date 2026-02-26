@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,11 +27,11 @@ const companyList: Company[] = [
   styleUrl: './mis-nav.css',
 })
 export class MisNav {
-  companyName = COMPANY_NAME;         // what you show in UI (selected)
-  companies = companyList;            // source list
+  companyName = COMPANY_NAME;
+  companies = companyList; 
 
-  query = '';                         // what user types
-  filteredCompanies: Company[] = [];  // suggestions
+  query = '';
+  filteredCompanies: Company[] = [];
   showDropdown = false;
 
   onQueryChange(value: string) {
@@ -52,10 +52,12 @@ export class MisNav {
   }
 
   selectCompany(c: Company) {
-    this.companyName = c.name;
+    this.companyName.set(c.name); 
+
+    localStorage.setItem('COMPANY_NAME', c.name);
     this.query = c.name;
     this.filteredCompanies = [];
-    this.showDropdown = false;
+    this.showDropdown = false;  
   }
 
   hideDropdownSoon() {

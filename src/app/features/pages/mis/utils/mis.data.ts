@@ -1,5 +1,6 @@
 import { DropdownOption, SelectRadioData } from "../../../../shared/models/models";
-export let COMPANY_NAME = ""
+import { signal } from '@angular/core';
+export const COMPANY_NAME = signal("");
 
 export const Hotjobs = [
   {

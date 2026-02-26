@@ -15,7 +15,7 @@ export class AddCompnay {
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
-    CompanyName: COMPANY_NAME,
+    CompanyName: COMPANY_NAME(),
   };
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
