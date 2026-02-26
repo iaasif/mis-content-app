@@ -1,8 +1,10 @@
-import { Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { COMPANY_NAME } from '../../utils/mis.data';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 type Company = { id: number; name: string };
 
@@ -27,14 +29,26 @@ const companyList: Company[] = [
   styleUrl: './mis-nav.css',
 })
 export class MisNav {
-  companyName = COMPANY_NAME;
+  router = inject(Router)
+  companyName = signal(COMPANY_NAME());        
   companies = companyList; 
 
+  currentRoute = signal<string>('')
   query = '';
   filteredCompanies: Company[] = [];
   showDropdown = false;
 
-  onQueryChange(value: string) {
+  constructor(){
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntilDestroyed()
+    ).subscribe((event: NavigationEnd) => {
+      console.log('New URL:', event.urlAfterRedirects);
+      this.currentRoute.set(event.urlAfterRedirects);
+    });
+  }
+
+  onQueryChange(value: string):void {
     this.query = value;
 
     const q = value.trim().toLowerCase();
@@ -51,7 +65,7 @@ export class MisNav {
     this.showDropdown = this.filteredCompanies.length > 0;
   }
 
-  selectCompany(c: Company) {
+  selectCompany(c: Company):void {
     this.companyName.set(c.name); 
 
     localStorage.setItem('COMPANY_NAME', c.name);
@@ -60,7 +74,9 @@ export class MisNav {
     this.showDropdown = false;  
   }
 
-  hideDropdownSoon() {
+  hideDropdownSoon():void {
     setTimeout(() => (this.showDropdown = false), 120);
   }
+
+
 }
