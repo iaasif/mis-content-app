@@ -199,13 +199,13 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
 
     if (type === 'html') {
       form.append('id', String(this.payload()['id'] ?? '877866'));
-      form.append('CompanyName', COMPANY_NAME);
+      form.append('CompanyName', COMPANY_NAME());
       form.append('File', this.file, this.file.name);
     } else if (type === 'image') {
       form.append('id', String(this.payload()['id'] ?? '877866'));
       form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
       form.append('Image', this.file, this.file.name);
-      form.append('CompanyName', COMPANY_NAME);
+      form.append('CompanyName', COMPANY_NAME());
       form.append('IsHotJobs','true');
     }
 

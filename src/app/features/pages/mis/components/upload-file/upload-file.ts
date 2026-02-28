@@ -11,12 +11,11 @@ import { StoreDataService } from '../../services/store-data-service';
   templateUrl: './upload-file.html',
   styleUrl: './upload-file.css',
 })
-export class UploadFile implements OnInit {
-  storeDataService = inject(StoreDataService);
-  ngOnInit(): void {
-    
-  }
+export class UploadFile {
+  companyName = signal(COMPANY_NAME);
 
+  storeDataService = inject(StoreDataService);
+ 
   readonly uploadFileType = UploadFileType;
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
   readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
@@ -24,12 +23,12 @@ export class UploadFile implements OnInit {
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
-    CompanyName: COMPANY_NAME,
+    CompanyName: COMPANY_NAME(),
   };
 
   readonly htmlPayload: Record<string, string | File | undefined> = {
     id: 'idformPayloadHTML',
-    CompanyName: COMPANY_NAME,
+    CompanyName: COMPANY_NAME(),
   };
 
   imageResponse = signal<UploadImgApiResponse | null>(null);

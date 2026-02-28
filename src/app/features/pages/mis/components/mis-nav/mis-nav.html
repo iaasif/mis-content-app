@@ -7,17 +7,38 @@
         <div
             class="inline-flex flex-wrap items-center gap-2 rounded-full border border-amber-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
             <span class="h-2 w-2 rounded-full bg-amber-500"></span>
-            Hot Job / Tender Manager
-            <span class="text-red-700">( &commat; {{companyName}}  )</span>
+
+            <span class="text-red-700">( Company Name: {{companyName()}} )</span>
         </div>
     </div>
 
-    <div class="mt-6 rounded-2xl border border-amber-200 bg-white/90 p-6 shadow-sm flex justify-between" >
-       <div>
-         <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">Hot Jobs And Tender Managment</h1>
-        <p class="mt-2 text-sm text-slate-600">A simple interface for manage Hot jobs and Tender.</p>
-       </div>
+    <div class="mt-6 rounded-2xl border border-amber-200 bg-white/90 p-6 shadow-sm flex justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">HTML Upload</h1>
+        </div>
+        <div>
+            <app-multi-select></app-multi-select>
+        </div>
+        @if(currentRoute() === '/up'){
+        <div class="relative w-72">
+          <div class="flex items-center gap-2">
+              <label for="search" class="whitespace-nowrap">Search company:</label>
+            <input class="border rounded-lg py-2 px-3 w-full" type="text" placeholder="Search company..."
+                [ngModel]="query" (ngModelChange)="onQueryChange($event)"
+                (focus)="showDropdown = filteredCompanies.length > 0" (blur)="hideDropdownSoon()" />
+          </div>
 
+            @if (showDropdown) {
+            <ul class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto">
+                @for (c of filteredCompanies; track c.id) {
+                <li class="px-3 py-2 cursor-pointer hover:bg-slate-100" (mousedown)="selectCompany(c)">
+                    {{ c.name }}
+                </li>
+                }
+            </ul>
+            }
+        </div>
+        }
         <div>
             <button [routerLink]="'up'"
                 class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 cursor-pointer">Html
