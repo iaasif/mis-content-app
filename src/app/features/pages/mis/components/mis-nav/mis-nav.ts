@@ -33,8 +33,7 @@ export class MisNav {
   router = inject(Router)
   companyName = signal(COMPANY_NAME());        
   companies = companyList; 
-
-  currentRoute = signal<string>('')
+  currentRoute = signal<string>(this.router.url)
   query = '';
   filteredCompanies: Company[] = [];
   showDropdown = false;
