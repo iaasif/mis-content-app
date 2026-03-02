@@ -1,82 +1,85 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { COMPANY_NAME } from '../../utils/mis.data';
-import { filter } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MultiSelectComponent } from "../../../../../shared/components/multi-select/multi-select.component";
-
-type Company = { id: number; name: string };
-
-const companyList: Company[] = [
-  { id: 1, name: "company 1" },
-  { id: 2, name: "company 2" },
-  { id: 3, name: "company 3" },
-  { id: 4, name: "company 4" },
-  { id: 5, name: "company 5" },
-  { id: 6, name: "company 6" },
-  { id: 7, name: "company 7" },
-  { id: 8, name: "company 8" },
-  { id: 9, name: "company 9" },
-  { id: 10, name: "company 10" },
-];
+import { CompanyNameSuggestion } from '../../services/company-name-suggestion';
 
 @Component({
   selector: 'app-mis-nav',
   standalone: true,
-  imports: [RouterLink, CommonModule, FormsModule, MultiSelectComponent],
+  imports: [RouterLink, CommonModule, FormsModule],
   templateUrl: './mis-nav.html',
   styleUrl: './mis-nav.css',
 })
 export class MisNav {
-  router = inject(Router)
-  companyName = signal(COMPANY_NAME());        
-  companies = companyList; 
-  currentRoute = signal<string>(this.router.url)
-  query = '';
-  filteredCompanies: Company[] = [];
-  showDropdown = false;
+ private readonly router = inject(Router);
+  private readonly companyApi = inject(CompanyNameSuggestion);
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(){
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntilDestroyed()
-    ).subscribe((event: NavigationEnd) => {
-      console.log('New URL:', event.urlAfterRedirects);
-      this.currentRoute.set(event.urlAfterRedirects);
+  companyName = COMPANY_NAME;
+  currentRoute = signal<string>(this.router.url);
+  query = signal('');
+  isFocused = signal(false);
+  suggestions = signal<string[]>([]);
+
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    const sub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentRoute.set(event.urlAfterRedirects);
+      }
     });
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
-  onQueryChange(value: string):void {
-    this.query = value;
+  onQueryChange(value: string): void {
+    this.query.set(value);
 
-    const q = value.trim().toLowerCase();
-    if (!q) {
-      this.filteredCompanies = [];
-      this.showDropdown = false;
+    if (this.debounceTimer) clearTimeout(this.debounceTimer);
+
+    if (!value.trim()) {
+      this.suggestions.set([]);
       return;
     }
 
-    this.filteredCompanies = this.companies
-      .filter(c => c.name.toLowerCase().includes(q))
-      .slice(0, 8);
-
-    this.showDropdown = this.filteredCompanies.length > 0;
+    this.debounceTimer = setTimeout(() => {
+      this.companyApi.companyNamesSuggestions(value.trim()).subscribe({
+        next: list => this.suggestions.set(list.slice(0, 8)),
+        error: () => this.suggestions.set([]),
+      });
+    }, 150);
   }
 
-  selectCompany(c: Company):void {
-    this.companyName.set(c.name); 
-
-    localStorage.setItem('COMPANY_NAME', c.name);
-    this.query = c.name;
-    this.filteredCompanies = [];
-    this.showDropdown = false;  
+  selectCompany(name: string): void {
+    localStorage.setItem('COMPANY_NAME', name);
+    COMPANY_NAME.set(name);        // ← update the shared signal
+    this.query.set(name);
+    this.isFocused.set(false);
+    this.suggestions.set([]);
   }
 
-  hideDropdownSoon():void {
-    setTimeout(() => (this.showDropdown = false), 120);
+  clearCompany(): void {
+    localStorage.removeItem('COMPANY_NAME');
+    COMPANY_NAME.set('');          // ← clear the shared signal
+    this.query.set('');
+    this.suggestions.set([]);
   }
 
+  onFocus(): void {
+    this.isFocused.set(true);
+    const q = this.query().trim();
+    if (q) {
+      this.companyApi.companyNamesSuggestions(q).subscribe({
+        next: list => this.suggestions.set(list.slice(0, 8)),
+        error: () => this.suggestions.set([]),
+      });
+    }
+  }
+
+  onBlur(): void {
+    setTimeout(() => this.isFocused.set(false), 120);
+  }
 
 }
