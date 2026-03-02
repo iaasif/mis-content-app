@@ -28,9 +28,9 @@
       <div class="upload-result" [style.display]="uploadStatus() ? 'flex' : 'none'">
         <span>{{ uploadResult }}</span>
         @if (uploadStatus() === 200 || uploadStatus() === 201 || uploadStatus() === undefined) {
-          <i class="icon-check text-xs bg-[#008a22] rounded-full text-[#fff] p-1"></i>
+          <i class="icon-check text-xs bg-[#008a22] rounded-full text-white p-1"></i>
         } @else {
-          <i class="icon-times bg-[#E71313] rounded-full p-2.5 text-[#fff] text-xs"></i>
+          <i class="icon-times bg-[#E71313] rounded-full p-2.5 text-white text-xs"></i>
         }
       </div>
     </div>
