@@ -13,7 +13,7 @@ import { CompanyNameSuggestion } from '../../services/company-name-suggestion';
   styleUrl: './mis-nav.css',
 })
 export class MisNav {
- private readonly router = inject(Router);
+  private readonly router = inject(Router);
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
 

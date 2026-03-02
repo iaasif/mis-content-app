@@ -1,5 +1,5 @@
 import { COMPANY_NAME, UploadFileType } from './../../utils/mis.data';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
 import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/jobs.data';
@@ -15,36 +15,25 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
-  companyName = signal(COMPANY_NAME);
-  private router = inject(Router)
-  currentRoute = signal(this.router.url)
-
   storeDataService = inject(StoreDataService);
- 
+
   readonly uploadFileType = UploadFileType;
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
   readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
-  
-  constructor() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntilDestroyed()
-    ).subscribe((event: NavigationEnd) => {
-      console.log('New URL:', event.urlAfterRedirects);
-      this.currentRoute.set(event.urlAfterRedirects);
-    });
-  }
 
-  readonly imagePayload: Record<string, string | File | undefined> = {
+  readonly companyName = COMPANY_NAME;
+  readonly isCompanySelected = computed(() => COMPANY_NAME().trim().length > 0);
+
+  readonly imagePayload = computed<Record<string, string | File | undefined>>(() => ({
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
     CompanyName: COMPANY_NAME(),
-  };
+  }));
 
-  readonly htmlPayload: Record<string, string | File | undefined> = {
+  readonly htmlPayload = computed<Record<string, string | File | undefined>>(() => ({
     id: 'idformPayloadHTML',
     CompanyName: COMPANY_NAME(),
-  };
+  }));
 
   imageResponse = signal<UploadImgApiResponse | null>(null);
   htmlResponse = signal<UploadHtmlResponse | null>(null);
@@ -52,9 +41,7 @@ export class UploadFile {
 
   onImageResponse(res: UploadImgApiResponse): void {
     this.imageResponse.set(res);
-
-    const variants = res.variants ?? []
-    ;
+    const variants = res.variants ?? [];
     this.linkList.set(variants);
     this.storeDataService.storeImgData(variants);
   }
