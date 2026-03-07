@@ -4,7 +4,7 @@ import { NewJob } from './features/pages/new-job/new-job';
 import { EditJob } from './features/pages/edit-job/edit-job';
 import { UploadFile } from './features/pages/mis/components/upload-file/upload-file';
 import { RearrangeHotJob } from './features/pages/mis/components/rearrange-hot-job/rearrange-hot-job';
-import { AddCompnay } from './features/pages/mis/components/add-compnay/add-compnay';
+import { AddCompany } from './features/pages/mis/components/add-company/add-company';
 
 export const routes: Routes = [
     {
@@ -28,8 +28,8 @@ export const routes: Routes = [
         component: RearrangeHotJob
     },
     {
-        path: 'add-compnay',
-        component: AddCompnay
+        path: 'add-company',
+        component: AddCompany
     },
 
 ];

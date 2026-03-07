@@ -6,12 +6,12 @@ import { InputComponent } from '../../../../../shared/components/input/input.com
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 
 @Component({
-  selector: 'app-add-compnay',
+  selector: 'app-add-company',
   imports: [RouterLink, ReactiveFormsModule, InputComponent, InputComponent, FormsModule, FileUploadComponent],
-  templateUrl: './add-compnay.html',
-  styleUrl: './add-compnay.css',
+  templateUrl: './add-company.html',
+  styleUrl: './add-company.css',
 })
-export class AddCompnay {
+export class AddCompany {
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
