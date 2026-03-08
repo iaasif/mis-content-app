@@ -62,10 +62,13 @@ export class AddCompany {
     const formValue = this.newCompanyForm.getRawValue();
 
     const payload: CreateCompany = {
-      CompanyName: 'a',
-     
-      LogoSource: 'a',
-
+      CompanyName: formValue.companyName,
+      LogoSource: formValue.logoSource,
+      LogoH: formValue.logoH,
+      LogoW: formValue.logoW,
+      LogoSize: formValue.logoSize,
+      LogoSourceLocal: formValue.logoSourceLocal,
+      CompanyNameBng: formValue.companyNameBng,
     };
 
     console.log('payload', payload);

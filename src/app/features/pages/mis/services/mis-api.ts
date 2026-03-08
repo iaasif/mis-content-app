@@ -12,6 +12,14 @@ export class MisApi {
   private readonly baseUrl = 'https://contentapi.bdjobs.com/api/hotjobs';
 
   addCompany(payload: CreateCompany): Observable<unknown> {
-    return this.http.post(`${this.baseUrl}/add-company`, payload);
+    const formData = new FormData();
+    Object.keys(payload).forEach(key => {
+      const value = (payload as any)[key];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value instanceof Blob ? value : value.toString());
+      }
+    });
+    
+    return this.http.post(`${this.baseUrl}/add-company`, formData);
   }
 }
