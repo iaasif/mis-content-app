@@ -84,3 +84,15 @@ export type newCompanyForm = {
   logoSource: null | string;
   logoSize: number;
 } 
+
+
+export interface CreateCompany {
+  CompanyName: string;
+  LogoSource?: string | null;
+  LogoH?: number | null;
+  LogoW?: number | null;
+  LogoSize?: number | null;
+  LogoSourceLocal?: string | null;
+  CompanyNameBng?: string | null;
+}
+

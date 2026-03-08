@@ -7,34 +7,20 @@
             </div>
             <p class="mt-1 text-xs text-slate-600">Add or edit hot job listings</p>
         </div>
-        <div class="flex gap-2">
-            <button [routerLink]="'/add-company'" type="button"
-                class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100">
-                Add
-            </button>
-            <button type="button"
-                class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-lg font-semibold text-blue-700 transition hover:bg-blue-100">
-                Edit
-            </button>
-            <button type="button"
-                class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100">
-                Delete Company
-            </button>
-        </div>
     </div>
 
-    <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
+    <form [formGroup]="newCompanyForm" (ngSubmit)="submit()">
         <div class="space-y-5 p-6">
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Company Name</label>
-                <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false">
+                <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false">
                 </app-input>
             </div>
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-                <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
+                <app-input [type]="'text'" [control]="newCompanyForm.controls.companyNameBng" [isNumericOnly]="false">
                 </app-input>
             </div>
 
@@ -49,19 +35,19 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo Source at Online</label>
-                <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
+                <app-input [type]="'text'" [control]="newCompanyForm.controls.logoSource" [isNumericOnly]="false">
                 </app-input>
             </div>
             <div class="border-t border-slate-200 pt-5"></div>
 
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">Logo size</label>
-                <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
+                <label class="text-lg font-semibold text-slate-700">Logo size for Online</label>
+                <app-input [type]="'number'" [control]="newCompanyForm.controls.logoSize" [isNumericOnly]="true">
                 </app-input>
             </div>
 
-            <div class="flex w-full justify-between items-center  border border-amber-200">
+            <!-- <div class="flex w-full justify-between items-center  border border-amber-200">
                 <div class="w-full border border-blue-400">
                     <div>original size</div>
                     <img class="w-10 h-10" src="/images/defaultImg.svg" alt="">
@@ -71,7 +57,7 @@
                     <div>for online view</div>
                     <img class="w-10 h-10" src="/images/defaultImg.svg" alt="">
                 </div>
-            </div>
+            </div> -->
             
             <div class="pt-4 flex gap-3">
                 <button type="submit"
@@ -79,7 +65,7 @@
                     Save
                 </button>
 
-                <button type="button" (click)="newHotJobForm.reset()"
+                <button type="button" (click)="newCompanyForm.reset()"
                     class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
                     Reset
                 </button>
@@ -92,7 +78,7 @@
             class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
             Cancel
         </button>
-        <button type="button" (click)="submit()" [disabled]="!newHotJobForm.valid"
+        <button type="submit" 
             class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
             Submit
         </button>

@@ -54,7 +54,7 @@ export class MisNav {
 
   selectCompany(name: string): void {
     localStorage.setItem('COMPANY_NAME', name);
-    COMPANY_NAME.set(name);        // ← update the shared signal
+    COMPANY_NAME.set(name);
     this.query.set(name);
     this.isFocused.set(false);
     this.suggestions.set([]);
@@ -62,7 +62,7 @@ export class MisNav {
 
   clearCompany(): void {
     localStorage.removeItem('COMPANY_NAME');
-    COMPANY_NAME.set('');          // ← clear the shared signal
+    COMPANY_NAME.set('');
     this.query.set('');
     this.suggestions.set([]);
   }

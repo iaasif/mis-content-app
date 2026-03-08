@@ -11,7 +11,6 @@ export class UploadFileService {
   http = inject(HttpClient);
   apiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
 
-  /** Builds FormData from ImgPayload so the file is sent in the request body (not in headers). */
   uploadImg(payload: ImgPayload): Observable<UploadImgApiResponse> {
     const form = new FormData();
     form.append('id', payload.id);
