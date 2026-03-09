@@ -13,9 +13,23 @@
         <div class="space-y-5 p-6">
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">Company Name</label>
-                <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false">
-                </app-input>
+                <label class="text-lg font-semibold text-slate-700">    
+                    Company Name <span class="text-red-500">*</span>
+                </label>
+                <div class="flex flex-col gap-1">
+                    <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false" [isRequired]="true">
+                    </app-input>
+                    @if (newCompanyForm.controls.companyName.invalid && (newCompanyForm.controls.companyName.touched || newCompanyForm.controls.companyName.dirty)) {
+                    <p class="text-sm text-red-500 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Company Name is required.
+                    </p>
+                    }
+                </div>
             </div>
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
@@ -28,9 +42,8 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo From Local Drive</label>
-                <app-file-upload 
-                   [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload"
-                   ></app-file-upload>
+                <app-file-upload [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload">
+                </app-file-upload>
             </div>
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
@@ -38,8 +51,8 @@
                 <app-input [type]="'text'" [control]="newCompanyForm.controls.logoSource" [isNumericOnly]="false">
                 </app-input>
             </div>
-            <div class="border-t border-slate-200 pt-5"></div>
 
+            <div class="border-t border-slate-200 pt-5"></div>
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo size for Online</label>
@@ -47,40 +60,19 @@
                 </app-input>
             </div>
 
-            <!-- <div class="flex w-full justify-between items-center  border border-amber-200">
-                <div class="w-full border border-blue-400">
-                    <div>original size</div>
-                    <img class="w-10 h-10" src="/images/defaultImg.svg" alt="">
-                </div>
+        </div>
 
-                <div class="w-full border border-blue-400">
-                    <div>for online view</div>
-                    <img class="w-10 h-10" src="/images/defaultImg.svg" alt="">
-                </div>
-            </div> -->
-            
-            <div class="pt-4 flex gap-3">
-                <button type="submit"
-                    class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
-                    Save
-                </button>
-
-                <button type="button" (click)="newCompanyForm.reset()"
-                    class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
-                    Reset
-                </button>
-            </div>
+        <!-- Footer buttons now inside the form -->
+        <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
+            <button type="button"
+                class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
+                Cancel
+            </button>
+            <button type="submit"
+                class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                Submit
+            </button>
         </div>
     </form>
 
-    <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
-        <button type="button"
-            class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
-            Cancel
-        </button>
-        <button type="submit" 
-            class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
-            Submit
-        </button>
-    </div>
 </div>

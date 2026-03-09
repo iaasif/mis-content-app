@@ -5,6 +5,7 @@ import { InputComponent } from '../../../../../shared/components/input/input.com
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { MisApi } from '../../services/mis-api';
 import { CreateCompany } from '../../models/jobs.data';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 
 @Component({
@@ -15,6 +16,7 @@ import { CreateCompany } from '../../models/jobs.data';
 })
 export class AddCompany {
   private misApi = inject(MisApi);
+  private hotToast = inject(HotToastService);
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
@@ -32,7 +34,6 @@ export class AddCompany {
 
   newCompanyForm = new FormGroup({
     companyName: new FormControl<string>('', {
-      nonNullable: true,
       validators: [Validators.required],
     }),
     companyNameBng: new FormControl<string | null>(null),
@@ -55,20 +56,22 @@ export class AddCompany {
 
   submit(): void {
     if (this.newCompanyForm.invalid) {
+      this.hotToast.error('Please fill all required fields');
       this.newCompanyForm.markAllAsTouched();
       return;
     }
+    console.log('formValue', this.newCompanyForm.getRawValue(), this.newCompanyForm.valid);
 
     const formValue = this.newCompanyForm.getRawValue();
 
     const payload: CreateCompany = {
-      CompanyName: formValue.companyName,
-      LogoSource: formValue.logoSource,
-      LogoH: formValue.logoH,
-      LogoW: formValue.logoW,
-      LogoSize: formValue.logoSize,
-      LogoSourceLocal: formValue.logoSourceLocal,
-      CompanyNameBng: formValue.companyNameBng,
+      CompanyName: formValue.companyName || '',
+      LogoSource: formValue.logoSource || '',
+      LogoH: formValue.logoH || 0,
+      LogoW: formValue.logoW || 0,
+      LogoSize: formValue.logoSize || 0,
+      LogoSourceLocal: formValue.logoSourceLocal || '',
+      CompanyNameBng: formValue.companyNameBng || '',
     };
 
     console.log('payload', payload);
@@ -76,10 +79,13 @@ export class AddCompany {
     this.misApi.addCompany(payload).subscribe({
       next: (res) => {
         console.log('res', res);
+        this.hotToast.success('Company added successfully');
+        this.newCompanyForm.reset();
       },
       error: (err) => {
         console.log('status', err.status);
         console.log('err', err.error);
+        this.hotToast.error('Failed to add company');
       },
     });
   }
