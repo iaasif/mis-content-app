@@ -5,7 +5,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 export const checkRefGuard: CanActivateFn = (route, state) => {
   const referrer = document.referrer;
   const hotToast = inject(HotToastService);
-  if (referrer === 'mis.bdjobs.com' || referrer === 'content.bdjobs.com') {
+  if (referrer === 'mis.bdjobs.com' ) {
 
     return true;
   }
