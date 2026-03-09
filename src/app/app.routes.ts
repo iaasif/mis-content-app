@@ -5,6 +5,7 @@ import { EditJob } from './features/pages/edit-job/edit-job';
 import { UploadFile } from './features/pages/mis/components/upload-file/upload-file';
 import { RearrangeHotJob } from './features/pages/mis/components/rearrange-hot-job/rearrange-hot-job';
 import { AddCompany } from './features/pages/mis/components/add-company/add-company';
+import { checkRefGuard } from './features/pages/mis/guards/check-ref-guard';
 
 export const routes: Routes = [
     {
@@ -21,7 +22,8 @@ export const routes: Routes = [
     },
     {
         path: 'up',
-        component: UploadFile
+        component: UploadFile,
+        canActivate: [checkRefGuard]
     },
     {
         path: 'rearrange',
