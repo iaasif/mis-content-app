@@ -40,6 +40,7 @@ export class UploadFile {
   linkList = signal<Variant[]>([]);
 
   onImageResponse(res: UploadImgApiResponse): void {
+    console.log('img ',res)
     this.imageResponse.set(res);
     const variants = res.variants ?? [];
     this.linkList.set(variants);
@@ -47,8 +48,10 @@ export class UploadFile {
   }
 
   onHtmlResponse(res: UploadHtmlResponse): void {
+    console.log('html ',res)
     this.htmlResponse.set(res);
     this.storeDataService.storeHtmlData(res);
   }
   // [attr.inert] = "companyName().length === 0 ? '' : null"
+  
 }

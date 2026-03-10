@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Form } from '@angular/forms';
 import { CreateCompany } from '../models/jobs.data';
 
 @Injectable({

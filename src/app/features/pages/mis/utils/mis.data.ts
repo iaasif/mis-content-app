@@ -194,7 +194,9 @@ export const priorities: DropdownOption[] = [
 
 export enum UploadFileType  {
   html = "html",
-  image = "image"
+  image = "image",
+  zip = "zip",
+  pdf = "pdf",
 }
 
 export const RearrangeData = [
