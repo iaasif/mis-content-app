@@ -15,13 +15,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
-  storeDataService = inject(StoreDataService);
-
   readonly uploadFileType = UploadFileType;
+
+  storeDataService = inject(StoreDataService);
+  imageResponse = signal<UploadImgApiResponse | null>(null);
+  htmlResponse = signal<UploadHtmlResponse | null>(null);
+  linkList = signal<Variant[]>([]);
+  readonly companyName = COMPANY_NAME;
+  showUploadZip = signal<UploadFileType>(this.uploadFileType.html);
+  showUploadZipInnerText= signal<string>('Upload ZIP/PDF');
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
   readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
 
-  readonly companyName = COMPANY_NAME;
   readonly isCompanySelected = computed(() => COMPANY_NAME().trim().length > 0);
 
   readonly imagePayload = computed<Record<string, string | File | undefined>>(() => ({
@@ -35,9 +40,7 @@ export class UploadFile {
     CompanyName: COMPANY_NAME(),
   }));
 
-  imageResponse = signal<UploadImgApiResponse | null>(null);
-  htmlResponse = signal<UploadHtmlResponse | null>(null);
-  linkList = signal<Variant[]>([]);
+
 
   onImageResponse(res: UploadImgApiResponse): void {
     console.log('img ',res)
@@ -54,4 +57,9 @@ export class UploadFile {
   }
   // [attr.inert] = "companyName().length === 0 ? '' : null"
   
+  toggleUploadZip():void{
+    console.log('toggleUploadZip',this.isCompanySelected());
+    this.showUploadZip.set(this.showUploadZip() === this.uploadFileType.html ? this.uploadFileType.zip : this.uploadFileType.html);
+    this.showUploadZipInnerText.set(this.showUploadZip() === this.uploadFileType.html ? 'Upload ZIP/PDF' : 'Upload HTML');
+  }
 }

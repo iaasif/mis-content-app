@@ -1,91 +1,75 @@
+<div (click)="toggleUploadZip()">{{showUploadZipInnerText()}}</div>
 @if (!isCompanySelected()) {
-  <div
-    role="alert"
-    aria-live="polite"
-    class="sticky top-4 z-20 mx-auto mb-6 flex items-center gap-4 rounded-2xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50 px-6 py-4 shadow-lg shadow-amber-100/60 ring-1 ring-amber-100"
-  >
-    <!-- Icon bubble -->
-    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd"
-          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-          clip-rule="evenodd"/>
-      </svg>
-    </span>
+<div role="alert" aria-live="polite"
+  class="sticky top-4 z-20 mx-auto mb-6 flex items-center gap-4 rounded-2xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50 px-6 py-4 shadow-lg shadow-amber-100/60 ring-1 ring-amber-100">
+  <!-- Icon bubble -->
+  <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor"
+      aria-hidden="true">
+      <path fill-rule="evenodd"
+        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+        clip-rule="evenodd" />
+    </svg>
+  </span>
 
-    <!-- Text -->
-    <div class="flex flex-col">
-      <span class="text-sm font-semibold text-amber-900">No company selected</span>
-      <span class="text-xs text-amber-700">Search and select a company from the top navigation to enable file uploads.</span>
-    </div>
-
-    <!-- Decorative right pulse dot -->
-    <span class="ml-auto flex items-center gap-1.5 text-xs font-medium text-amber-600" aria-hidden="true">
-      <span class="relative flex h-2 w-2">
-        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
-        <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
-      </span>
-      Action required
-    </span>
+  <!-- Text -->
+  <div class="flex flex-col">
+    <span class="text-sm font-semibold text-amber-900">No company selected</span>
+    <span class="text-xs text-amber-700">Search and select a company from the top navigation to enable file
+      uploads.</span>
   </div>
+
+  <!-- Decorative right pulse dot -->
+  <span class="ml-auto flex items-center gap-1.5 text-xs font-medium text-amber-600" aria-hidden="true">
+    <span class="relative flex h-2 w-2">
+      <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+      <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
+    </span>
+    Action required
+  </span>
+</div>
 }
 
 <div class="flex justify-around w-full mt-4 gap-4 border border-blue-800 p-10">
 
-  <div
-    class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-    [class.opacity-40]="!isCompanySelected()"
-    [class.pointer-events-none]="!isCompanySelected()"
-    [attr.aria-disabled]="!isCompanySelected()"
-    [attr.inert]="!isCompanySelected() ? '' : null"
-  >
-    <app-file-upload
-      [uploadFileType]="uploadFileType.image"
-      [uploadIcon]="'images/img-upload.png'"
-      [uploadTitle]="'Image upload'"
-      [maxHeight]="20000"
-      [maxWidth]="20000"
-      [payload]="imagePayload()"
-      (response)="onImageResponse($event)"
-      [imgUrl]="imageApiUrl"
-    />
+  @if (showUploadZip()==='html'){
+  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
+    [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
+    [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
+    <app-file-upload [uploadFileType]="uploadFileType.image" [uploadIcon]="'images/img-upload.png'"
+      [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload()"
+      (response)="onImageResponse($event)" [imgUrl]="imageApiUrl" />
 
     @if (storeDataService.imgUrls().length > 0) {
-      @for (link of storeDataService.imgUrls(); track $index) {
-        <div class="py-1 mt-2">
-          <span class="px-1 text-sm font-medium text-gray-700">Image {{ $index + 1 }}:</span>
-          <app-text-filed [data]="link" />
-        </div>
-      }
+    @for (link of storeDataService.imgUrls(); track $index) {
+    <div class="py-1 mt-2">
+      <span class="px-1 text-sm font-medium text-gray-700">Image {{ $index + 1 }}:</span>
+      <app-text-filed [data]="link" />
+    </div>
+    }
     }
   </div>
 
-  <div
-    class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-    [class.opacity-40]="!isCompanySelected()"
-    [class.pointer-events-none]="!isCompanySelected()"
-    [attr.aria-disabled]="!isCompanySelected()"
-    [attr.inert]="!isCompanySelected() ? '' : null"
-  >
-    <app-file-upload
-      [uploadFileType]="uploadFileType.html"
-      [uploadIcon]="'images/html-up.png'"
-      [uploadTitle]="'HTML upload'"
-      [maxHeight]="20000"
-      [maxWidth]="20000"
-      [payload]="htmlPayload()"
-      (responseHtmlUp)="onHtmlResponse($event)"
-      [htmlUrl]="htmlApiUrl"
-    />
+  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
+    [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
+    [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
+    <app-file-upload [uploadFileType]="uploadFileType.html" [uploadIcon]="'images/html-up.png'"
+      [uploadTitle]="'HTML upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="htmlPayload()"
+      (responseHtmlUp)="onHtmlResponse($event)" [htmlUrl]="htmlApiUrl" />
 
     @if (storeDataService.htmlUrls(); as res) {
-      @for (link of res; track $index) {
-        <div class="py-1 mt-2">
-          <span class="px-1 text-sm font-medium text-gray-700">HTML {{ $index + 1 }}:</span>
-          <app-text-filed [data]="link" />
-        </div>
-      }
+    @for (link of res; track $index) {
+    <div class="py-1 mt-2">
+      <span class="px-1 text-sm font-medium text-gray-700">HTML {{ $index + 1 }}:</span>
+      <app-text-filed [data]="link" />
+    </div>
+    }
     }
   </div>
-
+  }
+  @else {
+  <div>
+    hi
+  </div>
+  }
 </div>
