@@ -1,4 +1,8 @@
-<div (click)="toggleUploadZip()">{{showUploadZipInnerText()}}</div>
+<div class="py-3">
+  <div class="rounded-lg border   w-fit px-4 py-2 text-sm font-semibold text-emerald-700 transition cursor-pointer" [class]="showUploadZip()==='html' ? 'bg-emerald-100 border-emerald-200' : 'bg-amber-100 border-amber-200'" (click)="toggleUploadZip()">{{showUploadZipInnerText()}}</div>
+
+
+</div>
 @if (!isCompanySelected()) {
 <div role="alert" aria-live="polite"
   class="sticky top-4 z-20 mx-auto mb-6 flex items-center gap-4 rounded-2xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50 px-6 py-4 shadow-lg shadow-amber-100/60 ring-1 ring-amber-100">
