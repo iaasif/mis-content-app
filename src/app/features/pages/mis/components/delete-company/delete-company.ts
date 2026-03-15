@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { COMPANY_NAME } from '../../utils/mis.data';
 
 @Component({
   selector: 'app-delete-company',
@@ -7,5 +8,6 @@ import { Component } from '@angular/core';
   styleUrl: './delete-company.css',
 })
 export class DeleteCompany {
+  companyName = COMPANY_NAME
 
 }

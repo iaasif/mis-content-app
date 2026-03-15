@@ -1,12 +1,9 @@
 import { COMPANY_NAME, UploadFileType } from './../../utils/mis.data';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
 import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/jobs.data';
 import { StoreDataService } from '../../services/store-data-service';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-upload-file',
