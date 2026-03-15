@@ -80,23 +80,22 @@
             aria-label="Company suggestions"
             class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto"
           >
-            @for (name of suggestions(); track name) {
+            @for (data of suggestions(); track data.id) {
               <li
                 role="option"
-                [attr.aria-selected]="name === companyName()"
+                [attr.aria-selected]="data.companyName === companyName()"
                 class="px-3 py-2 cursor-pointer hover:bg-slate-100 text-sm"
-                [class.bg-amber-50]="name === companyName()"
-                [class.font-semibold]="name === companyName()"
-                (mousedown)="selectCompany(name)"
+                [class.bg-amber-50]="data.companyName === companyName()"
+                [class.font-semibold]="data.companyName === companyName()"
+                (mousedown)="selectCompany(data.companyName)"
               >
-                {{ name }}
+                {{ data.companyName }}
               </li>
             }
           </ul>
         }
       </div>
     }
-
     <div>
       <button
         [routerLink]="'up'"

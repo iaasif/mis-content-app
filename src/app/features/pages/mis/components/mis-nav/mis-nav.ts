@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { COMPANY_NAME } from '../../utils/mis.data';
 import { CompanyNameSuggestion } from '../../services/company-name-suggestion';
+import { CompanySuggestion } from '../../models/jobs.data';
 
 @Component({
   selector: 'app-mis-nav',
@@ -21,7 +22,7 @@ export class MisNav {
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
-  suggestions = signal<string[]>([]);
+  suggestions = signal<CompanySuggestion[]>([]);
 
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 

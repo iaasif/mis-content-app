@@ -85,7 +85,6 @@ export type newCompanyForm = {
   logoSize: number;
 } 
 
-
 export interface CreateCompany {
   CompanyName: string;
   LogoSource?: string | null;
@@ -96,3 +95,7 @@ export interface CreateCompany {
   CompanyNameBng?: string | null;
 }
 
+export interface CompanySuggestion {
+  id: number;
+  companyName: string;
+}
