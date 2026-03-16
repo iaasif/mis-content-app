@@ -7,7 +7,7 @@ import { MisApi } from '../../services/mis-api';
 import { CreateCompany } from '../../models/jobs.data';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { StoreDataService } from '../../services/store-data-service';
-
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-company',
@@ -92,4 +92,5 @@ export class AddCompany {
       },
     });
   }
+
 }

@@ -13,13 +13,15 @@
         <div class="space-y-5 p-6">
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">    
+                <label class="text-lg font-semibold text-slate-700">
                     Company Name <span class="text-red-500">*</span>
                 </label>
                 <div class="flex flex-col gap-1">
-                    <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false" [isRequired]="true">
+                    <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false"
+                        [isRequired]="true">
                     </app-input>
-                    @if (newCompanyForm.controls.companyName.invalid && (newCompanyForm.controls.companyName.touched || newCompanyForm.controls.companyName.dirty)) {
+                    @if (newCompanyForm.controls.companyName.invalid && (newCompanyForm.controls.companyName.touched ||
+                    newCompanyForm.controls.companyName.dirty)) {
                     <p class="text-sm text-red-500 flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
