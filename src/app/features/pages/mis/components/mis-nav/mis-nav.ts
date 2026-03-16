@@ -73,7 +73,7 @@ export class MisNav {
 
   clearCompany(): void {
     localStorage.removeItem('SELECTED_COMPANY');
-    this.storeData.SELECTED_COMPANY.set({} as CompanySuggestion);
+    this.storeData.SELECTED_COMPANY.set(null);
     this.query.set('');
     this.suggestions.set([]);
   }
