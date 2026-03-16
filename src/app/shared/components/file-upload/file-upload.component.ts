@@ -3,8 +3,9 @@ import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, NgZone, 
 import { ToastrService } from 'ngx-toastr';
 import { filter, map, tap } from 'rxjs/operators';
 import { UploadHtmlResponse, UploadImgApiResponse } from '../../../features/pages/mis/models/jobs.data';
-import { COMPANY_NAME, UploadFileType } from '../../../features/pages/mis/utils/mis.data';
+import { UploadFileType } from '../../../features/pages/mis/utils/mis.data';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { StoreDataService } from '../../../features/pages/mis/services/store-data-service';
 
 export const DefaultMaxSize = 9000000;
 
@@ -19,6 +20,7 @@ let fileInputIdCounter = 0;
 })
 export class FileUploadComponent implements AfterViewChecked, OnChanges {
   private hotToast = inject(HotToastService);
+  private storeDataService = inject(StoreDataService);
 
   /** Unique id for this instance so multiple file-uploads don't share the same input (label for / input id). */
   readonly fileInputId = `app-file-upload-input-${++fileInputIdCounter}`;
@@ -56,7 +58,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   notes!: string;
   imgUrl = input<string>('');
   htmlUrl = input<string>('');
-  
+
   private apiUrl(): string {
     return this.uploadFileType() === 'html' ? this.htmlUrl() : this.imgUrl();
   }
@@ -87,7 +89,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
         if (maxWidth && maxHeight && (width > maxWidth || height > maxHeight)) {
           this.isPreview.update(() => false);
           this.hotToast.error(`Maximum width is ${maxWidth}px & Maximum height is ${maxHeight}px`);
-          
+
         }
       };
     }
@@ -125,7 +127,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     const lightRedToast = { toastClass: 'ngx-toastr light-red-toast' };
     if (type === 'html') {
       if (!FileUploadComponent.HTML_EXTENSIONS.includes(ext)) {
-      this.hotToast.error('Please upload a valid html!');
+        this.hotToast.error('Please upload a valid html!');
         return false;
       }
     } else if (type === 'image') {
@@ -199,14 +201,14 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
 
     if (type === 'html') {
       form.append('id', String(this.payload()['id'] ?? '877866'));
-      form.append('CompanyName', COMPANY_NAME());
+      form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
       form.append('File', this.file, this.file.name);
     } else if (type === 'image') {
       form.append('id', String(this.payload()['id'] ?? '877866'));
       form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
       form.append('Image', this.file, this.file.name);
-      form.append('CompanyName', COMPANY_NAME());
-      form.append('IsHotJobs','true');
+      form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
+      form.append('IsHotJobs', 'true');
     }
 
     type ResponseType = UploadImgApiResponse | UploadHtmlResponse;

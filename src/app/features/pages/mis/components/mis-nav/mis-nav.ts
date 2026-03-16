@@ -2,9 +2,10 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { COMPANY_NAME } from '../../utils/mis.data';
 import { CompanyNameSuggestion } from '../../services/company-name-suggestion';
 import { CompanySuggestion } from '../../models/jobs.data';
+import { tap } from 'rxjs';
+import { StoreDataService } from '../../services/store-data-service';
 
 @Component({
   selector: 'app-mis-nav',
@@ -17,8 +18,9 @@ export class MisNav {
   private readonly router = inject(Router);
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
+  protected storeData = inject(StoreDataService);
 
-  companyName = COMPANY_NAME;
+  companyName = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
@@ -46,24 +48,32 @@ export class MisNav {
     }
 
     this.debounceTimer = setTimeout(() => {
-      this.companyApi.companyNamesSuggestions(value.trim()).subscribe({
+      this.companyApi.companyNamesSuggestions(value.trim()).pipe(
+        tap((res) => {
+          console.log('API call for suggestions with query:', res);
+        })
+      ).subscribe({
         next: list => this.suggestions.set(list.slice(0, 8)),
         error: () => this.suggestions.set([]),
       });
     }, 150);
   }
 
-  selectCompany(name: string): void {
-    localStorage.setItem('COMPANY_NAME', name);
-    COMPANY_NAME.set(name);
-    this.query.set(name);
+  selectCompany(data: CompanySuggestion): void {
+    localStorage.setItem('SELECTED_COMPANY', JSON.stringify(data));
+    this.storeData.SELECTED_COMPANY.set(data);
+    this.query.set(data.companyName);
     this.isFocused.set(false);
     this.suggestions.set([]);
+    console.log("data", data)
+    console.log("selected company", this.storeData.SELECTED_COMPANY())
+    console.log("this.suggestions", this.suggestions())
+
   }
 
   clearCompany(): void {
-    localStorage.removeItem('COMPANY_NAME');
-    COMPANY_NAME.set('');
+    localStorage.removeItem('SELECTED_COMPANY');
+    this.storeData.SELECTED_COMPANY.set({} as CompanySuggestion);
     this.query.set('');
     this.suggestions.set([]);
   }

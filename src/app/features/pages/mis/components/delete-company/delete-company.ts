@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
-import { COMPANY_NAME } from '../../utils/mis.data';
+import { Component, inject, signal } from '@angular/core';
+import { StoreDataService } from '../../services/store-data-service';
+import { MisApi } from '../../services/mis-api';
 
 @Component({
   selector: 'app-delete-company',
@@ -8,6 +9,22 @@ import { COMPANY_NAME } from '../../utils/mis.data';
   styleUrl: './delete-company.css',
 })
 export class DeleteCompany {
-  companyName = COMPANY_NAME
+  private readonly misApi = inject(MisApi);
+  storeData = inject(StoreDataService);
+  companyData = this.storeData.SELECTED_COMPANY;
+
+  deleteCompany(): void {
+    if (this.companyData()) {
+      this.misApi.deleteCompany(this.companyData()!.id).subscribe({
+        next: (res) => {
+          console.log('delete', res);
+        },
+        error: (err) => {
+          console.log('dlt err', err);
+        }
+      })
+    }
+
+  }
 
 }

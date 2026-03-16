@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { COMPANY_NAME, HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
+import { HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { MisApi } from '../../services/mis-api';
 import { CreateCompany } from '../../models/jobs.data';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { StoreDataService } from '../../services/store-data-service';
 
 
 @Component({
@@ -17,10 +18,12 @@ import { HotToastService } from '@ngxpert/hot-toast';
 export class AddCompany {
   private misApi = inject(MisApi);
   private hotToast = inject(HotToastService);
+  private storeDataService = inject(StoreDataService);
+
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
     imageName: 'HotJobLogo',
-    CompanyName: COMPANY_NAME(),
+    CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName ?? '',
   };
 
   readonly hotJobCategory = signal(HotJobCategory);

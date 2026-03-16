@@ -1,8 +1,16 @@
 <div class="w-full">
-    <div>
-        company name
+    <div class="flex">
+        <div>
+            company name
+        </div>
+        <div>
+            {{companyData()?.companyName}}
+        </div>
+
     </div>
-    <div>
-        {{companyName()}}
+    want to delete you company ?
+    <div class="flex">
+        <button (click)="deleteCompany()">yes</button>
+        <button>no</button>
     </div>
 </div>
