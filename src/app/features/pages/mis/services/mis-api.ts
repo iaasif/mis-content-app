@@ -2,13 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateCompany } from '../models/jobs.data';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MisApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://contentapi.bdjobs.com/api/hotjobs';
+  private readonly url = environment.apiUrl + 'hotjobs';
 
 
   addCompany(payload: CreateCompany): Observable<unknown> {
@@ -20,12 +21,12 @@ export class MisApi {
       }
     });
 
-    return this.http.post(`${this.baseUrl}/add-company`, formData);
+    return this.http.post(`${this.url}/add-company`, formData);
   }
 
   deleteCompany(companyId: number): Observable<unknown> {
     const cpid = companyId.toString()
-    return this.http.delete(`${this.baseUrl}/delete-company?ComId=${cpid}`);
+    return this.http.delete(`${this.url}/delete-company?ComId=${cpid}`);
   }
 
 }

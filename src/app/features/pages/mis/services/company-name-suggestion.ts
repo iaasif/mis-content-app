@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CompanySuggestion } from '../models/jobs.data';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,11 +10,11 @@ import { CompanySuggestion } from '../models/jobs.data';
 export class CompanyNameSuggestion {
 
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://contentapi.bdjobs.com/api/Company/suggestions';
+  private readonly url = environment.apiUrl + 'Company/suggestions';
 
   companyNamesSuggestions(query: string): Observable<CompanySuggestion[]> {
     const params = new HttpParams().set('query', query);
-    return this.http.get<CompanySuggestion[]>(this.baseUrl, { params });
+    return this.http.get<CompanySuggestion[]>(this.url, { params });
   }
 }
 
