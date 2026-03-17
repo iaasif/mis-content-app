@@ -13,15 +13,16 @@ export class MisApi {
 
 
   addCompany(payload: CreateCompany): Observable<unknown> {
-    const formData = new FormData();
-    Object.keys(payload).forEach(key => {
-      const value = (payload as any)[key];
-      if (value !== null && value !== undefined) {
-        formData.append(key, value instanceof Blob ? value : value.toString());
-      }
-    });
+    // const formData = new FormData();
+    // Object.keys(payload).forEach(key => {
+    //   const value = (payload as any)[key];
+    //   if (value !== null && value !== undefined) {
+    //     formData.append(key, value instanceof Blob ? value : value.toString());
+    //   }
+    // });
 
-    return this.http.post(`${this.url}/add-company`, formData);
+
+    return this.http.post(`${this.url}/add-company`, payload);
   }
 
   deleteCompany(companyId: number): Observable<unknown> {

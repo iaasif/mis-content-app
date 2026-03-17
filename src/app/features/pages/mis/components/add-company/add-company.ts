@@ -42,7 +42,9 @@ export class AddCompany {
     companyNameBng: new FormControl<string | null>(null),
 
     logoSourceLocal: new FormControl<string | null>(null),
-    logoSource: new FormControl<string | null>(null),
+    logoSource: new FormControl<string | null>('', {
+      validators: [Validators.required],
+    }),
 
     logoH: new FormControl<number | null>(null, {
       validators: [Validators.min(0), Validators.max(255)],
