@@ -20,7 +20,7 @@ export class UploadFile {
   imageResponse = signal<UploadImgApiResponse | null>(null);
   htmlResponse = signal<UploadHtmlResponse | null>(null);
   linkList = signal<Variant[]>([]);
-  readonly companyName = this.storeDataService.SELECTED_COMPANY();
+  readonly companyName = computed(() => this.storeDataService.SELECTED_COMPANY());
   showUploadZip = signal<UploadFileType>(this.uploadFileType.html);
   showUploadZipInnerText = signal<string>('Upload ZIP/PDF');
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
