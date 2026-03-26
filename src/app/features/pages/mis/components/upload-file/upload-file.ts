@@ -61,4 +61,14 @@ export class UploadFile {
     this.showUploadZip.set(this.showUploadZip() === this.uploadFileType.html ? this.uploadFileType.zip : this.uploadFileType.html);
     this.showUploadZipInnerText.set(this.showUploadZip() === this.uploadFileType.html ? 'Upload ZIP/PDF' : 'Upload HTML');
   }
+
+  onPdfResponse(res: UploadHtmlResponse): void {
+    console.log('pdf ', res);
+    this.storeDataService.storePdfData(res);
+  }
+
+  onZipResponse(res: UploadHtmlResponse): void {
+    console.log('zip ', res);
+    this.storeDataService.storeZipData(res);
+  }
 }

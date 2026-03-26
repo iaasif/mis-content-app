@@ -60,7 +60,8 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   htmlUrl = input<string>('');
 
   private apiUrl(): string {
-    return this.uploadFileType() === 'html' ? this.htmlUrl() : this.imgUrl();
+    const type = this.uploadFileType();
+    return (type === 'pdf' || type === 'zip' || type === 'html') ? this.htmlUrl() : this.imgUrl();
   }
 
   response = output<UploadImgApiResponse>()
@@ -111,6 +112,8 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
 
   private static readonly HTML_EXTENSIONS = ['html'];
   private static readonly IMAGE_EXTENSIONS = ['img', 'png', 'jpg', 'jpeg'];
+  private static readonly PDF_EXTENSIONS = ['pdf'];
+  private static readonly ZIP_EXTENSIONS = ['zip'];
 
   private checkFileValidation(file: File) {
     if (!file) {
@@ -124,7 +127,7 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
 
     const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
     const type = this.uploadFileType();
-    const lightRedToast = { toastClass: 'ngx-toastr light-red-toast' };
+
     if (type === 'html') {
       if (!FileUploadComponent.HTML_EXTENSIONS.includes(ext)) {
         this.hotToast.error('Please upload a valid html!');
@@ -133,7 +136,16 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     } else if (type === 'image') {
       if (!FileUploadComponent.IMAGE_EXTENSIONS.includes(ext)) {
         this.hotToast.error('Please upload a valid img file!');
-
+        return false;
+      }
+    } else if (type === 'pdf') {
+      if (!FileUploadComponent.PDF_EXTENSIONS.includes(ext)) {
+        this.hotToast.error('Please upload a valid PDF file!');
+        return false;
+      }
+    } else if (type === 'zip') {
+      if (!FileUploadComponent.ZIP_EXTENSIONS.includes(ext)) {
+        this.hotToast.error('Please upload a valid ZIP file!');
         return false;
       }
     }
@@ -149,7 +161,6 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   }
 
   onFileSelected(event: any, inputFile: File | null) {
-    // Use inputFile when provided (e.g. from drop); otherwise use file input (e.g. from browse)
     const selectedFile = inputFile ?? event.target?.files?.[0];
     if (!this.checkFileValidation(selectedFile)) {
       return;
@@ -164,13 +175,14 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
     this.fileName = this.file.name;
     this.fileSize = `${(this.file.size / 1024).toFixed(2)} KB`;
 
-    // Decide if it is an image or not
-    // If it's in allowedMimeTypes => currently used for Excel
+    const type = this.uploadFileType();
 
-    if (this.allowedMimeTypes.includes(this.file.type)) {
-
+    if (this.allowedMimeTypes.includes(this.file.type) || type === 'pdf' || type === 'zip') {
+      // Excel, PDF, ZIP — no image preview
       this.isImage.update(() => false);
+      this.isPreview.update(() => false);
     } else {
+      // Images and HTML — show preview
       this.isPreview.update(() => true);
     }
 
@@ -192,73 +204,80 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
 
   /** The file is sent in the request body as FormData (headers cannot contain binary data). */
   upload() {
-    if (!this.file) return;
-    if (!this.checkFileValidation(this.file)) return;
-    this.toggleUploadProgress(true);
-    this.progress.set('0%');
-    const form = new FormData();
-    const type = this.uploadFileType();
+  if (!this.file) return;
+  if (!this.checkFileValidation(this.file)) return;
+  this.toggleUploadProgress(true);
+  this.progress.set('0%');
+  const form = new FormData();
+  const type = this.uploadFileType();
 
-    if (type === 'html') {
-      form.append('id', String(this.payload()['id'] ?? '877866'));
-      form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
-      form.append('File', this.file, this.file.name);
-    } else if (type === 'image') {
-      form.append('id', String(this.payload()['id'] ?? '877866'));
-      form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
-      form.append('Image', this.file, this.file.name);
-      form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
-      form.append('IsHotJobs', 'true');
-    }
+  if (type === 'html') {
+    form.append('id', String(this.payload()['id'] ?? '877866'));
+    form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
+    form.append('File', this.file, this.file.name);
+  } else if (type === 'image') {
+    form.append('id', String(this.payload()['id'] ?? '877866'));
+    form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
+    form.append('Image', this.file, this.file.name);
+    form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
+    form.append('IsHotJobs', 'true');
+  } else if (type === 'pdf' || type === 'zip') {
+    form.append('id', String(this.payload()['id'] ?? '877866'));
+    form.append('CompanyName', this.storeDataService.SELECTED_COMPANY()?.companyName ?? '');
+    form.append('File', this.file, this.file.name);
+  }
 
-    type ResponseType = UploadImgApiResponse | UploadHtmlResponse;
+  type ResponseType = UploadImgApiResponse | UploadHtmlResponse;
 
-    this.http
-      .post<ResponseType>(this.apiUrl(), form, {
-        reportProgress: true,
-        observe: 'events',
+  this.http
+    .post<ResponseType>(this.apiUrl(), form, {
+      reportProgress: true,
+      observe: 'events',
+    })
+    .pipe(
+      tap((event) => {
+        if (
+          event.type === HttpEventType.UploadProgress &&
+          event.loaded != null &&
+          event.total != null &&
+          event.total > 0
+        ) {
+          this.progress.set(
+            `${Math.round((100 * event.loaded) / event.total)}%`
+          );
+        }
+      }),
+      filter((event) => event.type === HttpEventType.Response),
+      map((event) => (event as HttpResponse<ResponseType>).body),
+      this.hotToast.observe({
+        loading: 'Please Wait Uploading...',
+        success: 'Uploaded!',
+        error: 'Could not Uploaded. Try again',
       })
-      .pipe(
-        tap((event) => {
-          if (
-            event.type === HttpEventType.UploadProgress &&
-            event.loaded != null &&
-            event.total != null &&
-            event.total > 0
-          ) {
-            this.progress.set(
-              `${Math.round((100 * event.loaded) / event.total)}%`
-            );
-          }
-        }),
-        filter((event) => event.type === HttpEventType.Response),
-        map((event) => (event as HttpResponse<ResponseType>).body),
-        this.hotToast.observe({  // ← Now only observes the final response
-          loading: 'Please Wait Uploading...',
-          success: 'Uploaded!',
-          error: 'Could not Uploaded. Try again',
-        })
-      )
+    )
       .subscribe({
         next: (res) => {
           if (!res) return;
           this.ngZone.run(() => {
+            let successValue: string;
             if (type === 'html') {
               this.responseHtmlUp.emit(res as UploadHtmlResponse);
+              const r = res as UploadHtmlResponse;
+              successValue = r.publicUrl ?? r.id;
             } else if (type === 'image') {
               this.response.emit(res as UploadImgApiResponse);
+              const r = res as UploadImgApiResponse;
+              successValue = r.profile ?? r.id;
+            } else if (type === 'pdf' || type === 'zip') {
+              this.responseHtmlUp.emit(res as UploadHtmlResponse);
+              const r = res as UploadHtmlResponse;
+              successValue = r.publicUrl ?? r.id;
+            } else {
+              successValue = '';
             }
             this.uploadResult = 'Uploaded';
             this.uploadStatus.set(200);
             this.isPreview.set(false);
-            let successValue: string;
-            if (type === 'html') {
-              const r = res as UploadHtmlResponse;
-              successValue = r.publicUrl ?? r.id;
-            } else {
-              const r = res as UploadImgApiResponse;
-              successValue = r.profile ?? r.id;
-            }
             this.onSuccess.emit(successValue);
             this.toggleUploadProgress(false);
           });

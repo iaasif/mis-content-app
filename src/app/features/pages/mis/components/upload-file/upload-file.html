@@ -57,9 +57,14 @@
   <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
     [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
     [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
-    <app-file-upload [uploadFileType]="uploadFileType.html" [uploadIcon]="'images/html-up.png'"
-      [uploadTitle]="'HTML upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="htmlPayload()"
-      (responseHtmlUp)="onHtmlResponse($event)" [htmlUrl]="htmlApiUrl" />
+    <app-file-upload 
+    [uploadFileType]="uploadFileType.html" 
+    [uploadIcon]="'images/html-up.png'"
+    [uploadTitle]="'HTML upload'" 
+    [maxHeight]="20000" 
+    [maxWidth]="20000" 
+    [payload]="htmlPayload()"
+    (responseHtmlUp)="onHtmlResponse($event)" [htmlUrl]="htmlApiUrl" />
 
     @if (storeDataService.htmlUrls(); as res) {
     @for (link of res; track $index) {
@@ -72,8 +77,54 @@
   </div>
   }
   @else {
-  <div>
-    hi
+  <div class="flex justify-around w-full gap-4">
+
+    <!-- PDF Upload -->
+    <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
+      [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
+      [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
+      <app-file-upload
+        [uploadFileType]="uploadFileType.pdf"
+        [uploadIcon]="'images/pdf-up.png'"
+        [uploadTitle]="'PDF upload'"
+        [payload]="htmlPayload()"
+        (responseHtmlUp)="onPdfResponse($event)"
+        [htmlUrl]="htmlApiUrl"
+        [maxHeight]="20000" [maxWidth]="20000"
+         />
+      @if (storeDataService.pdfUrls(); as res) {
+        @for (link of res; track $index) {
+          <div class="py-1 mt-2">
+            <span class="px-1 text-sm font-medium text-gray-700">PDF {{ $index + 1 }}:</span>
+            <app-text-filed [data]="link" />
+          </div>
+        }
+      }
+    </div>
+
+    <!-- ZIP Upload -->
+    <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
+      [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
+      [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
+      <app-file-upload
+        [uploadFileType]="uploadFileType.zip"
+        [uploadIcon]="'images/zip-up.png'"
+        [uploadTitle]="'ZIP upload'"
+        [payload]="htmlPayload()"
+        (responseHtmlUp)="onZipResponse($event)"
+        [htmlUrl]="htmlApiUrl"
+        [maxHeight]="20000" [maxWidth]="20000"
+         />
+      @if (storeDataService.zipUrls(); as res) {
+        @for (link of res; track $index) {
+          <div class="py-1 mt-2">
+            <span class="px-1 text-sm font-medium text-gray-700">ZIP {{ $index + 1 }}:</span>
+            <app-text-filed [data]="link" />
+          </div>
+        }
+      }
+    </div>
+
   </div>
-  }
+}
 </div>
