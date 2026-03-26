@@ -1,16 +1,16 @@
 import { FormControl } from "@angular/forms"
 export interface IJobs {
-    id: number,
-    title: string,
-    url: string,
-    isnew:boolean,
-    enUrl: string,
-    bnUrl: string
+  id: number,
+  title: string,
+  url: string,
+  isnew: boolean,
+  enUrl: string,
+  bnUrl: string
 }
 export interface ImgPayload {
-    id: string,
-    ImageName: string,
-    Image : File
+  id: string,
+  ImageName: string,
+  Image: File
 }
 export interface UploadImgApiResponse {
   id: string
@@ -83,8 +83,7 @@ export type newCompanyForm = {
   companyLogo: boolean;
   logoSource: null | string;
   logoSize: number;
-} 
-
+}
 
 export interface CreateCompany {
   CompanyName: string;
@@ -96,3 +95,7 @@ export interface CreateCompany {
   CompanyNameBng?: string | null;
 }
 
+export interface CompanySuggestion {
+  id: number;
+  companyName: string;
+}
