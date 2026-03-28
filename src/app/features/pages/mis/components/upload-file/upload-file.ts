@@ -71,4 +71,6 @@ export class UploadFile {
     console.log('zip ', res);
     this.storeDataService.storeZipData(res);
   }
+
 }
+

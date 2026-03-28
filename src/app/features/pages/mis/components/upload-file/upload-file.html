@@ -1,5 +1,7 @@
 <div class="py-3">
-  <div class="rounded-lg border   w-fit px-4 py-2 text-sm font-semibold text-emerald-700 transition cursor-pointer" [class]="showUploadZip()==='html' ? 'bg-emerald-100 border-emerald-200' : 'bg-amber-100 border-amber-200'" (click)="toggleUploadZip()">{{showUploadZipInnerText()}}</div>
+  <div class="rounded-lg border   w-fit px-4 py-2 text-sm font-semibold text-emerald-700 transition cursor-pointer"
+    [class]="showUploadZip()==='html' ? 'bg-emerald-100 border-emerald-200' : 'bg-amber-100 border-amber-200'"
+    (click)="toggleUploadZip()">{{showUploadZipInnerText()}}</div>
 
 
 </div>
@@ -34,12 +36,12 @@
 </div>
 }
 
-<div class="flex justify-around w-full mt-4 gap-4 border border-blue-800 p-10">
+<div class="flex justify-around w-full mt-4 gap-4 border border-blue-800 p-10"
+  [class.pointer-events-none]="!isCompanySelected()" [class.opacity-40]="!isCompanySelected()"
+  [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
 
   @if (showUploadZip()==='html'){
-  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-    [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
-    [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
+  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300">
     <app-file-upload [uploadFileType]="uploadFileType.image" [uploadIcon]="'images/img-upload.png'"
       [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload()"
       (response)="onImageResponse($event)" [imgUrl]="imageApiUrl" />
@@ -54,17 +56,10 @@
     }
   </div>
 
-  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-    [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
-    [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
-    <app-file-upload 
-    [uploadFileType]="uploadFileType.html" 
-    [uploadIcon]="'images/html-up.png'"
-    [uploadTitle]="'HTML upload'" 
-    [maxHeight]="20000" 
-    [maxWidth]="20000" 
-    [payload]="htmlPayload()"
-    (responseHtmlUp)="onHtmlResponse($event)" [fileUploadUrl]="fileUploadApiUrl" />
+  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300">
+    <app-file-upload [uploadFileType]="uploadFileType.html" [uploadIcon]="'images/html-up.png'"
+      [uploadTitle]="'HTML upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="htmlPayload()"
+      (responseHtmlUp)="onHtmlResponse($event)" [fileUploadUrl]="fileUploadApiUrl" />
 
     @if (storeDataService.fileUploadUrls(); as res) {
     @for (link of res; track $index) {
@@ -80,51 +75,35 @@
   <div class="flex justify-around w-full gap-4">
 
     <!-- PDF Upload -->
-    <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-      [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
-      [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
-      <app-file-upload
-        [uploadFileType]="uploadFileType.pdf"
-        [uploadIcon]="'images/pdf-up.png'"
-        [uploadTitle]="'PDF upload'"
-        [payload]="htmlPayload()"
-        (responseHtmlUp)="onPdfResponse($event)"
-        [fileUploadUrl]="fileUploadApiUrl"
-        [maxHeight]="20000" [maxWidth]="20000"
-         />
+    <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300">
+      <app-file-upload [uploadFileType]="uploadFileType.pdf" [uploadIcon]="'images/pdf-up.png'"
+        [uploadTitle]="'PDF upload'" [payload]="htmlPayload()" (responseHtmlUp)="onPdfResponse($event)"
+        [fileUploadUrl]="fileUploadApiUrl" [maxHeight]="20000" [maxWidth]="20000" />
       @if (storeDataService.pdfUrls(); as res) {
-        @for (link of res; track $index) {
-          <div class="py-1 mt-2">
-            <span class="px-1 text-sm font-medium text-gray-700">PDF {{ $index + 1 }}:</span>
-            <app-text-filed [data]="link" />
-          </div>
-        }
+      @for (link of res; track $index) {
+      <div class="py-1 mt-2">
+        <span class="px-1 text-sm font-medium text-gray-700">PDF {{ $index + 1 }}:</span>
+        <app-text-filed [data]="link" />
+      </div>
+      }
       }
     </div>
 
     <!-- ZIP Upload -->
-    <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-      [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
-      [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
-      <app-file-upload
-        [uploadFileType]="uploadFileType.zip"
-        [uploadIcon]="'images/zip-up.png'"
-        [uploadTitle]="'ZIP upload'"
-        [payload]="htmlPayload()"
-        (responseHtmlUp)="onZipResponse($event)"
-        [fileUploadUrl]="fileUploadApiUrl"
-        [maxHeight]="20000" [maxWidth]="20000"
-         />
+    <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300">
+      <app-file-upload [uploadFileType]="uploadFileType.zip" [uploadIcon]="'images/zip-up.png'"
+        [uploadTitle]="'ZIP upload'" [payload]="htmlPayload()" (responseHtmlUp)="onZipResponse($event)"
+        [fileUploadUrl]="fileUploadApiUrl" [maxHeight]="20000" [maxWidth]="20000" />
       @if (storeDataService.zipUrls(); as res) {
-        @for (link of res; track $index) {
-          <div class="py-1 mt-2">
-            <span class="px-1 text-sm font-medium text-gray-700">ZIP {{ $index + 1 }}:</span>
-            <app-text-filed [data]="link" />
-          </div>
-        }
+      @for (link of res; track $index) {
+      <div class="py-1 mt-2">
+        <span class="px-1 text-sm font-medium text-gray-700">ZIP {{ $index + 1 }}:</span>
+        <app-text-filed [data]="link" />
+      </div>
+      }
       }
     </div>
 
   </div>
-}
+  }
 </div>
