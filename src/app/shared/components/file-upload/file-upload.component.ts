@@ -57,11 +57,11 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
   private ngZone = inject(NgZone);
   notes!: string;
   imgUrl = input<string>('');
-  htmlUrl = input<string>('');
+  fileUploadUrl = input<string>('');
 
   private apiUrl(): string {
     const type = this.uploadFileType();
-    return (type === 'pdf' || type === 'zip' || type === 'html') ? this.htmlUrl() : this.imgUrl();
+    return (type === 'pdf' || type === 'zip' || type === 'html') ? this.fileUploadUrl() : this.imgUrl();
   }
 
   response = output<UploadImgApiResponse>()
@@ -275,10 +275,18 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
             } else {
               successValue = '';
             }
-            this.uploadResult = 'Uploaded';
-            this.uploadStatus.set(200);
-            this.isPreview.set(false);
+        
             this.onSuccess.emit(successValue);
+        
+            // ✅ Full reset — same as cancel() so next upload starts clean
+            this.file = null as unknown as File;
+            this.isPreview.set(false);
+            this.isImage.set(true);
+            this.uploadStatus.set(undefined);
+            this.uploadResult = '';
+            this.fileName = '';
+            this.fileSize = '';
+            this.progress.set('0%');
             this.toggleUploadProgress(false);
           });
         },
@@ -290,9 +298,19 @@ export class FileUploadComponent implements AfterViewChecked, OnChanges {
       });
   }
 
+  // cancel() {
+  //   this.file = null as unknown as File;
+  //   this.isPreview.update(() => false);
+  //   this.toggleUploadProgress(false);
+  // }
   cancel() {
     this.file = null as unknown as File;
-    this.isPreview.update(() => false);
+    this.isPreview.set(false);
+    this.isImage.set(true); // ✅ reset so drop zone shows again on cancel
+    this.uploadStatus.set(undefined);
+    this.uploadResult = '';
+    this.fileName = '';
+    this.fileSize = '';
     this.toggleUploadProgress(false);
   }
 

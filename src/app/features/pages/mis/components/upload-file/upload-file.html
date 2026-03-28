@@ -64,9 +64,9 @@
     [maxHeight]="20000" 
     [maxWidth]="20000" 
     [payload]="htmlPayload()"
-    (responseHtmlUp)="onHtmlResponse($event)" [htmlUrl]="htmlApiUrl" />
+    (responseHtmlUp)="onHtmlResponse($event)" [fileUploadUrl]="fileUploadApiUrl" />
 
-    @if (storeDataService.htmlUrls(); as res) {
+    @if (storeDataService.fileUploadUrls(); as res) {
     @for (link of res; track $index) {
     <div class="py-1 mt-2">
       <span class="px-1 text-sm font-medium text-gray-700">HTML {{ $index + 1 }}:</span>
@@ -89,7 +89,7 @@
         [uploadTitle]="'PDF upload'"
         [payload]="htmlPayload()"
         (responseHtmlUp)="onPdfResponse($event)"
-        [htmlUrl]="htmlApiUrl"
+        [fileUploadUrl]="fileUploadApiUrl"
         [maxHeight]="20000" [maxWidth]="20000"
          />
       @if (storeDataService.pdfUrls(); as res) {
@@ -112,7 +112,7 @@
         [uploadTitle]="'ZIP upload'"
         [payload]="htmlPayload()"
         (responseHtmlUp)="onZipResponse($event)"
-        [htmlUrl]="htmlApiUrl"
+        [fileUploadUrl]="fileUploadApiUrl"
         [maxHeight]="20000" [maxWidth]="20000"
          />
       @if (storeDataService.zipUrls(); as res) {
