@@ -24,7 +24,7 @@ export class UploadFile {
   showUploadZip = signal<UploadFileType>(this.uploadFileType.html);
   showUploadZipInnerText = signal<string>('Upload ZIP/PDF');
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
-  readonly htmlApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-html';
+  readonly fileUploadApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-file';
 
   readonly isCompanySelected = computed(() => this.storeDataService.SELECTED_COMPANY() != null);
 
@@ -35,7 +35,7 @@ export class UploadFile {
   }));
 
   readonly htmlPayload = computed<Record<string, string | File | undefined>>(() => ({
-    id: 'idformPayloadHTML',
+    id: this.storeDataService.SELECTED_COMPANY()?.id?.toString(),
     CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName,
   }));
 
@@ -61,4 +61,16 @@ export class UploadFile {
     this.showUploadZip.set(this.showUploadZip() === this.uploadFileType.html ? this.uploadFileType.zip : this.uploadFileType.html);
     this.showUploadZipInnerText.set(this.showUploadZip() === this.uploadFileType.html ? 'Upload ZIP/PDF' : 'Upload HTML');
   }
+
+  onPdfResponse(res: UploadHtmlResponse): void {
+    console.log('pdf ', res);
+    this.storeDataService.storePdfData(res);
+  }
+
+  onZipResponse(res: UploadHtmlResponse): void {
+    console.log('zip ', res);
+    this.storeDataService.storeZipData(res);
+  }
+
 }
+

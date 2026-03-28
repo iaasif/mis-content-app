@@ -5,9 +5,11 @@ import { CompanySuggestion, UploadHtmlResponse, Variant } from '../models/jobs.d
   providedIn: 'root',
 })
 export class StoreDataService {
-
   imgUrls = signal<Variant[]>([]);
-  htmlUrls = signal<UploadHtmlResponse[]>([]);
+  fileUploadUrls = signal<UploadHtmlResponse[]>([]);
+  pdfUrls = signal<UploadHtmlResponse[]>([]);   // ← add
+  zipUrls = signal<UploadHtmlResponse[]>([]);   // ← add
+
   SELECTED_COMPANY = signal<CompanySuggestion | null>(null);
 
   storeImgData(data: Variant[]) {
@@ -15,9 +17,14 @@ export class StoreDataService {
   }
 
   storeHtmlData(data: UploadHtmlResponse) {
-    this.htmlUrls.update(prev => [...prev, data]);
+    this.fileUploadUrls.update(prev => [...prev, data]);
   }
 
+  storePdfData(data: UploadHtmlResponse) {       // ← add
+    this.pdfUrls.update(prev => [...prev, data]);
+  }
 
-
-} 
+  storeZipData(data: UploadHtmlResponse) {       // ← add
+    this.zipUrls.update(prev => [...prev, data]);
+  }
+}
