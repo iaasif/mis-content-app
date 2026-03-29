@@ -6,6 +6,7 @@ import { UploadFile } from './features/pages/mis/components/upload-file/upload-f
 import { RearrangeHotJob } from './features/pages/mis/components/rearrange-hot-job/rearrange-hot-job';
 import { AddCompany } from './features/pages/mis/components/add-company/add-company';
 import { checkRefGuard } from './features/pages/mis/guards/check-ref-guard';
+import { MisLogin } from './features/pages/mis/components/mis-login/mis-login';
 
 export const routes: Routes = [
     {
@@ -32,6 +33,10 @@ export const routes: Routes = [
     {
         path: 'add-company',
         component: AddCompany
+    },
+    {
+        path: 'mis-login',
+        component: MisLogin
     },
 
 ];

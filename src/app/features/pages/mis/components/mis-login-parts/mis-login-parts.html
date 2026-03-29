@@ -1,0 +1,136 @@
+<div class="rounded-2xl border shadow-sm backdrop-blur" [class]="[bgColor(), borderColor()]">
+  <div class="flex items-start justify-between gap-4 border-b px-5 py-4" [class]="borderColor()">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full" [class]="titleBg()"></span>
+        <h3 class="text-lg font-semibold tracking-wide text-slate-900">{{ title() }}</h3>
+      </div>
+      <!--<p class="mt-1 text-xs text-slate-600">{{ items().length }} open listings</p>-->
+    </div>
+    <div
+      class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+      Your IP ...... Office IP ...... logged In As ....
+    </div>
+  </div>
+
+
+  <form [formGroup]="newCompanyForm" (ngSubmit)="submit()">
+        <div class="space-y-5 p-6">
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+                <label class="text-lg font-semibold text-slate-700">    
+                    User Name <span class="text-red-500">*</span>
+                </label>
+                <div class="flex flex-col gap-1">
+                    <app-input [type]="'text'" [control]="newCompanyForm.controls.USER_NAME" [isNumericOnly]="false" [isRequired]="true">
+                    </app-input>
+                    @if (newCompanyForm.controls.USER_NAME.invalid && (newCompanyForm.controls.USER_NAME.touched || newCompanyForm.controls.USER_NAME.dirty)) {
+                    <p class="text-sm text-red-500 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        User Name is required.
+                    </p>
+                    }
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+                <label class="text-lg font-semibold text-slate-700">Password <span class="text-red-500">*</span> </label>
+                <app-input [type]="'password'" [control]="newCompanyForm.controls.UPASS" [isNumericOnly]="false">
+                </app-input>
+
+                @if (newCompanyForm.controls.UPASS.invalid && (newCompanyForm.controls.UPASS.touched || newCompanyForm.controls.UPASS.dirty)) {
+                    <p class="text-sm text-red-500 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Password is required.
+                    </p>
+                    }
+
+
+
+            </div>
+
+
+
+
+
+        </div>
+
+        <!-- Footer buttons now inside the form -->
+        <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
+            <button type="button"
+                class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
+                Cancel
+            </button>
+            <button type="submit"
+                class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                Submit
+            </button>
+        </div>
+    </form>
+
+  
+
+  <!-- <div class="divide-y divide-slate-200">
+    @for (item of items(); track $index) {
+      @if (isExternal(item.url) || !item.url) {
+        <a [href]="item.url" class="group block">
+          <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
+            
+            <div class="min-w-0 flex-1">
+              <div class="flex justify-between">
+                <div class="text-base font-semibold text-slate-900 group-hover:underline">
+                  {{ item.title }}
+                </div>
+                @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
+                
+                }
+              </div>
+              <div class="mt-1 text-xs text-slate-500">View details tariq2</div>
+            </div>
+            <div class="text-slate-400 group-hover:text-slate-700">
+              
+            </div>
+          </div>
+        </a>
+      } @else {
+        <a [routerLink]="item.url" class="group block">
+          <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
+            
+            <div class="min-w-0 flex-1">
+              <div class="flex justify-between">
+                <div class="text-base font-semibold text-slate-900 group-hover:underline">
+                  {{ item.title }}
+                </div>
+                @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
+                <div class="flex gap-x-2 underline">
+                  <div>English--tariq</div>
+                  <div>বাংলা</div>
+                </div>
+                }
+              </div>
+              
+            </div>
+
+            <div class="text-slate-400 group-hover:text-slate-700">
+              
+            <label class="text-lg font-semibold text-slate-700"> <textarea>  {{ item.title }}</textarea> </label>
+                  
+
+
+            </div>
+
+
+          </div>
+        </a>
+      }
+    }
+  </div> -->
+</div>
