@@ -5,7 +5,7 @@
         <span class="h-2.5 w-2.5 rounded-full" [class]="titleBg()"></span>
         <h3 class="text-lg font-semibold tracking-wide text-slate-900">{{ title() }}</h3>
       </div>
-      <!--<p class="mt-1 text-xs text-slate-600">{{ items().length }} open listings</p>-->
+       
     </div>
     <div
       class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
@@ -78,59 +78,5 @@
 
   
 
-  <!-- <div class="divide-y divide-slate-200">
-    @for (item of items(); track $index) {
-      @if (isExternal(item.url) || !item.url) {
-        <a [href]="item.url" class="group block">
-          <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
-            
-            <div class="min-w-0 flex-1">
-              <div class="flex justify-between">
-                <div class="text-base font-semibold text-slate-900 group-hover:underline">
-                  {{ item.title }}
-                </div>
-                @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
-                
-                }
-              </div>
-              <div class="mt-1 text-xs text-slate-500">View details tariq2</div>
-            </div>
-            <div class="text-slate-400 group-hover:text-slate-700">
-              
-            </div>
-          </div>
-        </a>
-      } @else {
-        <a [routerLink]="item.url" class="group block">
-          <div class="flex items-start gap-4 p-4 transition" [class]="hoverBg()">
-            
-            <div class="min-w-0 flex-1">
-              <div class="flex justify-between">
-                <div class="text-base font-semibold text-slate-900 group-hover:underline">
-                  {{ item.title }}
-                </div>
-                @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
-                <div class="flex gap-x-2 underline">
-                  <div>English--tariq</div>
-                  <div>বাংলা</div>
-                </div>
-                }
-              </div>
-              
-            </div>
-
-            <div class="text-slate-400 group-hover:text-slate-700">
-              
-            <label class="text-lg font-semibold text-slate-700"> <textarea>  {{ item.title }}</textarea> </label>
-                  
-
-
-            </div>
-
-
-          </div>
-        </a>
-      }
-    }
-  </div> -->
+  
 </div>

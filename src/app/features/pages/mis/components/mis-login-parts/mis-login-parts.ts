@@ -59,22 +59,7 @@ export class HotJobsAndTender {
     }),
     UPASS: new FormControl<string | null>(null),
 
-    /*
-    //logoSourceLocal: new FormControl<string | null>(null),
-    //logoSource: new FormControl<string | null>(null),
 
-    logoH: new FormControl<number | null>(null, {
-      validators: [Validators.min(0), Validators.max(255)],
-    }),
-    logoW: new FormControl<number | null>(null, {
-      validators: [Validators.min(0), Validators.max(255)],
-    }),
-
-    logoSize: new FormControl<number | null>(null, {
-      validators: [Validators.min(0), Validators.max(32767)],
-    }),
-
-    */
 
 
   });
@@ -92,11 +77,7 @@ export class HotJobsAndTender {
 
     const payload: CreateCompany = {
       USER_NAME: formValue.USER_NAME || '',
-      //LogoSource: formValue.logoSource || '',
-      //LogoH: formValue.logoH || 0,
-      //LogoW: formValue.logoW || 0,
-      //LogoSize: formValue.logoSize || 0,
-      //LogoSourceLocal: formValue.logoSourceLocal || '',
+
       UPASS: formValue.UPASS || '',
     };
 
