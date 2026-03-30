@@ -39,8 +39,6 @@ export class UploadFile {
     CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName,
   }));
 
-
-
   onImageResponse(res: UploadImgApiResponse): void {
     console.log('img ', res)
     this.imageResponse.set(res);

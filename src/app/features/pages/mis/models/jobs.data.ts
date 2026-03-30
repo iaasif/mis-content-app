@@ -99,3 +99,14 @@ export interface CompanySuggestion {
   id: number;
   companyName: string;
 }
+
+export interface HotJob {
+  id: number
+  companyName: string
+  jobTitles: string
+  serialNo: number
+  premiumJob: number
+  postedOn: string
+  startDate: string
+  endDate: string
+}
