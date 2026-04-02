@@ -1,12 +1,5 @@
 import { Routes } from '@angular/router';
-
-
-
-
-
-
 import { checkRefGuard } from './features/pages/mis/guards/check-ref-guard';
-
 
 export const routes: Routes = [
     {
@@ -38,5 +31,4 @@ export const routes: Routes = [
         path: 'delete',
         loadComponent: () => import('./features/pages/mis/components/delete-company/delete-company').then(m => m.DeleteCompany)
     },
-
 ];
