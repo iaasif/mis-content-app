@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
-import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
+
 import { MisApi } from '../../services/mis-api';
 import { CreateCompany } from '../../models/jobs.data';
 import { HotToastService } from '@ngxpert/hot-toast';
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-company',
-  imports: [ReactiveFormsModule, InputComponent, FileUploadComponent],
+  imports: [ReactiveFormsModule, InputComponent],
   templateUrl: './add-company.html',
   styleUrl: './add-company.css',
 })
