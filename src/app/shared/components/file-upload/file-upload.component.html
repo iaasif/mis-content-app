@@ -1,115 +1,127 @@
-<div class="upload-form max-w-96 mx-auto rounded-lg shadow-lg !border border-gray-300/70">
-  <h4 class="text-lg">{{uploadTitle()}}</h4>
-  @if(!isPreview()) {
-  <label [attr.for]="fileInputId" (dragover)="handleDragOver($event)" (drop)="handleDrop($event)" class="p-4">
-    <i class="ph ph-upload"></i>
-    <img class="h-18 w-18" [src]="uploadIcon()" alt="">
-    <span class="text-lg font-semibold">
-      Drag & drop or
-      <span>browse</span>
-      your files
+<div class="upload-form max-w-2xl mx-auto rounded-xl shadow-lg border border-gray-200 bg-white overflow-hidden">
+
+  <!-- Header -->
+  <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+    @if (uploadIcon()) {
+    <img [src]="uploadIcon()" class="h-7 w-7 object-contain" alt="" />
+    }
+    <h4 class="text-base font-semibold text-gray-800">{{ uploadTitle() }}</h4>
+    @if (files().length > 0) {
+    <span class="ml-auto text-xs text-gray-400">{{ files().length }} file(s) queued</span>
+    }
+  </div>
+
+  <!-- Drop zone (always visible so more files can be added) -->
+  <label [attr.for]="fileInputId" (dragover)="handleDragOver($event)" (dragleave)="handleDragLeave()"
+    (drop)="handleDrop($event)"
+    class="flex flex-col items-center justify-center gap-2 px-6 py-8 cursor-pointer transition-colors duration-200"
+    [class.bg-blue-50]="isDragOver()" [class.border-blue-400]="isDragOver()" [class.bg-gray-50]="!isDragOver()"
+    style="border: 2px dashed #d1d5db; border-radius: 0.5rem; margin: 1rem;">
+    <i class="ph ph-upload-simple text-3xl text-gray-400"></i>
+    <span class="text-sm font-medium text-gray-600">
+      Drag & drop or <span class="text-blue-600 underline underline-offset-2">browse</span> files
+    </span>
+    <span class="text-xs text-gray-400">
+      Images · PDF · ZIP · HTML — max {{ maxFileSizeInBytes() / 1024 / 1024 | number:'1.0-0' }} MB each
     </span>
   </label>
+  <input [id]="fileInputId" type="file" name="file" multiple class="sr-only" (change)="onFileInputChange($event)" />
 
-  <input [id]="fileInputId" type="file" name="file" (change)="onFileSelected($event, null)"
-    [accept]="fileTypesToLimit()" />
+  <!-- File list -->
+  @if (files().length > 0) {
+  <div class="px-4 pb-4 flex flex-col gap-3">
 
-    @if (file && !isImage()) {
-    <div class="flex flex-col items-center gap-4 my-3">
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <i class="ph ph-file text-xl"></i>
-        <span class="font-medium">{{ fileName }}</span>
-        <span class="text-gray-400">({{ fileSize }})</span>
-      </div>
-    
-      <!-- @if (outputBoxVisible) {
-      <div class="result mb-2 w-full">
-        <div class="file-details">
-          <span class="file-name">{{ progress() }}</span>
-          <div class="progress-bar">
-            <div class="progress" [style.width]="progress()"></div>
-          </div>
-        </div>
-      </div>
-      } -->
-    
-      <div class="upload-result" [style.display]="uploadStatus() ? 'flex' : 'none'">
-        <span>{{ uploadResult }}</span>
-        @if (uploadStatus() === 200 || uploadStatus() === 201) {
-        <i class="icon-check text-xs bg-[#008a22] rounded-full text-white p-1"></i>
+    @for (mf of files(); track mf.id) {
+    <div class="rounded-lg border border-gray-100 bg-gray-50 p-3 flex gap-3 items-start">
+
+      <!-- Preview / icon -->
+      <div class="shrink-0 h-12 w-12 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center">
+        @if (mf.isImage && mf.previewUrl) {
+        <img [id]="'preview-' + mf.id" [src]="mf.previewUrl" class="h-full w-full object-cover" alt="" />
         } @else {
-        <i class="icon-times bg-[#E71313] rounded-full p-2.5 text-white text-xs"></i>
+        <i [class]="typeIcon(mf.detectedType) + ' text-2xl text-gray-400'"></i>
         }
       </div>
-    
-      <div class="flex items-center gap-4">
-        <button (click)="cancel()" type="button" style="height: 40px; margin-top: 20px;" class="btn-cancel cursor-pointer">
-          Cancel
-        </button>
-        <button (click)="upload()" type="button" style="height: 40px; margin-top: 20px;" class="btn-success cursor-pointer">
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-sm font-medium text-gray-800 truncate max-w-xs">{{ mf.name }}</span>
+          <span class="text-xs px-1.5 py-0.5 rounded-full font-medium" [class]="typeBadgeClass(mf.detectedType)">
+            {{ mf.detectedType }}
+          </span>
+          <span class="text-xs text-gray-400 ml-auto">{{ mf.size }}</span>
+        </div>
+
+        <!-- Progress bar -->
+        @if (mf.uploadStatus === 'uploading') {
+        <div class="mt-2 h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+          <div class="h-full rounded-full bg-blue-500 transition-all duration-300" [style.width]="mf.progress">
+          </div>
+        </div>
+        <span class="text-xs text-blue-500 mt-0.5 block">{{ mf.progress }}</span>
+        }
+
+        <!-- Success result URL -->
+        @if (mf.uploadStatus === 'done' && mf.resultUrl) {
+        <div class="mt-1.5 flex items-center gap-2">
+          <a [href]="mf.resultUrl" target="_blank" rel="noopener"
+            class="text-xs text-blue-600 truncate hover:underline max-w-xs" [title]="mf.resultUrl">
+            <i class="ph ph-check-circle text-green-500 text-sm"></i>
+            {{ mf.resultUrl }}
+          </a>
+        </div>
+        }
+
+        <!-- Error -->
+        @if (mf.uploadStatus === 'error') {
+        <p class="mt-1 text-xs text-red-500 flex items-center gap-1">
+          <i class="ph ph-warning-circle"></i>
+          {{ mf.errorMessage }}
+        </p>
+        }
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 shrink-0">
+        @if (mf.uploadStatus === 'idle') {
+        <button type="button" (click)="upload(mf.id)"
+          class="text-xs px-3 py-1.5 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors">
           Upload
         </button>
+        }
+        @if (mf.uploadStatus === 'done') {
+        <i class="ph ph-check-circle text-green-500 text-xl"></i>
+        }
+        @if (mf.uploadStatus === 'error') {
+        <button type="button" (click)="upload(mf.id)"
+          class="text-xs px-2 py-1.5 rounded-md bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors">
+          Retry
+        </button>
+        }
+        @if (mf.uploadStatus !== 'uploading') {
+        <button type="button" (click)="removeFile(mf.id)"
+          class="text-gray-400 hover:text-red-500 transition-colors p-1 rounded" title="Remove">
+          <i class="ph ph-x text-sm"></i>
+        </button>
+        }
       </div>
+
     </div>
     }
 
-  <div class="result mb-5" [style.display]="outputBoxVisible ? 'flex' : 'none'">
-    <div class="file-details ">
-      <span class="file-name">{{ fileName }}</span>
-      <span class="file-name">{{ progress() }}</span>
-      @if (uploadStatus() === 200 || uploadStatus() === 201 || uploadStatus() === undefined) {
-      <div class="progress-bar">
-        <div class="progress" [style.width]="progress()"></div>
-      </div>
-      <span class="file-size">{{ fileSize }}</span>
-      }
-    </div>
-
-    <div class="upload-result" [style.display]="uploadStatus() ? 'flex' : 'none'">
-      <span>{{ uploadResult }}</span>
-      @if (uploadStatus() === 200 || uploadStatus() === 201 || uploadStatus() === undefined) {
-      <i class="icon-check text-xs bg-[#008a22] rounded-full text-white p-1"></i>
-      } @else {
-      <i class="icon-times bg-[#E71313] rounded-full p-2.5 text-white text-xs"></i>
-      }
-    </div>
-  </div>
-
-  @if (notes) {
-  <div>
-    <p class="text-xs mt-2 text-gray-400 italic">{{notes}}</p>
-  </div>
-  }
-  }
-
-  @if (isPreview()) {
-  <div class="flex flex-col items-center gap-4 my-3 ">
-    <div class=" max-w-lg mx-auto object-cover">
-      <img #preview alt="" style="max-width: 150px; object-fit: cover;">
-    </div>
-
-    @if (outputBoxVisible) {
-    <div class="result mb-5 w-full">
-      <div class="file-details">
-        <span class="file-name">{{ fileName }}</span>
-        <span class="file-name">{{ progress() }}</span>
-        <div class="progress-bar">
-          <div class="progress" [style.width]="progress()"></div>
-        </div>
-        <span class="file-size">{{ fileSize }}</span>
-      </div>
+    <!-- Upload All CTA -->
+    @if (hasIdleFiles()) {
+    <div class="flex justify-end pt-1">
+      <button type="button" (click)="uploadAll()" [disabled]="anyUploading()"
+        class="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+        <i class="ph ph-upload-simple"></i>
+        Upload All Pending
+      </button>
     </div>
     }
 
-    <div class="flex items-center gap-4 ">
-      <button (click)="cancel()" type="button" style="height: 40px;margin-top: 20px;" class="btn-cancel cursor-pointer">
-        Cancel
-      </button>
-      <button (click)="upload()" type="button" style="height: 40px;margin-top: 20px;"
-        class="btn-success cursor-pointer">
-        Upload
-      </button>
-    </div>
   </div>
   }
+
 </div>

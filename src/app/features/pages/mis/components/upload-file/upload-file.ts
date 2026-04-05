@@ -1,74 +1,54 @@
-
 import { Component, computed, inject, signal } from '@angular/core';
-import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
-import { TextFiled } from "../../../../../shared/components/text-filed/text-filed";
+import { FileUploadComponent } from '../../../../../shared/components/file-upload/file-upload.component';
+import { TextFiled } from '../../../../../shared/components/text-filed/text-filed';
 import { UploadHtmlResponse, UploadImgApiResponse, Variant } from '../../models/jobs.data';
 import { StoreDataService } from '../../services/store-data-service';
-import { UploadFileType } from '../../utils/mis.data';
 
 @Component({
   selector: 'app-upload-file',
+  standalone: true,
   imports: [FileUploadComponent, TextFiled],
   templateUrl: './upload-file.html',
   styleUrl: './upload-file.css',
 })
 export class UploadFile {
-  readonly uploadFileType = UploadFileType;
 
-  storeDataService = inject(StoreDataService);
+  readonly storeDataService = inject(StoreDataService);
 
-  imageResponse = signal<UploadImgApiResponse | null>(null);
-  htmlResponse = signal<UploadHtmlResponse | null>(null);
-  linkList = signal<Variant[]>([]);
-  readonly companyName = computed(() => this.storeDataService.SELECTED_COMPANY());
-  showUploadZip = signal<UploadFileType>(this.uploadFileType.html);
-  showUploadZipInnerText = signal<string>('Upload ZIP/PDF');
+  // ── API URLs ─────────────────────────────────────────────────────────────────
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
   readonly fileUploadApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/upload-file';
 
+  // ── Guard ────────────────────────────────────────────────────────────────────
   readonly isCompanySelected = computed(() => this.storeDataService.SELECTED_COMPANY() != null);
 
-  readonly imagePayload = computed<Record<string, string | File | undefined>>(() => ({
-    id: 'idfromPayloadIMG',
+  // ── Shared payload (id + company resolved from store) ────────────────────────
+  readonly sharedPayload = computed<Record<string, string | number | undefined>>(() => ({
+    id: this.storeDataService.SELECTED_COMPANY()?.id ?? '',
     imageName: 'HotJobLogo',
     CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName,
   }));
 
-  readonly htmlPayload = computed<Record<string, string | File | undefined>>(() => ({
-    id: this.storeDataService.SELECTED_COMPANY()?.id?.toString(),
-    CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName,
-  }));
+  // ── Response handlers ────────────────────────────────────────────────────────
 
   onImageResponse(res: UploadImgApiResponse): void {
-    console.log('img ', res)
-    this.imageResponse.set(res);
     const variants = res.variants ?? [];
-    this.linkList.set(variants);
     this.storeDataService.storeImgData(variants);
   }
 
   onHtmlResponse(res: UploadHtmlResponse): void {
-    console.log('html ', res)
-    this.htmlResponse.set(res);
     this.storeDataService.storeHtmlData(res);
   }
-  // [attr.inert] = "companyName().length === 0 ? '' : null"
 
-  toggleUploadZip(): void {
-    console.log('toggleUploadZip', this.isCompanySelected());
-    this.showUploadZip.set(this.showUploadZip() === this.uploadFileType.html ? this.uploadFileType.zip : this.uploadFileType.html);
-    this.showUploadZipInnerText.set(this.showUploadZip() === this.uploadFileType.html ? 'Upload ZIP/PDF' : 'Upload HTML');
-  }
+  // ── Grouped result links ──────────────────────────────────────────────────────
 
-  onPdfResponse(res: UploadHtmlResponse): void {
-    console.log('pdf ', res);
-    this.storeDataService.storePdfData(res);
-  }
+  /** All image CDN links from store */
+  readonly imageLinks = computed(() => this.storeDataService.imgUrls());
 
-  onZipResponse(res: UploadHtmlResponse): void {
-    console.log('zip ', res);
-    this.storeDataService.storeZipData(res);
-  }
+  /** All file (html/pdf/zip) public URLs from store */
+  readonly fileLinks = computed(() => this.storeDataService.fileUploadUrls());
 
+  readonly hasAnyResults = computed(() =>
+    this.imageLinks().length > 0 || this.fileLinks().length > 0
+  );
 }
-
