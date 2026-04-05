@@ -1,13 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
-
 import { MisApi } from '../../services/mis-api';
 import { CreateCompany } from '../../models/jobs.data';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { StoreDataService } from '../../services/store-data-service';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-company',
