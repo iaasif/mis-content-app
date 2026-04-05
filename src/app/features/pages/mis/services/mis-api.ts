@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateCompany } from '../models/jobs.data';
+import { CreateCompany, HotJob } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
 
 @Injectable({
@@ -28,6 +28,10 @@ export class MisApi {
   deleteCompany(companyId: number): Observable<unknown> {
     const cpid = companyId.toString()
     return this.http.delete(`${this.url}/delete-company?ComId=${cpid}`);
+  }
+
+  getHotJobs(): Observable<HotJob[]> {
+    return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs`);
   }
 
 }
