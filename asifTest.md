@@ -24,4 +24,4 @@
 | Display Position | `[NOT REQUIRED]` |
 
 
-# tariq bhai , please update this filed 
+# tariq bhai , please update this field 
