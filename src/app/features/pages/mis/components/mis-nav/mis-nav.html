@@ -77,7 +77,7 @@
       @if (isFocused() && suggestions().length > 0) {
       <ul id="company-suggestions" role="listbox" aria-label="Company suggestions"
         class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto">
-        @for (data of suggestions(); track data.id) {
+        @for (data of suggestions(); track data.comId) {
         <li role="option" [attr.aria-selected]="data.companyName === companyName()?.companyName"
           class="px-3 py-2 cursor-pointer hover:bg-slate-100 text-sm"
           [class.bg-amber-50]="data.companyName === companyName()?.companyName"
