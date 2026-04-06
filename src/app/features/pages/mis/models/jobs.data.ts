@@ -98,6 +98,8 @@ export interface CreateCompany {
 export interface CompanySuggestion {
   id: number;
   companyName: string;
+  companyNameBng: string | null;
+  displayCompanyName: string | null;
 }
 
 export interface HotJob {
