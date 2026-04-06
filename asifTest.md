@@ -1,20 +1,27 @@
-Company Name
-Show Company Name as.
-কোম্পানির নাম
-Job Title(s)
-চাকরির শিরোনাম
-Hot Job URL
-Comments
-Please Provide Category Job IDs. Separate Ids With Comma	
-Display Company Logo ?
-Select Company Logo
-No. of Job(s
-Hotjobs Type
-Job Count	
-Premium Start Date
-Premium End Date
-Publish Date
-Job Deadline
-Posted By
-Source Person
-Display Postion
+# Job Data Field Specification
+
+| Field Name | Tag |
+|------------|-----|
+| Company Name | `[REQUIRED]` |
+| Show Company Name as | `[NOT REQUIRED]` |
+| কোম্পানির নাম | `[NOT REQUIRED]` |
+| Job Title(s) | `[REQUIRED]` |
+| চাকরির শিরোনাম | `[NOT GOING TO NEW SYSTEM]` |
+| Hot Job URL | `[NOT REQUIRED]` |
+| Comments | `[NOT REQUIRED]` |
+| Please Provide Category Job IDs. Separate Ids With Comma | `[REQUIRED]` |
+| Display Company Logo ? | `[NOT REQUIRED]` |
+| Select Company Logo | `[NOT REQUIRED]` |
+| No. of Job(s) | `[NOT REQUIRED]` |
+| Hotjobs Type | `[NOT REQUIRED]` |
+| Job Count | `[NOT REQUIRED]` |
+| Premium Start Date | `[NOT REQUIRED]` |
+| Premium End Date | `[NOT REQUIRED]` |
+| Publish Date | `[REQUIRED]` |
+| Job Deadline | `[REQUIRED]` |
+| Posted By | `[NOT REQUIRED]` |
+| Source Person | `[NOT REQUIRED]` |
+| Display Position | `[NOT REQUIRED]` |
+
+
+# tariq bhai , please update this filed 
