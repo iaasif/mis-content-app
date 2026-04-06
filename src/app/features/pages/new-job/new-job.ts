@@ -20,6 +20,19 @@ import { StoreDataService } from '../mis/services/store-data-service';
   styleUrl: './new-job.css'
 })
 export class NewJob {
+  private readonly router = inject(Router);
+  private readonly companyApi = inject(CompanyNameSuggestion);
+  private readonly destroyRef = inject(DestroyRef);
+  protected storeData = inject(StoreDataService);
+
+  companyName = this.storeData.SELECTED_COMPANY ?? null;
+  currentRoute = signal<string>(this.router.url);
+  query = signal('');
+  isFocused = signal(false);
+  suggestions = signal<CompanySuggestion[]>([]);
+
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
   position = signal(priorities);
@@ -33,6 +46,15 @@ export class NewJob {
     { label: 'No', value: false },
   ];
 
+  constructor() {
+    const sub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentRoute.set(event.urlAfterRedirects);
+      }
+    });
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
+  }
+  
   newHotJobForm = new FormGroup<HotJobFormControls>({
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -123,31 +145,6 @@ export class NewJob {
     console.log('=== FINAL PAYLOAD ===');
     console.log('Hot job payload:', payload);
     console.log('=== END SUBMISSION ===');
-  }
-
-
-
-
-  private readonly router = inject(Router);
-  private readonly companyApi = inject(CompanyNameSuggestion);
-  private readonly destroyRef = inject(DestroyRef);
-  protected storeData = inject(StoreDataService);
-
-  companyName = this.storeData.SELECTED_COMPANY ?? null;
-  currentRoute = signal<string>(this.router.url);
-  query = signal('');
-  isFocused = signal(false);
-  suggestions = signal<CompanySuggestion[]>([]);
-
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-  constructor() {
-    const sub = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.currentRoute.set(event.urlAfterRedirects);
-      }
-    });
-    this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
 
   onQueryChange(value: string): void {
