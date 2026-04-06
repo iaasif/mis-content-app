@@ -26,7 +26,10 @@
               <div class="flex justify-between">
                 <div class="text-base font-semibold text-slate-900 group-hover:underline">
                   {{ item.title }}
-                </div>
+                </div> 
+                @if(item.isnew){
+                <div class="text-xs text-red-500 rounded-2xl px-2 py-1">New</div>
+                }
                 @if(item.bnUrl.length > 1 || item.enUrl.length > 1){
                 <div class="flex gap-x-2 underline">
                   <div>English</div>
