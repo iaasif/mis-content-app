@@ -24,7 +24,7 @@ export class UploadFile {
 
   // ── Shared payload (id + company resolved from store) ────────────────────────
   readonly sharedPayload = computed<Record<string, string | number | undefined>>(() => ({
-    id: this.storeDataService.SELECTED_COMPANY()?.id ?? '',
+    id: this.storeDataService.SELECTED_COMPANY()?.comId ?? '',
     imageName: 'HotJobLogo',
     CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName,
   }));

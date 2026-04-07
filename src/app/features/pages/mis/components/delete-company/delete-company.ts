@@ -24,7 +24,7 @@ export class DeleteCompany {
     const loading = this.hottoast.loading('Deleting company...');
     this.showConfirm.set(false);
 
-    this.misApi.deleteCompany(this.companyData()!.id).subscribe({
+    this.misApi.deleteCompany(this.companyData()!.comId).subscribe({
       next: (res) => {
         console.log('delete', res);
         loading.close();
