@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
@@ -19,7 +19,7 @@ import { StoreDataService } from '../mis/services/store-data-service';
   templateUrl: './new-job.html',
   styleUrl: './new-job.css'
 })
-export class NewJob {
+export class NewJob implements OnInit {
   private readonly router = inject(Router);
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
@@ -37,16 +37,19 @@ export class NewJob {
   hotJobsType = signal(HotJobType);
   position = signal(priorities);
 
+  PublishedDate = signal<DatepickerValue>(null);
+  Deadline = signal<DatepickerValue>(null);
+
   FromDate = signal<DatepickerValue>(null);
   ToDate = signal<DatepickerValue>(null);
 
   // for Display Logo radio
-  displayLogoOptions = [
+  displayLogoOptions =signal([
     { label: 'Yes', value: true },
     { label: 'No', value: false },
-  ];
+  ]) ;
 
-  constructor() {
+  ngOnInit(): void {
     const sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute.set(event.urlAfterRedirects);
@@ -61,34 +64,50 @@ export class NewJob {
 
     companyNameBn: new FormControl('', { nonNullable: true }),
     jobTitle: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    jobTitleBn: new FormControl('', { nonNullable: true }),
 
-    hotJobsUrl: new FormControl('', { nonNullable: true }),
-    comments: new FormControl('', { nonNullable: true }),
+    hotJobsUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    comments: new FormControl<string | null>(null),
 
-    categoryJobIds: new FormControl('', { nonNullable: true }),
+    categoryJobIds: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     displayLogo: new FormControl(false, { nonNullable: true }),
     companyLogoId: new FormControl<null | string | number>(null),
 
-    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
+    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0),Validators.required] }),
 
     hotJobsType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     // you are using this as checkbox selected values (fine, but type should match your component)
-    postedOptions: new FormControl<Array<Array<any>>>([], { nonNullable: true }),
+    postedOptions: new FormControl<(string | boolean)[]>([], { nonNullable: true }),
 
-    displayPosition: new FormControl('', { nonNullable: true }),
+    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    publishedDate: new FormControl('', { nonNullable: true }),
-    jobDeadline: new FormControl('', { nonNullable: true }),
+    publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    premiumStartDate: new FormControl('', { nonNullable: true }),
-    premiumEndDate: new FormControl('', { nonNullable: true }),
+    premiumStartDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    premiumEndDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    postedBy: new FormControl('', { nonNullable: true }),
-    sourcePerson: new FormControl('', { nonNullable: true }),
+    postedBy: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
   });
+
+
+  onPublishedDateChange(val: DatepickerValue) {
+    console.log('From date changed:', val);
+    this.PublishedDate.set(val);
+    const isoDate = this.datepickerToIso(val);
+    console.log('Setting premiumStartDate to:', isoDate);
+    this.newHotJobForm.controls.publishedDate.setValue(isoDate);
+  }
+  
+  onJobDeadlineChange(val: DatepickerValue) {
+    console.log('To date changed:', val);
+    this.Deadline.set(val);
+    const isoDate = this.datepickerToIso(val);
+    console.log('Setting premiumEndDate to:', isoDate);
+    this.newHotJobForm.controls.jobDeadline.setValue(isoDate);
+  }
 
   onFromDateChange(val: DatepickerValue) {
     console.log('From date changed:', val);

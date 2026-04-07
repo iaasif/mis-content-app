@@ -11,21 +11,20 @@ import { SelectRadioData } from '../../models/models';
 export class CheckboxNew {
   readonly isRequired = input(false);
   readonly isDisabled = input(false);
-  control = model(new FormControl<string[]>([])); // Only string array
+  control = model(new FormControl<(string | boolean)[]>([])); // ✅ allow boolean too
   checkboxItems = input<SelectRadioData[]>([]);
   isHtmlLabel = input(false);
 
-  isChecked(value: string): boolean {
+  isChecked(value: string | boolean): boolean {
     return this.control()?.value?.includes(value) ?? false;
   }
 
-  onCheckboxChange(value: string, event: Event): void {
+  onCheckboxChange(value: string | boolean, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     const currentValues = this.control()?.value || [];
     const newValues = checked
       ? [...currentValues, value]
       : currentValues.filter(v => v !== value);
-    
     this.control()?.setValue(newValues);
   }
 

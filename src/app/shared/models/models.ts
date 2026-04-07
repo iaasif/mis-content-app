@@ -35,7 +35,12 @@ export interface SelectRadioData {
   id: number | string | boolean;
   name: string;
   label: string;
-  value: string; // Add this property
+  value: string | boolean; // Add this property
+}
+
+export interface RadioOption {
+  label: string;
+  value: boolean | string | number;
 }
 
 export interface Pagination {

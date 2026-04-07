@@ -37,15 +37,14 @@ export interface HotJobForm {
   showCompanyNameAs: string;
   companyNameBn: string;
   jobTitle: string;
-  jobTitleBn: string;
   hotJobsUrl: string;
-  comments: string;
+  comments: string | null;
   categoryJobIds: string;
   displayLogo: boolean;
-  companyLogoId: null | string | number; // or just `any` if you're not sure
+  companyLogoId: null | string | number;
   numberOfJobs: number;
   hotJobsType: string;
-  postedOptions: Array<Array<any>>; // or more specific type if you know the inner array structure
+  postedOptions: (string | boolean)[];
   displayPosition: string;
   publishedDate: string;
   jobDeadline: string;
@@ -59,15 +58,14 @@ export type HotJobFormControls = {
   showCompanyNameAs: FormControl<string>;
   companyNameBn: FormControl<string>;
   jobTitle: FormControl<string>;
-  jobTitleBn: FormControl<string>;
   hotJobsUrl: FormControl<string>;
-  comments: FormControl<string>;
+  comments: FormControl<string | null>;
   categoryJobIds: FormControl<string>;
   displayLogo: FormControl<boolean>;
   companyLogoId: FormControl<null | string | number>;
   numberOfJobs: FormControl<number>;
   hotJobsType: FormControl<string>;
-  postedOptions: FormControl<Array<Array<any>>>;
+  postedOptions: FormControl<(string | boolean)[]>;
   displayPosition: FormControl<string>;
   publishedDate: FormControl<string>;
   jobDeadline: FormControl<string>;
