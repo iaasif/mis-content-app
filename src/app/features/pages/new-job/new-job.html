@@ -216,7 +216,7 @@
        <!-- Display Position -->
        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Display Position</label>
-        <app-dropdown-component class="w-2xl" [options]="position()">
+        <app-dropdown-component class="w-2xl" [options]="position()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
         </app-dropdown-component>
       </div>
       <!-- Posted By -->
