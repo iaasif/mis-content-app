@@ -96,7 +96,7 @@ export interface CreateCompany {
 }
 
 export interface CompanySuggestion {
-  id: number;
+  comId: number;
   companyName: string;
   companyNameBng: string | null;
   displayCompanyName: string | null;
