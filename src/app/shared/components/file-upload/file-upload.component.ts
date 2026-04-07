@@ -17,7 +17,7 @@ let fileInputIdCounter = 0;
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-export type DetectedFileType = 'image' | 'pdf' | 'zip' | 'html' | 'unknown';
+export type DetectedFileType = 'image' | 'pdf' | 'zip' | 'html' | 'unknown' | 'doc' | 'docx' | 'xlsx' | 'xls';
 
 export interface ManagedFile {
   readonly id: number;
@@ -41,6 +41,9 @@ const IMAGE_EXTS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp']);
 const PDF_EXTS = new Set(['pdf']);
 const ZIP_EXTS = new Set(['zip', 'rar', '7z']);
 const HTML_EXTS = new Set(['html', 'htm']);
+const DOC_EXTS = new Set(['doc', 'docx']);
+const XLSX_EXTS = new Set(['xlsx']);
+const XLS_EXTS = new Set(['xls']);
 
 function detectType(file: File): DetectedFileType {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
@@ -48,6 +51,9 @@ function detectType(file: File): DetectedFileType {
   if (PDF_EXTS.has(ext)) return 'pdf';
   if (ZIP_EXTS.has(ext)) return 'zip';
   if (HTML_EXTS.has(ext)) return 'html';
+  if (DOC_EXTS.has(ext)) return 'doc';
+  if (XLSX_EXTS.has(ext)) return 'xlsx';
+  if (XLS_EXTS.has(ext)) return 'xls';
   return 'unknown';
 }
 
@@ -298,6 +304,10 @@ export class FileUploadComponent implements AfterViewChecked {
       zip: 'ph ph-file-zip',
       html: 'ph ph-file-html',
       unknown: 'ph ph-file',
+      doc: 'ph ph-file-doc',
+      docx: 'ph ph-file-docx',
+      xlsx: 'ph ph-file-xlsx',
+      xls: 'ph ph-file-xls',
     };
     return map[type];
   }
@@ -309,6 +319,10 @@ export class FileUploadComponent implements AfterViewChecked {
       zip: 'bg-yellow-100 text-yellow-700',
       html: 'bg-green-100 text-green-700',
       unknown: 'bg-gray-100 text-gray-700',
+      doc: 'bg-purple-100 text-purple-700',
+      docx: 'bg-purple-100 text-purple-700',
+      xlsx: 'bg-purple-100 text-purple-700',
+      xls: 'bg-purple-100 text-purple-700',
     };
     return map[type];
   }
