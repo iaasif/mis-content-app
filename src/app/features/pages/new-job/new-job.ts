@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { tap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
 import { StoreDataService } from '../mis/services/store-data-service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-new-job',
@@ -25,11 +26,12 @@ export class NewJob implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
 
-  companyName = this.storeData.SELECTED_COMPANY ?? null;
+  wantToAddHotJob = signal(false); 
+  companyData = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
-  suggestions = signal<CompanySuggestion[]>([]);
+  companyNameSuggestions = signal<CompanySuggestion[]>([]);
 
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -43,8 +45,7 @@ export class NewJob implements OnInit {
   FromDate = signal<DatepickerValue>(null);
   ToDate = signal<DatepickerValue>(null);
 
-  // for Display Logo radio
-  displayLogoOptions =signal([
+  displayLogoOptions = signal([
     { label: 'Yes', value: true },
     { label: 'No', value: false },
   ]) ;
@@ -62,7 +63,7 @@ export class NewJob implements OnInit {
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
-    companyNameBn: new FormControl('', { nonNullable: true }),
+    companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
     jobTitle: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     hotJobsUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -75,9 +76,8 @@ export class NewJob implements OnInit {
 
     numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0),Validators.required] }),
 
-    hotJobsType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    hotJobsType: new FormControl('Normal', { nonNullable: true, validators: [Validators.required] }),
 
-    // you are using this as checkbox selected values (fine, but type should match your component)
     postedOptions: new FormControl<(string | boolean)[]>([], { nonNullable: true }),
 
     displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
@@ -92,28 +92,22 @@ export class NewJob implements OnInit {
     sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
   });
 
-
+  
   onPublishedDateChange(val: DatepickerValue) {
-    console.log('From date changed:', val);
     this.PublishedDate.set(val);
     const isoDate = this.datepickerToIso(val);
-    console.log('Setting premiumStartDate to:', isoDate);
     this.newHotJobForm.controls.publishedDate.setValue(isoDate);
   }
   
   onJobDeadlineChange(val: DatepickerValue) {
-    console.log('To date changed:', val);
     this.Deadline.set(val);
     const isoDate = this.datepickerToIso(val);
-    console.log('Setting premiumEndDate to:', isoDate);
     this.newHotJobForm.controls.jobDeadline.setValue(isoDate);
   }
 
   onFromDateChange(val: DatepickerValue) {
-    console.log('From date changed:', val);
     this.FromDate.set(val);
     const isoDate = this.datepickerToIso(val);
-    console.log('Setting premiumStartDate to:', isoDate);
     this.newHotJobForm.controls.premiumStartDate.setValue(isoDate);
   }
 
@@ -126,11 +120,9 @@ export class NewJob implements OnInit {
   }
 
   private datepickerToIso(val: DatepickerValue): string {
-    // ngxsmk DatepickerValue is often Date | null (or sometimes {start,end})
     if (!val) return '';
     if (val instanceof Date) return val.toISOString();
-
-    // If your picker returns range objects sometimes:
+    
     // @ts-ignore - depends on your lib's actual type
     if (val?.start instanceof Date) return val.start.toISOString();
 
@@ -138,15 +130,12 @@ export class NewJob implements OnInit {
   }
 
   submit(): void {
-    console.log('=== FORM SUBMISSION TRIGGERED ===');
-    console.log('Form valid:', this.newHotJobForm.valid);
-    console.log('Form status:', this.newHotJobForm.status);
+
 
     // Log all form values
     console.log('Form value:', this.newHotJobForm.value);
     console.log('Form raw value:', this.newHotJobForm.getRawValue());
 
-    // Log validation errors if any
     if (this.newHotJobForm.invalid) {
       console.log('=== FORM VALIDATION ERRORS ===');
       Object.keys(this.newHotJobForm.controls).forEach(key => {
@@ -159,20 +148,22 @@ export class NewJob implements OnInit {
       this.newHotJobForm.markAllAsTouched();
       return;
     }
+    else{
+      
+    }
 
     const payload: HotJobForm = this.newHotJobForm.getRawValue();
-    console.log('=== FINAL PAYLOAD ===');
     console.log('Hot job payload:', payload);
-    console.log('=== END SUBMISSION ===');
   }
 
   onQueryChange(value: string): void {
+    this.wantToAddHotJob.set(false);
     this.query.set(value);
 
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
 
     if (!value.trim()) {
-      this.suggestions.set([]);
+      this.companyNameSuggestions.set([]);
       return;
     }
 
@@ -182,8 +173,8 @@ export class NewJob implements OnInit {
           console.log('API call for suggestions with query:', res);
         })
       ).subscribe({
-        next: list => this.suggestions.set(list.slice(0, 8)),
-        error: () => this.suggestions.set([]),
+        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
+        error: () => this.companyNameSuggestions.set([]),
       });
     }, 150);
   }
@@ -193,10 +184,10 @@ export class NewJob implements OnInit {
     this.storeData.SELECTED_COMPANY.set(data);
     this.query.set(data.companyName);
     this.isFocused.set(false);
-    this.suggestions.set([]);
+    this.companyNameSuggestions.set([]);
     console.log("data", data)
     console.log("selected company", this.storeData.SELECTED_COMPANY())
-    console.log("this.suggestions", this.suggestions())
+    console.log("this.suggestions", this.companyNameSuggestions())
 
   }
 
@@ -204,7 +195,9 @@ export class NewJob implements OnInit {
     localStorage.removeItem('SELECTED_COMPANY');
     this.storeData.SELECTED_COMPANY.set(null);
     this.query.set('');
-    this.suggestions.set([]);
+    this.companyNameSuggestions.set([]);
+    
+    this.wantToAddHotJob.set(false);
   }
 
   onFocus(): void {
@@ -212,8 +205,8 @@ export class NewJob implements OnInit {
     const q = this.query().trim();
     if (q) {
       this.companyApi.companyNamesSuggestions(q).subscribe({
-        next: list => this.suggestions.set(list.slice(0, 8)),
-        error: () => this.suggestions.set([]),
+        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
+        error: () => this.companyNameSuggestions.set([]),
       });
     }
   }
@@ -221,4 +214,15 @@ export class NewJob implements OnInit {
   onBlur(): void {
     setTimeout(() => this.isFocused.set(false), 120);
   }
+  
+  addHotJob():void{
+    this.wantToAddHotJob.set(true);
+
+    this.newHotJobForm.patchValue({
+      companyName :  this.companyData()?.companyName,
+      showCompanyNameAs : this.companyData()?.displayCompanyName,
+      companyNameBn: this.companyData()?.companyNameBng,
+    })
+  }
+
 }

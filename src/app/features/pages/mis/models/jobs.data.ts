@@ -34,8 +34,8 @@ export interface UploadHtmlResponse {
 }
 export interface HotJobForm {
   companyName: string;
-  showCompanyNameAs: string;
-  companyNameBn: string;
+  showCompanyNameAs: string | null;
+  companyNameBn: string | null;
   jobTitle: string;
   hotJobsUrl: string;
   comments: string | null;
@@ -55,8 +55,8 @@ export interface HotJobForm {
 }
 export type HotJobFormControls = {
   companyName: FormControl<string>;
-  showCompanyNameAs: FormControl<string>;
-  companyNameBn: FormControl<string>;
+  showCompanyNameAs: FormControl<string | null>;
+  companyNameBn: FormControl<string  | null>;
   jobTitle: FormControl<string>;
   hotJobsUrl: FormControl<string>;
   comments: FormControl<string | null>;
@@ -109,4 +109,14 @@ export interface HotJob {
   postedOn: string
   startDate: string
   endDate: string
+}
+export interface SourcePerson {
+  userId: number;
+  fullName: string;
+  depSerial: number;
+}
+
+export interface postedBy {
+  userId : number;
+  fullName: string
 }

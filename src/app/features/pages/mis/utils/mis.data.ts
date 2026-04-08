@@ -28,7 +28,7 @@ export const Hotjobs = [
   {
     id: 4,
     title: 'Generate Hot Job HTML (4 Column)   ',
-    url: '',
+    url: 'hotJobPreview',
     enUrl: 'https://mis.bdjobs.com/mis/hotjobmanager/HJTemplate4col.asp?s=database&id=',
     bnUrl: 'https://mis.bdjobs.com/mis/hotjobmanager/HJTemplateBN4col.asp?s=database&id=',
     isnew: false,
