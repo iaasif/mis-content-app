@@ -135,35 +135,50 @@ export class NewJob implements OnInit {
   }
 
   submit(): void {
-
-    console.log('ok')
-  
-    console.log('Form value:', this.newHotJobForm.value);
-    console.log('Form raw value:', this.newHotJobForm.getRawValue());
-    const payload: HotJobForm = this.newHotJobForm.getRawValue();
-    console.log('Hot job payload:', payload);
-
     if (this.newHotJobForm.invalid) {
-      console.log('=== FORM VALIDATION ERRORS ===');
-      Object.keys(this.newHotJobForm.controls).forEach(key => {
-        const control = this.newHotJobForm.get(key);
-        if (control && control.invalid) {
-          console.log(`Field "${key}" errors:`, control.errors);
-        }
-      });
-      console.log('Marking all fields as touched for validation display');
       this.newHotJobForm.markAllAsTouched();
       return;
     }
-    else{
-      this.misApi.addHotJob(payload).pipe(
-        tap((d)=>{
-          console.log('dd-->',d)
-        })
-      ).subscribe()
-    }
-
-    
+  
+    const raw = this.newHotJobForm.getRawValue();
+    const opts: (string | boolean)[] = raw.postedOptions ?? [];
+  
+    const payload = {
+      companyId:               raw.companyId,
+      companyName:             raw.companyName,
+      alternativeCompanyName:  raw.showCompanyNameAs,       // renamed
+      alternativeCompanyNameBN: raw.companyNameBn,          // renamed
+      jobTitles:               raw.jobTitle,                // renamed (plural)
+      jobTitlesBN:             '',                          // add a form control for this
+      jobUrl:                  raw.hotJobsUrl,              // renamed
+      comments:                raw.comments ?? '',
+      categoryJobIds:          raw.categoryJobIds,
+      displayLogo:             raw.displayLogo,
+      logoSource:              String(raw.companyLogoId ?? ''), // renamed + string
+      totalJobs:               raw.numberOfJobs,            // renamed
+      whiteCollarCount:        0,                           // add form controls if needed
+      blueCollarCount:         0,
+      complementaryCount:      0,
+      hotjobCMCount:           0,
+      isPremium:               raw.hotJobsType === 'Premium',  // transformed
+      isBlueCollar:            opts.includes('BlueCollar'),    // extracted from array
+      isComplementary:         opts.includes('Complementary'),
+      isHotjobCM:              opts.includes('HotjobCM'),
+      startOn:                 raw.premiumStartDate || null,   // renamed
+      endOn:                   raw.premiumEndDate || null,     // renamed
+      publishedOn:             raw.publishedDate,              // renamed
+      deadline:                raw.jobDeadline,               // renamed
+      postedBy:                Number(raw.postedBy),           // ensure number
+      referredBy:              Number(raw.sourcePerson),       // renamed
+      serialNo:                Number(raw.displayPosition),    // renamed
+      hotJobId:                0,
+      pageMode:                'Add',
+    };
+    console.log("payloiad",payload)
+  
+    // this.misApi.addHotJob(payload).pipe(
+    //   tap(d => console.log('response -->', d))
+    // ).subscribe();
   }
 
   onQueryChange(value: string): void {
