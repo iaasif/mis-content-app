@@ -1,11 +1,10 @@
 import { Component, signal } from '@angular/core';
-import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
 import { priorities } from '../mis/utils/mis.data';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
 
 @Component({
   selector: 'app-edit-job',
-  imports: [DropdownComponent,NgxsmkDatepickerComponent],
+  imports: [NgxsmkDatepickerComponent],
   templateUrl: './edit-job.html',
   styleUrl: './edit-job.css',
 })

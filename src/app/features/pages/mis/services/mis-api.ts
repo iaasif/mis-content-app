@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateCompany, HotJob, postedBy, SourcePerson } from '../models/jobs.data';
+import { CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
 
 @Injectable({
@@ -43,9 +43,8 @@ export class MisApi {
   }
 
   //work later
-  addHotJob(payload: any): Observable<any>{
-
-    return this.http.post<any>(`${environment.apiUrl} hotjobs/add-hotjob`,payload)
+  addHotJob(payload: any): Observable<HotJobCreationResponse>{
+    return this.http.post<HotJobCreationResponse>(`${environment.apiUrl} hotjobs/add-hotjob`,payload)
   }
 
   getAllHotJobs():Observable<HotJob[]>{

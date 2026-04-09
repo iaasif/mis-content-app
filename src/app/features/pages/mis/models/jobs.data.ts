@@ -33,6 +33,7 @@ export interface UploadHtmlResponse {
   publicUrl: string
 }
 export interface HotJobForm {
+  companyId: number | string ;
   companyName: string;
   showCompanyNameAs: string | null;
   companyNameBn: string | null;
@@ -54,6 +55,7 @@ export interface HotJobForm {
   sourcePerson: string;
 }
 export type HotJobFormControls = {
+  companyId: FormControl<number | string>;
   companyName: FormControl<string>;
   showCompanyNameAs: FormControl<string | null>;
   companyNameBn: FormControl<string  | null>;
@@ -119,4 +121,9 @@ export interface SourcePerson {
 export interface postedBy {
   userId : number;
   fullName: string
+}
+
+export interface HotJobCreationResponse {
+  id: number;
+  message: string;
 }

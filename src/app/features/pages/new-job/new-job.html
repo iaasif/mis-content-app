@@ -195,34 +195,36 @@
       <!-- Published Date -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Published Date</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
+        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PublishedDate()"
           (valueChange)="onPublishedDateChange($event)">
         </ngxsmk-datepicker>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Job Deadline</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
+        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="Deadline()"
           (valueChange)="onJobDeadlineChange($event)">
         </ngxsmk-datepicker>
-      </div>
-
-
-      <!-- Premium Start Date -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
-          (valueChange)="onFromDateChange($event)">
-        </ngxsmk-datepicker>
-      </div>
-
-      <!-- Premium End Date -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
-          (valueChange)="onToDateChange($event)">
-        </ngxsmk-datepicker>
-      </div>
+        </div>
+        
+        
+        @if(isPremium()){
+        <!-- Premium Start Date -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+          <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
+          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
+            (valueChange)="onFromDateChange($event)">
+          </ngxsmk-datepicker>
+        </div>
+        
+        <!-- Premium End Date -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+          <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
+          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
+            (valueChange)="onToDateChange($event)">
+          </ngxsmk-datepicker>
+        </div>
+        }
 
       <div class="border-t border-slate-200 pt-5"></div>
 
@@ -235,8 +237,10 @@
       <!-- Posted By -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Posted By</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
-        </app-input>
+        <!-- <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
+        </app-input> -->
+        <app-dropdown-component class="w-2xl" [options]="postedBy()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
+        </app-dropdown-component>
       </div>
 
       <!-- Source Person -->

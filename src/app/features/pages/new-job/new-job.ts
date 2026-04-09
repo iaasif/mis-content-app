@@ -1,18 +1,20 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
-import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
 import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
 import { StoreDataService } from '../mis/services/store-data-service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MisApi } from '../mis/services/mis-api';
+import { DropdownOption } from '../../../shared/models/models';
 
 @Component({
   selector: 'app-new-job',
@@ -25,6 +27,7 @@ export class NewJob implements OnInit {
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
+  protected misApi = inject(MisApi);
 
   wantToAddHotJob = signal(false); 
   companyData = this.storeData.SELECTED_COMPANY ?? null;
@@ -60,6 +63,7 @@ export class NewJob implements OnInit {
   }
   
   newHotJobForm = new FormGroup<HotJobFormControls>({
+    companyId : new FormControl(0, {nonNullable: true,validators:[Validators.required]}),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
@@ -85,8 +89,8 @@ export class NewJob implements OnInit {
     publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
     jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    premiumStartDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
-    premiumEndDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    premiumStartDate: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
+    premiumEndDate: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
 
     postedBy: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
     sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
@@ -97,6 +101,7 @@ export class NewJob implements OnInit {
     this.PublishedDate.set(val);
     const isoDate = this.datepickerToIso(val);
     this.newHotJobForm.controls.publishedDate.setValue(isoDate);
+    console.log(isoDate)
   }
   
   onJobDeadlineChange(val: DatepickerValue) {
@@ -131,10 +136,12 @@ export class NewJob implements OnInit {
 
   submit(): void {
 
-
-    // Log all form values
+    console.log('ok')
+  
     console.log('Form value:', this.newHotJobForm.value);
     console.log('Form raw value:', this.newHotJobForm.getRawValue());
+    const payload: HotJobForm = this.newHotJobForm.getRawValue();
+    console.log('Hot job payload:', payload);
 
     if (this.newHotJobForm.invalid) {
       console.log('=== FORM VALIDATION ERRORS ===');
@@ -149,11 +156,14 @@ export class NewJob implements OnInit {
       return;
     }
     else{
-      
+      this.misApi.addHotJob(payload).pipe(
+        tap((d)=>{
+          console.log('dd-->',d)
+        })
+      ).subscribe()
     }
 
-    const payload: HotJobForm = this.newHotJobForm.getRawValue();
-    console.log('Hot job payload:', payload);
+    
   }
 
   onQueryChange(value: string): void {
@@ -217,12 +227,44 @@ export class NewJob implements OnInit {
   
   addHotJob():void{
     this.wantToAddHotJob.set(true);
-
     this.newHotJobForm.patchValue({
+      companyId: this.companyData()?.comId,
       companyName :  this.companyData()?.companyName,
       showCompanyNameAs : this.companyData()?.displayCompanyName,
       companyNameBn: this.companyData()?.companyNameBng,
     })
   }
+
+  private premiumValidator(group: AbstractControl) {
+    const type = group.get('hotJobsType')?.value;
+    const start = group.get('premiumStartDate')?.value;
+    const end = group.get('premiumEndDate')?.value;
+  
+    if (type === 'Premium' && (!start || !end)) {
+      return { premiumRequired: true };
+    }
+  
+    return null;
+  }
+  isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
+  hotJobsTypeSignal = toSignal(
+    this.newHotJobForm.get('hotJobsType')!.valueChanges,
+    { initialValue: this.newHotJobForm.get('hotJobsType')!.value }
+  );
+
+  postedBy = toSignal(
+    this.misApi.getPostedBy(deptId).pipe(
+      map((res) =>
+        res.map((item: any): DropdownOption => ({
+          label: item.fullName,   // label = fullname
+          value: item.userId      // value = userid
+        }))
+      ),
+      tap((mapped) => {
+        console.log("posted by", mapped);
+      })
+    ),
+    { initialValue: [] }
+  );
 
 }

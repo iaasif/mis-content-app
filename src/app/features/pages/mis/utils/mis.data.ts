@@ -351,3 +351,5 @@ export const RearrangeData = [
     }
   }
 ];
+
+export const deptId = 3; 
