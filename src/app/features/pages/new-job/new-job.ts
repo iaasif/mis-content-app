@@ -261,8 +261,20 @@ export class NewJob implements OnInit {
         }))
       ),
       tap((mapped) => {
-        console.log("posted by", mapped);
+        // console.log("posted by", mapped);
       })
+    ),
+    { initialValue: [] }
+  );
+  
+  sorcePerson = toSignal(
+    this.misApi.getSourcePersons().pipe(
+      map((res) =>
+        res.map((person: any): DropdownOption => ({
+            label: person.fullName,
+            value: person.depSerial
+          }))
+      )
     ),
     { initialValue: [] }
   );
