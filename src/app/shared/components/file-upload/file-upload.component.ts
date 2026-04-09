@@ -1,293 +1,331 @@
-import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, NgZone, OnChanges, Output, signal, SimpleChanges, viewChild, input, output } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import {
+  HttpClient, HttpEventType, HttpResponse
+} from '@angular/common/http';
+import {
+  AfterViewChecked, Component, ElementRef,
+  inject, NgZone, output, signal, viewChild, input, computed, linkedSignal
+} from '@angular/core';
 import { filter, map, tap } from 'rxjs/operators';
-import { UploadHtmlResponse, UploadImgApiResponse } from '../../../features/pages/mis/models/jobs.data';
-import { COMPANY_NAME, UploadFileType } from '../../../features/pages/mis/utils/mis.data';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { StoreDataService } from '../../../features/pages/mis/services/store-data-service';
+import { UploadHtmlResponse, UploadImgApiResponse } from '../../../features/pages/mis/models/jobs.data';
+import { DecimalPipe } from '@angular/common';
 
-export const DefaultMaxSize = 9000000;
+export const DefaultMaxSize = 9_000_000;
 
 let fileInputIdCounter = 0;
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+
+export type DetectedFileType = 'image' | 'pdf' | 'zip' | 'html' | 'unknown' | 'doc' | 'docx' | 'xlsx' | 'xls';
+
+export interface ManagedFile {
+  readonly id: number;
+  readonly file: File;
+  readonly name: string;
+  readonly size: string;           // formatted e.g. "1.23 MB"
+  readonly detectedType: DetectedFileType;
+  readonly isImage: boolean;
+  previewUrl: string | null;       // object-URL, revoked after upload/cancel
+  progress: string;                // "0%" … "100%"
+  uploadStatus: 'idle' | 'uploading' | 'done' | 'error';
+  errorMessage: string;
+  resultUrl: string;               // returned public URL after success
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+let managedFileId = 0;
+
+const IMAGE_EXTS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp']);
+const PDF_EXTS = new Set(['pdf']);
+const ZIP_EXTS = new Set(['zip', 'rar', '7z']);
+const HTML_EXTS = new Set(['html', 'htm']);
+const DOC_EXTS = new Set(['doc', 'docx']);
+const XLSX_EXTS = new Set(['xlsx']);
+const XLS_EXTS = new Set(['xls']);
+
+function detectType(file: File): DetectedFileType {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  if (IMAGE_EXTS.has(ext)) return 'image';
+  if (PDF_EXTS.has(ext)) return 'pdf';
+  if (ZIP_EXTS.has(ext)) return 'zip';
+  if (HTML_EXTS.has(ext)) return 'html';
+  if (DOC_EXTS.has(ext)) return 'doc';
+  if (XLSX_EXTS.has(ext)) return 'xlsx';
+  if (XLS_EXTS.has(ext)) return 'xls';
+  return 'unknown';
+}
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+// ── Component ──────────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [],
+  imports: [DecimalPipe],
   templateUrl: './file-upload.component.html',
-  styleUrl: './file-upload.component.css'
+  styleUrl: './file-upload.component.css',
 })
-export class FileUploadComponent implements AfterViewChecked, OnChanges {
-  private hotToast = inject(HotToastService);
+export class FileUploadComponent implements AfterViewChecked {
 
-  /** Unique id for this instance so multiple file-uploads don't share the same input (label for / input id). */
+  // ── DI ──────────────────────────────────────────────────────────────────────
+  private readonly http = inject(HttpClient);
+  private readonly ngZone = inject(NgZone);
+  private readonly hotToast = inject(HotToastService);
+  private readonly storeDataService = inject(StoreDataService);
+
+  // ── Unique DOM id ────────────────────────────────────────────────────────────
   readonly fileInputId = `app-file-upload-input-${++fileInputIdCounter}`;
 
-  uploadFileType = input<UploadFileType>()
+  // ── Inputs ───────────────────────────────────────────────────────────────────
+  readonly maxFileSizeInBytes = input<number>(DefaultMaxSize);
+  readonly maxWidth = input<number>(20_000);
+  readonly maxHeight = input<number>(20_000);
+  readonly uploadTitle = input<string>('Upload Files');
+  readonly uploadIcon = input<string>('');
+  readonly imgUrl = input.required<string>();   // endpoint for images
+  readonly fileUploadUrl = input.required<string>();   // endpoint for pdf/zip/html
+  readonly payload = input.required<Record<string, string | number | undefined>>();
 
-  outputBoxVisible: boolean = false;
-  progress = signal<string>('0%');
-  uploadResult = '';
-  fileName = '';
-  fileSize = '';
-  uploadStatus = signal<number | undefined>(undefined);
-  isPreview = signal<boolean>(false);
-  img = viewChild<ElementRef<HTMLImageElement>>('preview');
-  file!: File;
-  allowedMimeTypes = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-excel'
-  ];
-  isImage = signal<boolean>(true);
+  // ── Outputs ──────────────────────────────────────────────────────────────────
+  readonly response = output<UploadImgApiResponse>();
+  readonly responseHtmlUp = output<UploadHtmlResponse>();
+  readonly uploadInProgress = output<boolean>();
 
-  readonly fileTypesToLimit = input<string>('');
-  readonly maxFileSizeInKb = input(DefaultMaxSize / 1024);
-  readonly maxWidth = input.required<number>();
-  readonly maxHeight = input.required<number>();
-  readonly payload = input.required<Record<string, number | string | File | undefined>>();
-  readonly uploadTitle = input<string>('Image Upload');
-  readonly uploadIcon = input<string>();
-  @Output() onSuccess = new EventEmitter<string>();
-  @Output() onFileSelect = new EventEmitter<File>();
-  @Output() uploadInProgress = new EventEmitter<boolean>();
-  private toastr = inject(ToastrService);
-  private http = inject(HttpClient);
-  private ngZone = inject(NgZone);
-  notes!: string;
-  imgUrl = input<string>('');
-  htmlUrl = input<string>('');
-  
-  private apiUrl(): string {
-    return this.uploadFileType() === 'html' ? this.htmlUrl() : this.imgUrl();
-  }
+  // ── State ────────────────────────────────────────────────────────────────────
+  readonly files = signal<ManagedFile[]>([]);
+  readonly isDragOver = signal(false);
 
-  response = output<UploadImgApiResponse>()
-  responseHtmlUp = output<UploadHtmlResponse>()
+  /** true when ANY file is currently uploading */
+  readonly anyUploading = computed(() =>
+    this.files().some(f => f.uploadStatus === 'uploading')
+  );
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['fileTypesToLimit'] || changes['maxFileSizeInKb'] || changes['maxWidth'] || changes['maxHeight']) {
-      this.setValidationsNote(changes);
-    }
-  }
+  /** All uploaded result URLs grouped by type (for parent to consume via output,
+   *  but also visible inside this component if needed) */
+  readonly imageFiles = computed(() => this.files().filter(f => f.isImage));
+  readonly otherFiles = computed(() => this.files().filter(f => !f.isImage));
+
+  // ── Preview ref ───────────────────────────────────────────────────────────────
+  // We use a map of ElementRef per file; simpler to handle in template with
+  // an id-based approach rather than viewChild for dynamic lists.
 
   ngAfterViewChecked(): void {
-    if (!this.isImage()) {
-      return;
-    }
-    if (this.img() instanceof ElementRef) {
-      const url = URL.createObjectURL(this.file);
-      const img = this.img() as ElementRef<HTMLImageElement>;
-      img.nativeElement.src = url;
-      img.nativeElement.onload = () => {
-        URL.revokeObjectURL(url);
-        let width = img.nativeElement.naturalWidth;
-        let height = img.nativeElement.naturalHeight;
-        const maxWidth = this.maxWidth();
-        const maxHeight = this.maxHeight();
-        if (maxWidth && maxHeight && (width > maxWidth || height > maxHeight)) {
-          this.isPreview.update(() => false);
-          this.hotToast.error(`Maximum width is ${maxWidth}px & Maximum height is ${maxHeight}px`);
-          
+    // Validate image dimensions once a previewUrl is set
+    this.files().forEach(mf => {
+      if (!mf.isImage || !mf.previewUrl || mf.uploadStatus !== 'idle') return;
+      const imgEl = document.getElementById(`preview-${mf.id}`) as HTMLImageElement | null;
+      if (!imgEl || imgEl.dataset['validated']) return;
+      imgEl.dataset['validated'] = '1';
+      imgEl.onload = () => {
+        if (
+          imgEl.naturalWidth > this.maxWidth() ||
+          imgEl.naturalHeight > this.maxHeight()
+        ) {
+          this.hotToast.error(
+            `Max size is ${this.maxWidth()}×${this.maxHeight()} px`
+          );
+          this.removeFile(mf.id);
         }
       };
+    });
+  }
+
+  // ── File selection ────────────────────────────────────────────────────────────
+
+  onFileInputChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) this.addFiles(Array.from(input.files));
+    // reset so same file can be re-added after removal
+    input.value = '';
+  }
+
+  handleDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver.set(true);
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+  }
+
+  handleDragLeave(): void { this.isDragOver.set(false); }
+
+  handleDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver.set(false);
+    if (event.dataTransfer?.files?.length) {
+      this.addFiles(Array.from(event.dataTransfer.files));
     }
   }
 
-  private setValidationsNote(changes: SimpleChanges) {
-    this.notes = 'Note: ';
-    const fileTypesToLimit = this.fileTypesToLimit();
-    if (changes['fileTypesToLimit'] && fileTypesToLimit.length) {
-      this.notes = this.notes + `Image must be at ${fileTypesToLimit} format.`;
-    }
-    if (changes['maxFileSizeInKb']) {
-      this.notes = this.notes + `Its size will be below ${this.maxFileSizeInKb()} KB. `
-    }
-    if (changes['maxWidth'] && changes['maxHeight']) {
-      this.notes += `width & height can be maximum ${this.maxWidth()} x ${this.maxHeight()} pixels.`
-    }
-  }
+  private addFiles(rawFiles: File[]): void {
+    const newEntries: ManagedFile[] = [];
 
-  private static readonly HTML_EXTENSIONS = ['html'];
-  private static readonly IMAGE_EXTENSIONS = ['img', 'png', 'jpg', 'jpeg'];
-
-  private checkFileValidation(file: File) {
-    if (!file) {
-      this.hotToast.error("Please select a file");
-      return false;
-    }
-    if ((file.size / 1024) > this.maxFileSizeInKb()) {
-      this.hotToast.error("File size is too Big");
-      return false;
-    }
-
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-    const type = this.uploadFileType();
-    const lightRedToast = { toastClass: 'ngx-toastr light-red-toast' };
-    if (type === 'html') {
-      if (!FileUploadComponent.HTML_EXTENSIONS.includes(ext)) {
-      this.hotToast.error('Please upload a valid html!');
-        return false;
+    for (const file of rawFiles) {
+      if (file.size > this.maxFileSizeInBytes()) {
+        this.hotToast.error(`"${file.name}" exceeds max size of ${formatSize(this.maxFileSizeInBytes())}`);
+        continue;
       }
-    } else if (type === 'image') {
-      if (!FileUploadComponent.IMAGE_EXTENSIONS.includes(ext)) {
-        this.hotToast.error('Please upload a valid img file!');
-
-        return false;
+      const detectedType = detectType(file);
+      if (detectedType === 'unknown') {
+        this.hotToast.error(`"${file.name}" — unsupported file type.`);
+        continue;
       }
+      const isImage = detectedType === 'image';
+      const entry: ManagedFile = {
+        id: ++managedFileId,
+        file,
+        name: file.name,
+        size: formatSize(file.size),
+        detectedType,
+        isImage,
+        previewUrl: isImage ? URL.createObjectURL(file) : null,
+        progress: '0%',
+        uploadStatus: 'idle',
+        errorMessage: '',
+        resultUrl: '',
+      };
+      newEntries.push(entry);
     }
 
-    const fileNames = file.name.split('.');
-    const fileTypesToLimit = this.fileTypesToLimit();
-    if (fileTypesToLimit.length && !fileTypesToLimit.includes(fileNames[fileNames.length - 1])) {
-      this.hotToast.error(`Please select ${fileTypesToLimit}`);
-      return false;
+    if (newEntries.length) {
+      this.files.update(prev => [...prev, ...newEntries]);
     }
-
-    return true;
   }
 
-  onFileSelected(event: any, inputFile: File | null) {
-    // Use inputFile when provided (e.g. from drop); otherwise use file input (e.g. from browse)
-    const selectedFile = inputFile ?? event.target?.files?.[0];
-    if (!this.checkFileValidation(selectedFile)) {
-      return;
-    }
-
-    this.outputBoxVisible = false;
-    this.uploadResult = '';
-    this.fileName = '';
-    this.fileSize = '';
-
-    this.file = selectedFile;
-    this.fileName = this.file.name;
-    this.fileSize = `${(this.file.size / 1024).toFixed(2)} KB`;
-
-    // Decide if it is an image or not
-    // If it's in allowedMimeTypes => currently used for Excel
-
-    if (this.allowedMimeTypes.includes(this.file.type)) {
-
-      this.isImage.update(() => false);
-    } else {
-      this.isPreview.update(() => true);
-    }
-
-    this.onFileSelect.emit(this.file);
+  removeFile(id: number): void {
+    this.files.update(prev => {
+      const target = prev.find(f => f.id === id);
+      if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter(f => f.id !== id);
+    });
   }
 
-  getBase64(file: File) {
-    var reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-      console.log(reader.result);
-    };
-  }
+  // ── Upload ────────────────────────────────────────────────────────────────────
 
-  toggleUploadProgress(isVisible: boolean) {
-    this.outputBoxVisible = isVisible;
-    this.uploadInProgress.emit(isVisible);
-  }
+  upload(id: number): void {
+    const mf = this.files().find(f => f.id === id);
+    if (!mf || mf.uploadStatus === 'uploading') return;
 
-  /** The file is sent in the request body as FormData (headers cannot contain binary data). */
-  upload() {
-    if (!this.file) return;
-    if (!this.checkFileValidation(this.file)) return;
-    this.toggleUploadProgress(true);
-    this.progress.set('0%');
+    this._mutate(id, { uploadStatus: 'uploading', progress: '0%', errorMessage: '' });
+    this.uploadInProgress.emit(true);
+
     const form = new FormData();
-    const type = this.uploadFileType();
+    const companyName = this.storeDataService.SELECTED_COMPANY()?.companyName ?? '';
+    const payloadId = String(this.payload()['id'] ?? '');
 
-    if (type === 'html') {
-      form.append('id', String(this.payload()['id'] ?? '877866'));
-      form.append('CompanyName', COMPANY_NAME());
-      form.append('File', this.file, this.file.name);
-    } else if (type === 'image') {
-      form.append('id', String(this.payload()['id'] ?? '877866'));
+    if (mf.detectedType === 'image') {
+      form.append('id', payloadId);
       form.append('imageName', String(this.payload()['imageName'] ?? 'HotJobLogo'));
-      form.append('Image', this.file, this.file.name);
-      form.append('CompanyName', COMPANY_NAME());
-      form.append('IsHotJobs','true');
+      form.append('Image', mf.file, mf.name);
+      form.append('CompanyName', companyName);
+      form.append('IsHotJobs', 'true');
+    } else {
+      form.append('id', payloadId);
+      form.append('CompanyName', companyName);
+      form.append('File', mf.file, mf.name);
     }
 
-    type ResponseType = UploadImgApiResponse | UploadHtmlResponse;
+    const url = mf.isImage ? this.imgUrl() : this.fileUploadUrl();
+    type R = UploadImgApiResponse | UploadHtmlResponse;
 
-    this.http
-      .post<ResponseType>(this.apiUrl(), form, {
-        reportProgress: true,
-        observe: 'events',
-      })
+    this.http.post<R>(url, form, { reportProgress: true, observe: 'events' })
       .pipe(
-        tap((event) => {
+        tap(event => {
           if (
             event.type === HttpEventType.UploadProgress &&
-            event.loaded != null &&
-            event.total != null &&
-            event.total > 0
+            event.loaded != null && event.total != null && event.total > 0
           ) {
-            this.progress.set(
-              `${Math.round((100 * event.loaded) / event.total)}%`
-            );
+            const pct = `${Math.round((100 * event.loaded) / event.total)}%`;
+            this._mutate(id, { progress: pct });
           }
         }),
-        filter((event) => event.type === HttpEventType.Response),
-        map((event) => (event as HttpResponse<ResponseType>).body),
-        this.hotToast.observe({  // ← Now only observes the final response
-          loading: 'Please Wait Uploading...',
-          success: 'Uploaded!',
-          error: 'Could not Uploaded. Try again',
+        filter(event => event.type === HttpEventType.Response),
+        map(event => (event as HttpResponse<R>).body),
+        this.hotToast.observe({
+          loading: `Uploading ${mf.name}…`,
+          success: `${mf.name} uploaded!`,
+          error: `Failed to upload ${mf.name}`,
         })
       )
       .subscribe({
-        next: (res) => {
+        next: res => {
           if (!res) return;
           this.ngZone.run(() => {
-            if (type === 'html') {
-              this.responseHtmlUp.emit(res as UploadHtmlResponse);
-            } else if (type === 'image') {
-              this.response.emit(res as UploadImgApiResponse);
-            }
-            this.uploadResult = 'Uploaded';
-            this.uploadStatus.set(200);
-            this.isPreview.set(false);
-            let successValue: string;
-            if (type === 'html') {
-              const r = res as UploadHtmlResponse;
-              successValue = r.publicUrl ?? r.id;
-            } else {
+            let resultUrl = '';
+            if (mf.detectedType === 'image') {
               const r = res as UploadImgApiResponse;
-              successValue = r.profile ?? r.id;
+              resultUrl = r.profile ?? r.id ?? '';
+              this.response.emit(r);
+            } else {
+              const r = res as UploadHtmlResponse;
+              resultUrl = r.publicUrl ?? r.id ?? '';
+              this.responseHtmlUp.emit(r);
             }
-            this.onSuccess.emit(successValue);
-            this.toggleUploadProgress(false);
+            this._mutate(id, { uploadStatus: 'done', progress: '100%', resultUrl });
+            this.uploadInProgress.emit(this.anyUploading());
           });
         },
-        error: (err) => {
-          this.uploadResult = err.error?.message ?? 'File upload failed!';
-          this.uploadStatus.set(err.status ?? 500);
-          this.toggleUploadProgress(false);
+        error: err => {
+          this._mutate(id, {
+            uploadStatus: 'error',
+            errorMessage: err.error?.message ?? 'Upload failed',
+          });
+          this.uploadInProgress.emit(this.anyUploading());
         },
       });
   }
 
-  cancel() {
-    this.file = null as unknown as File;
-    this.isPreview.update(() => false);
-    this.toggleUploadProgress(false);
+  uploadAll(): void {
+    this.files()
+      .filter(f => f.uploadStatus === 'idle')
+      .forEach(f => this.upload(f.id));
   }
 
-  handleDragOver(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'copy';
-    }
+  // ── Helpers ───────────────────────────────────────────────────────────────────
+
+  /** Immutably patch a single ManagedFile by id */
+  private _mutate(id: number, patch: Partial<ManagedFile>): void {
+    this.files.update(prev =>
+      prev.map(f => f.id === id ? { ...f, ...patch } : f)
+    );
   }
 
-  handleDrop(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.dataTransfer?.files?.length) {
-      this.onFileSelected(event, event.dataTransfer.files[0]);
-    }
+  typeIcon(type: DetectedFileType): string {
+    const map: Record<DetectedFileType, string> = {
+      image: 'ph ph-image',
+      pdf: 'ph ph-file-pdf',
+      zip: 'ph ph-file-zip',
+      html: 'ph ph-file-html',
+      unknown: 'ph ph-file',
+      doc: 'ph ph-file-doc',
+      docx: 'ph ph-file-docx',
+      xlsx: 'ph ph-file-xlsx',
+      xls: 'ph ph-file-xls',
+    };
+    return map[type];
   }
+
+  typeBadgeClass(type: DetectedFileType): string {
+    const map: Record<DetectedFileType, string> = {
+      image: 'bg-blue-100 text-blue-700',
+      pdf: 'bg-red-100 text-red-700',
+      zip: 'bg-yellow-100 text-yellow-700',
+      html: 'bg-green-100 text-green-700',
+      unknown: 'bg-gray-100 text-gray-700',
+      doc: 'bg-purple-100 text-purple-700',
+      docx: 'bg-purple-100 text-purple-700',
+      xlsx: 'bg-purple-100 text-purple-700',
+      xls: 'bg-purple-100 text-purple-700',
+    };
+    return map[type];
+  }
+
+  hasIdleFiles = computed(() => this.files().some(f => f.uploadStatus === 'idle'));
 }

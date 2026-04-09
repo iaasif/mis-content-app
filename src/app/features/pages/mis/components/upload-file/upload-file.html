@@ -1,12 +1,7 @@
-<div class="py-3">
-  <div class="rounded-lg border   w-fit px-4 py-2 text-sm font-semibold text-emerald-700 transition cursor-pointer" [class]="showUploadZip()==='html' ? 'bg-emerald-100 border-emerald-200' : 'bg-amber-100 border-amber-200'" (click)="toggleUploadZip()">{{showUploadZipInnerText()}}</div>
-
-
-</div>
+<!-- Company guard banner -->
 @if (!isCompanySelected()) {
-<div role="alert" aria-live="polite"
-  class="sticky top-4 z-20 mx-auto mb-6 flex items-center gap-4 rounded-2xl border border-amber-200 bg-linear-to-r from-amber-50 to-orange-50 px-6 py-4 shadow-lg shadow-amber-100/60 ring-1 ring-amber-100">
-  <!-- Icon bubble -->
+<div role="alert" aria-live="polite" class="sticky top-4 z-20 mx-auto mb-6 flex items-center gap-4 rounded-2xl border border-amber-200
+           bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 shadow-lg shadow-amber-100/60 ring-1 ring-amber-100">
   <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor"
       aria-hidden="true">
@@ -15,15 +10,10 @@
         clip-rule="evenodd" />
     </svg>
   </span>
-
-  <!-- Text -->
   <div class="flex flex-col">
     <span class="text-sm font-semibold text-amber-900">No company selected</span>
-    <span class="text-xs text-amber-700">Search and select a company from the top navigation to enable file
-      uploads.</span>
+    <span class="text-xs text-amber-700">Select a company from the top navigation to enable file uploads.</span>
   </div>
-
-  <!-- Decorative right pulse dot -->
   <span class="ml-auto flex items-center gap-1.5 text-xs font-medium text-amber-600" aria-hidden="true">
     <span class="relative flex h-2 w-2">
       <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
@@ -34,46 +24,66 @@
 </div>
 }
 
-<div class="flex justify-around w-full mt-4 gap-4 border border-blue-800 p-10">
+<!-- Main layout -->
+<div class="flex flex-col lg:flex-row gap-6 mt-4 p-6" [class.pointer-events-none]="!isCompanySelected()"
+  [class.opacity-40]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
 
-  @if (showUploadZip()==='html'){
-  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-    [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
-    [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
-    <app-file-upload [uploadFileType]="uploadFileType.image" [uploadIcon]="'images/img-upload.png'"
-      [uploadTitle]="'Image upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload()"
-      (response)="onImageResponse($event)" [imgUrl]="imageApiUrl" />
+  <!-- ── Upload panel (left) ────────────────────────────────────────────────── -->
+  <div class="w-full lg:w-1/2">
+    <app-file-upload [uploadTitle]="'Upload Files'" [uploadIcon]="'images/img-upload.png'" [maxWidth]="20000"
+      [maxHeight]="20000" [payload]="sharedPayload()" [imgUrl]="imageApiUrl" [fileUploadUrl]="fileUploadApiUrl"
+      (response)="onImageResponse($event)" (responseHtmlUp)="onHtmlResponse($event)" />
+  </div>
 
-    @if (storeDataService.imgUrls().length > 0) {
-    @for (link of storeDataService.imgUrls(); track $index) {
-    <div class="py-1 mt-2">
-      <span class="px-1 text-sm font-medium text-gray-700">Image {{ $index + 1 }}:</span>
-      <app-text-filed [data]="link" />
+  <!-- ── Results panel (right) ──────────────────────────────────────────────── -->
+  <div class="w-full lg:w-1/2 flex flex-col gap-4">
+
+    @if (!hasAnyResults()) {
+    <div class="flex flex-col items-center justify-center h-full min-h-48 text-center
+                  rounded-xl border-2 border-dashed border-gray-200 text-gray-400 gap-2 px-6 py-10">
+      <i class="ph ph-link text-3xl"></i>
+      <p class="text-sm font-medium">Upload results will appear here</p>
+      <p class="text-xs">Each successful upload will show its public URL below, grouped by type.</p>
     </div>
     }
-    }
-  </div>
 
-  <div class="w-1/2 border border-blue-800 rounded-lg p-3 relative transition-opacity duration-300"
-    [class.opacity-40]="!isCompanySelected()" [class.pointer-events-none]="!isCompanySelected()"
-    [attr.aria-disabled]="!isCompanySelected()" [attr.inert]="!isCompanySelected() ? '' : null">
-    <app-file-upload [uploadFileType]="uploadFileType.html" [uploadIcon]="'images/html-up.png'"
-      [uploadTitle]="'HTML upload'" [maxHeight]="20000" [maxWidth]="20000" [payload]="htmlPayload()"
-      (responseHtmlUp)="onHtmlResponse($event)" [htmlUrl]="htmlApiUrl" />
-
-    @if (storeDataService.htmlUrls(); as res) {
-    @for (link of res; track $index) {
-    <div class="py-1 mt-2">
-      <span class="px-1 text-sm font-medium text-gray-700">HTML {{ $index + 1 }}:</span>
-      <app-text-filed [data]="link" />
+    <!-- Image links -->
+    @if (imageLinks().length > 0) {
+    <div class="rounded-xl border border-blue-100 bg-blue-50 p-4 w-full">
+      <div class="flex items-center gap-2 mb-3">
+        <i class="ph ph-image text-blue-500"></i>
+        <span class="text-sm font-semibold text-blue-700">Image Links</span>
+        <span class="ml-auto text-xs text-blue-400">{{ imageLinks().length }}</span>
+      </div>
+      <div class="flex flex-col gap-2">
+        @for (link of imageLinks(); track $index) {
+        <div class="flex items-center gap-2 ">
+          <span class="text-xs text-blue-400 w-5 shrink-0">#{{ $index + 1 }}</span>
+          <app-text-filed class="w-full" [data]="link" />
+        </div>
+        }
+      </div>
     </div>
     }
+
+    <!-- File links (html / pdf / zip) -->
+    @if (fileLinks().length > 0) {
+    <div class="rounded-xl border border-green-100 bg-green-50 p-4 ">
+      <div class="flex items-center gap-2 mb-3">
+        <i class="ph ph-files text-green-500"></i>
+        <span class="text-sm font-semibold text-green-700">File Links</span>
+        <span class="ml-auto text-xs text-green-400">{{ fileLinks().length }}</span>
+      </div>
+      <div class="flex flex-col gap-2">
+        @for (link of fileLinks(); track $index) {
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-green-400 w-5 shrink-0">#{{ $index + 1 }}</span>
+          <app-text-filed class="w-full" [data]="link" />
+        </div>
+        }
+      </div>
+    </div>
     }
+
   </div>
-  }
-  @else {
-  <div>
-    hi
-  </div>
-  }
 </div>

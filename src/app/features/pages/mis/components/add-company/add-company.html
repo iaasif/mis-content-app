@@ -13,13 +13,15 @@
         <div class="space-y-5 p-6">
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">    
+                <label class="text-lg font-semibold text-slate-700">
                     Company Name <span class="text-red-500">*</span>
                 </label>
                 <div class="flex flex-col gap-1">
-                    <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false" [isRequired]="true">
+                    <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false"
+                        [isRequired]="true">
                     </app-input>
-                    @if (newCompanyForm.controls.companyName.invalid && (newCompanyForm.controls.companyName.touched || newCompanyForm.controls.companyName.dirty)) {
+                    @if (newCompanyForm.controls.companyName.invalid && (newCompanyForm.controls.companyName.touched ||
+                    newCompanyForm.controls.companyName.dirty)) {
                     <p class="text-sm text-red-500 flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
@@ -39,17 +41,31 @@
             </div>
 
             <div class="border-t border-slate-200 pt-5"></div>
-
+<!-- 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo From Local Drive</label>
                 <app-file-upload [maxHeight]="20000" [maxWidth]="20000" [payload]="imagePayload">
                 </app-file-upload>
-            </div>
-
+                
+            </div> -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo Source at Online</label>
-                <app-input [type]="'text'" [control]="newCompanyForm.controls.logoSource" [isNumericOnly]="false">
-                </app-input>
+                <div class="flex flex-col gap-1">
+                    <app-input [type]="'text'" [control]="newCompanyForm.controls.logoSource" [isNumericOnly]="false">
+                    </app-input>
+                    @if (newCompanyForm.controls.logoSource.invalid && (newCompanyForm.controls.logoSource.touched ||
+                    newCompanyForm.controls.logoSource.dirty)) {
+                    <p class="text-sm text-red-500 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Logo Source is required.
+                    </p>
+                    }
+
+                </div>
             </div>
 
             <div class="border-t border-slate-200 pt-5"></div>
@@ -74,5 +90,4 @@
             </button>
         </div>
     </form>
-
 </div>

@@ -9,253 +9,256 @@
       <p class="mt-1 text-xs text-slate-600">Add or edit hot job listings</p>
     </div>
     <div class="flex gap-2">
-      <button [routerLink]="'/add-company'" type="button" class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100">
+      <button [routerLink]="'/add-company'" type="button"
+        class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100">
         Add Company
       </button>
-      <button [routerLink]="'/edit'" type="button" class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-lg font-semibold text-blue-700 transition hover:bg-blue-100">
+      <button [routerLink]="'/edit'" type="button"
+        class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-lg font-semibold text-blue-700 transition hover:bg-blue-100">
         Edit
       </button>
-      <button type="button" class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100">
+      <button [routerLink]="'/delete'" type="button"
+        class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100">
         Delete Company
       </button>
     </div>
   </div>
 
-  <!-- Form Content -->
-  <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
-  <div class="space-y-5 p-6">
-    <!-- Company Name -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Company Name</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.companyName"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
+  <div class=" bg-red-300">
+    <div class="relative w-72">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <label for="company-search" class="whitespace-nowrap text-sm font-medium text-slate-700">
+            Search company:
+          </label>
 
-    <!-- Show Company Name As -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Show Company Name As</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.showCompanyNameAs"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
+          <div class="relative flex items-center w-full">
+            <input id="company-search"
+              class="border rounded-lg py-2 pl-3 pr-8 w-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              type="text" placeholder="Search company..." [ngModel]="query()" (ngModelChange)="onQueryChange($event)"
+              (focus)="onFocus()" (blur)="onBlur()" autocomplete="off" aria-autocomplete="list"
+              [attr.aria-expanded]="isFocused() && suggestions().length > 0" aria-controls="company-suggestions"
+              role="combobox" />
 
-    <!-- Company Name (Bengali) -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.companyNameBn"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
+            @if (query().length > 0) {
+            <button type="button"
+              class="absolute right-2 text-slate-400 hover:text-red-500 focus:outline-none focus:text-red-500 transition-colors cursor-pointer"
+              (click)="clearCompany()" aria-label="Clear selected company">
+              <!-- X icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"
+                aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+            }
+          </div>
+        </div>
 
-    <div class="border-t border-slate-200 pt-5"></div>
-
-    <!-- Job Title -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Job Title</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.jobTitle"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Job Title (Bengali) -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">চাকরির শিরনাম</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.jobTitleBn"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <div class="border-t border-slate-200 pt-5"></div>
-
-    <!-- Hot Jobs URL -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Hot Jobs URL</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.hotJobsUrl"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Comments -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Comments</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.comments"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Category Job IDs -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
-      <label class="text-lg font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
-      <div class="space-y-1">
-        <app-input
-          [type]="'text'"
-          [control]="newHotJobForm.controls.categoryJobIds"
-          [isNumericOnly]="false">
-        </app-input>
-        <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
+        @if (companyName() !== null) {
+        <p class="text-xs text-emerald-700 font-medium pl-1" aria-live="polite">
+          ✓ Selected: {{ companyName()?.companyName }}
+        </p>
+        }
       </div>
-    </div>
 
-    <div class="border-t border-slate-200 pt-5"></div>
-
-    <!-- Display Logo -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Display Logo?</label>
-      <app-radio
-        [control]="newHotJobForm.controls.displayLogo"
-        [groupName]="'displayLogo'">
-      </app-radio>
-    </div>
-
-    <!-- Select company logo -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Select company logo</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.companyLogoId"
-        [isNumericOnly]="true">
-      </app-input>
-    </div>
-
-    <!-- Number of Jobs -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Number of Jobs</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.numberOfJobs"
-        [isNumericOnly]="true">
-      </app-input>
-    </div>
-
-    <!-- Hot-Job Type -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Hot-Job Type</label>
-      <app-radio
-        [control]="newHotJobForm.controls.hotJobsType"
-        [groupName]="'hotJobsType'"
-        [radioItems]="hotJobsType()">
-      </app-radio>
-    </div>
-
-    <!-- Hot-Job Category -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Hot-Job Category</label>
-      <app-checkbox-new
-        [checkboxItems]="hotJobCategory()">
-      </app-checkbox-new>
-    </div>
-
-    <!-- Display Position -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Display Position</label>
-      <app-dropdown-component
-        class="w-2xl"
-        [options]="position()">
-      </app-dropdown-component>
-    </div>
-
-    <div class="border-t border-slate-200 pt-5"></div>
-
-    <!-- Published Date -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Published Date</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.publishedDate"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Job Deadline -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Job Deadline</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.jobDeadline"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Premium Start Date -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
-      <ngxsmk-datepicker
-        class="w-2xl"
-        mode="single"
-        [showRanges]="true"
-        [value]="FromDate()"
-        (valueChange)="onFromDateChange($event)">
-      </ngxsmk-datepicker>
-    </div>
-
-    <!-- Premium End Date -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
-      <ngxsmk-datepicker
-        class="w-2xl"
-        mode="single"
-        [showRanges]="true"
-        [value]="ToDate()"
-        (valueChange)="onToDateChange($event)">
-      </ngxsmk-datepicker>
-    </div>
-
-    <div class="border-t border-slate-200 pt-5"></div>
-
-    <!-- Posted By -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Posted By</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.postedBy"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Source Person -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-      <label class="text-lg font-semibold text-slate-700">Source Person</label>
-      <app-input
-        [type]="'text'"
-        [control]="newHotJobForm.controls.sourcePerson"
-        [isNumericOnly]="false">
-      </app-input>
-    </div>
-
-    <!-- Inline Submit/Reset Buttons (Inside Form) -->
-    <div class="pt-4 flex gap-3">
-      <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
-        Save
-      </button>
-
-      <button type="button" (click)="newHotJobForm.reset()" class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
-        Reset
-      </button>
+      @if (isFocused() && suggestions().length > 0) {
+      <ul id="company-suggestions" role="listbox" aria-label="Company suggestions"
+        class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto">
+        @for (data of suggestions(); track data.comId) {
+        <li role="option" [attr.aria-selected]="data.companyName === companyName()?.companyName"
+          class="px-3 py-2 cursor-pointer hover:bg-slate-100 text-sm"
+          [class.bg-amber-50]="data.companyName === companyName()?.companyName"
+          [class.font-semibold]="data.companyName === companyName()?.companyName" (mousedown)="selectCompany(data)">
+          {{ data.companyName }}
+        </li>
+        }
+      </ul>
+      }
     </div>
   </div>
-</form>
+  <!-- Form Content -->
+  <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
+    <div class="space-y-5 p-6">
+      <!-- Company Name -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Company Name</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Show Company Name As -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Show Company Name As</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Company Name (Bengali) -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <div class="border-t border-slate-200 pt-5"></div>
+
+      <!-- Job Title -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Job Title</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Job Title (Bengali) -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">চাকরির শিরনাম</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.jobTitleBn" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <div class="border-t border-slate-200 pt-5"></div>
+
+      <!-- Hot Jobs URL -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Hot Jobs URL</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Comments -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Comments</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.comments" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Category Job IDs -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
+        <label class="text-lg font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
+        <div class="space-y-1">
+          <app-input [type]="'text'" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
+          </app-input>
+          <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-200 pt-5"></div>
+
+      <!-- Display Logo -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Display Logo?</label>
+        <app-radio [control]="newHotJobForm.controls.displayLogo" [groupName]="'displayLogo'">
+        </app-radio>
+      </div>
+
+      <!-- Select company logo -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Select company logo</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyLogoId" [isNumericOnly]="true">
+        </app-input>
+      </div>
+
+      <!-- Number of Jobs -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Number of Jobs</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
+        </app-input>
+      </div>
+
+      <!-- Hot-Job Type -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Hot-Job Type</label>
+        <app-radio [control]="newHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'"
+          [radioItems]="hotJobsType()">
+        </app-radio>
+      </div>
+
+      <!-- Hot-Job Category -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Hot-Job Category</label>
+        <app-checkbox-new [checkboxItems]="hotJobCategory()">
+        </app-checkbox-new>
+      </div>
+
+      <!-- Display Position -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Display Position</label>
+        <app-dropdown-component class="w-2xl" [options]="position()">
+        </app-dropdown-component>
+      </div>
+
+      <div class="border-t border-slate-200 pt-5"></div>
+
+      <!-- Published Date -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Published Date</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.publishedDate" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Job Deadline -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Job Deadline</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.jobDeadline" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Premium Start Date -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
+        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
+          (valueChange)="onFromDateChange($event)">
+        </ngxsmk-datepicker>
+      </div>
+
+      <!-- Premium End Date -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
+        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
+          (valueChange)="onToDateChange($event)">
+        </ngxsmk-datepicker>
+      </div>
+
+      <div class="border-t border-slate-200 pt-5"></div>
+
+      <!-- Posted By -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Posted By</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Source Person -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Source Person</label>
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.sourcePerson" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Inline Submit/Reset Buttons (Inside Form) -->
+      <div class="pt-4 flex gap-3">
+        <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
+          Save
+        </button>
+
+        <button type="button" (click)="newHotJobForm.reset()"
+          class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
+          Reset
+        </button>
+      </div>
+    </div>
+  </form>
 
   <!-- Footer Actions -->
   <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
-    <button type="button" class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
+    <button type="button"
+      class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
       Cancel
     </button>
-    <button type="button" (click)="submit()" [disabled]="!newHotJobForm.valid" class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
+    <button type="button" (click)="submit()" [disabled]="!newHotJobForm.valid"
+      class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
       Save Changes
     </button>
   </div>

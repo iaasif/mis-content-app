@@ -1,22 +1,38 @@
-import { Component, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
 import { HotJobType, HotJobCategory, priorities } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
-import { FormControl,FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
-import { RouterLink } from '@angular/router';
+import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { tap } from 'rxjs';
+import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
+import { StoreDataService } from '../mis/services/store-data-service';
 
 @Component({
   selector: 'app-new-job',
-  imports: [RouterLink,ReactiveFormsModule, DropdownComponent,NgxsmkDatepickerComponent,InputComponent, InputComponent, RadioComponent, DropdownComponent, CheckboxNew, FormsModule
-  ],
+  imports: [RouterLink, ReactiveFormsModule, DropdownComponent, NgxsmkDatepickerComponent, InputComponent, InputComponent, RadioComponent, DropdownComponent, CheckboxNew, FormsModule, CommonModule],
   templateUrl: './new-job.html',
   styleUrl: './new-job.css'
-})  
+})
 export class NewJob {
+  private readonly router = inject(Router);
+  private readonly companyApi = inject(CompanyNameSuggestion);
+  private readonly destroyRef = inject(DestroyRef);
+  protected storeData = inject(StoreDataService);
+
+  companyName = this.storeData.SELECTED_COMPANY ?? null;
+  currentRoute = signal<string>(this.router.url);
+  query = signal('');
+  isFocused = signal(false);
+  suggestions = signal<CompanySuggestion[]>([]);
+
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
   position = signal(priorities);
@@ -30,6 +46,15 @@ export class NewJob {
     { label: 'No', value: false },
   ];
 
+  constructor() {
+    const sub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentRoute.set(event.urlAfterRedirects);
+      }
+    });
+    this.destroyRef.onDestroy(() => sub.unsubscribe());
+  }
+  
   newHotJobForm = new FormGroup<HotJobFormControls>({
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -97,11 +122,11 @@ export class NewJob {
     console.log('=== FORM SUBMISSION TRIGGERED ===');
     console.log('Form valid:', this.newHotJobForm.valid);
     console.log('Form status:', this.newHotJobForm.status);
-    
+
     // Log all form values
     console.log('Form value:', this.newHotJobForm.value);
     console.log('Form raw value:', this.newHotJobForm.getRawValue());
-    
+
     // Log validation errors if any
     if (this.newHotJobForm.invalid) {
       console.log('=== FORM VALIDATION ERRORS ===');
@@ -120,5 +145,61 @@ export class NewJob {
     console.log('=== FINAL PAYLOAD ===');
     console.log('Hot job payload:', payload);
     console.log('=== END SUBMISSION ===');
+  }
+
+  onQueryChange(value: string): void {
+    this.query.set(value);
+
+    if (this.debounceTimer) clearTimeout(this.debounceTimer);
+
+    if (!value.trim()) {
+      this.suggestions.set([]);
+      return;
+    }
+
+    this.debounceTimer = setTimeout(() => {
+      this.companyApi.companyNamesSuggestions(value.trim()).pipe(
+        tap((res) => {
+          console.log('API call for suggestions with query:', res);
+        })
+      ).subscribe({
+        next: list => this.suggestions.set(list.slice(0, 8)),
+        error: () => this.suggestions.set([]),
+      });
+    }, 150);
+  }
+
+  selectCompany(data: CompanySuggestion): void {
+    localStorage.setItem('SELECTED_COMPANY', JSON.stringify(data));
+    this.storeData.SELECTED_COMPANY.set(data);
+    this.query.set(data.companyName);
+    this.isFocused.set(false);
+    this.suggestions.set([]);
+    console.log("data", data)
+    console.log("selected company", this.storeData.SELECTED_COMPANY())
+    console.log("this.suggestions", this.suggestions())
+
+  }
+
+  clearCompany(): void {
+    localStorage.removeItem('SELECTED_COMPANY');
+    this.storeData.SELECTED_COMPANY.set(null);
+    this.query.set('');
+    this.suggestions.set([]);
+  }
+
+  onFocus(): void {
+    this.isFocused.set(true);
+    const q = this.query().trim();
+    if (q) {
+      this.companyApi.companyNamesSuggestions(q).subscribe({
+        next: list => this.suggestions.set(list.slice(0, 8)),
+        error: () => this.suggestions.set([]),
+      });
+    }
+  }
+
+  onBlur(): void {
+    setTimeout(() => this.isFocused.set(false), 120);
   }
 }

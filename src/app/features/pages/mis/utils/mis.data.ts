@@ -1,6 +1,4 @@
 import { DropdownOption, SelectRadioData } from "../../../../shared/models/models";
-import { signal } from '@angular/core';
-export const COMPANY_NAME = signal("");
 
 export const Hotjobs = [
   {
@@ -37,14 +35,6 @@ export const Hotjobs = [
   },
   {
     id: 5,
-    title: 'Generate Hot Job Template (DB)   ',
-    url: '',
-    enUrl: '',
-    bnUrl: '',
-    isnew: false,
-  },
-  {
-    id: 6,
     title: 'Generate JSON for HOTJOBS',
     url: '',
     enUrl: '',
@@ -52,7 +42,7 @@ export const Hotjobs = [
     isnew: false,
   },
   {
-    id: 7,
+    id: 6,
     title: 'View Hot Jobs',
     url: 'https://www.bdjobs.com/',
     enUrl: '',
@@ -88,14 +78,6 @@ export const Tenders = [
   },
   {
     id: 4,
-    title: 'Rearrange Tender (3 Column) ',
-    url: 'https://mis.bdjobs.com/mis/hotjobmanager/arrangetenders.asp?id=',
-    enUrl: '',
-    bnUrl: '',
-    isnew: true,
-  },
-  {
-    id: 5,
     title: 'Generate Tender HTML (3 Column)   ',
     url: '',
     enUrl: '',
@@ -103,15 +85,7 @@ export const Tenders = [
     isnew: false,
   },
   {
-    id: 6,
-    title: 'Generate Tender Template (DB) (3 Column)   ',
-    url: '',
-    enUrl: '',
-    bnUrl: '',
-    isnew: false,
-  },
-  {
-    id: 7,
+    id: 5,
     title: 'View Tenders ',
     url: 'https://www.bdjobs.com/',
     enUrl: '',
@@ -119,80 +93,80 @@ export const Tenders = [
     isnew: false,
   },
   {
+    id: 6,
+    title: 'Hotjobs Data update',
+    url: '',
+    enUrl: '',
+    bnUrl: '',
+    isnew: true,
+  },
+  {
+    id: 7,
+    title: 'Tenders Data update',
+    url: '',
+    enUrl: '',
+    bnUrl: '',
+    isnew: true,
+  },
+  {
     id: 8,
-    title: 'Hotjobs Data update   New',
-    url: '',
-    enUrl: '',
-    bnUrl: '',
-    isnew: true,
-  },
-  {
-    id: 9,
-    title: 'Tenders Data update   New',
-    url: '',
-    enUrl: '',
-    bnUrl: '',
-    isnew: true,
-  },
-  {
-    id: 10,
     title: 'Training Data update',
     url: '',
     enUrl: '',
     bnUrl: '',
-    isnew: false,
+    isnew: true,
   },
 ]
 
-export const HotJobType :  SelectRadioData[] = [
+export const HotJobType: SelectRadioData[] = [
   {
     id: '1',
     label: 'Premium',
-    name: 'Premium',  
-    value:'Premium'  
+    name: 'Premium',
+    value: 'Premium'
   },
   {
     id: '2',
     label: 'Normal',
     name: 'Normal',
-    value:'Normal'  
+    value: 'Normal'
   },
 ]
 export const HotJobCategory: SelectRadioData[] = [
-  
+
   {
     id: '3',
     label: 'Blue Collar',
     name: 'blueCollar',
-    value:'blueCollar'  
-    
+    value: 'blueCollar'
+
   },
   {
     id: '4',
     label: 'Complementary',
     name: 'Complementary',
-    value:'Complementary'  
+    value: 'Complementary'
 
   },
   {
     id: '5',
     label: 'Hotjob CM',
     name: 'Hotjob CM',
-    value:'Hotjob CM'  
+    value: 'Hotjob CM'
 
   },
 
 ]
 
 export const priorities: DropdownOption[] = [
-{ label: 'Low', value: 1 },
-{ label: 'Medium', value: 2 },
-{ label: 'High', value: 3 },
-{ label: 'Urgent', value: 4 },
-{ label: 'Critical', value: 5 }
+  { label: 'Low', value: 1 },
+  { label: 'Medium', value: 2 },
+  { label: 'High', value: 3 },
+  { label: 'Urgent', value: 4 },
+  { label: 'Critical', value: 5 }
 ];
 
-export enum UploadFileType  {
+export enum UploadFileType {
   html = "html",
   image = "image",
   zip = "zip",

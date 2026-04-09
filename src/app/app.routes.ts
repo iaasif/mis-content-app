@@ -1,40 +1,37 @@
 import { Routes } from '@angular/router';
-import { MisHome } from './features/pages/mis/components/mis-home/mis-home';
-import { NewJob } from './features/pages/new-job/new-job';
-import { EditJob } from './features/pages/edit-job/edit-job';
-import { UploadFile } from './features/pages/mis/components/upload-file/upload-file';
-import { RearrangeHotJob } from './features/pages/mis/components/rearrange-hot-job/rearrange-hot-job';
-import { AddCompany } from './features/pages/mis/components/add-company/add-company';
 import { checkRefGuard } from './features/pages/mis/guards/check-ref-guard';
 import { MisLogin } from './features/pages/mis/components/mis-login/mis-login';
 
 export const routes: Routes = [
     {
         path: '',
-        component: MisHome,
+        loadComponent: () => import('./features/pages/mis/components/mis-home/mis-home').then(m => m.MisHome),
     },
     {
         path: 'new',
-        component: NewJob
+        loadComponent: () => import('./features/pages/new-job/new-job').then(m => m.NewJob)
     },
     {
         path: 'edit',
-        component: EditJob
+        loadComponent: () => import('./features/pages/edit-job/edit-job').then(m => m.EditJob)
     },
     {
         path: 'up',
-        component: UploadFile,
+        loadComponent: () => import('./features/pages/mis/components/upload-file/upload-file').then(m => m.UploadFile),
         canActivate: [checkRefGuard]
     },
     {
         path: 'rearrange',
-        component: RearrangeHotJob
+        loadComponent: () => import('./features/pages/mis/components/rearrange-hot-job/rearrange-hot-job').then(m => m.RearrangeHotJob)
     },
     {
         path: 'add-company',
-        component: AddCompany
+        loadComponent: () => import('./features/pages/mis/components/add-company/add-company').then(m => m.AddCompany)
     },
     {
+        path: 'delete',
+        loadComponent: () => import('./features/pages/mis/components/delete-company/delete-company').then(m => m.DeleteCompany)
+    },    {
         path: 'mis-login',
         component: MisLogin
     },
