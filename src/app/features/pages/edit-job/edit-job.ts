@@ -1,15 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { priorities } from '../mis/utils/mis.data';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
+import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
+import { DropdownOption } from '../../../shared/models/models';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-job',
-  imports: [NgxsmkDatepickerComponent],
+  imports: [NgxsmkDatepickerComponent, DropdownComponent],
   templateUrl: './edit-job.html',
   styleUrl: './edit-job.css',
 })
 export class EditJob {
-  position = signal(priorities);
+  jobType= signal(JobType)
   FromDate = signal<DatepickerValue>(null);
   ToDate = signal<DatepickerValue>(null);
   
@@ -17,6 +20,8 @@ export class EditJob {
     console.log(this.FromDate(),this.ToDate())
   }
   data = data;
+
+  testformcontrol = new FormControl
 } 
 
 const data= [
@@ -52,3 +57,18 @@ const data= [
     comments:"",
   }
 ]
+
+export const JobType: DropdownOption[] = [
+  {
+    label: "All Jobs",
+    value: "allJobs",
+  },
+  {
+    label: "Active Jobs",
+    value: "activeJobs",
+  },
+  {
+    label: "Expired Jobs",
+    value: "expiredJobs",
+  },
+];

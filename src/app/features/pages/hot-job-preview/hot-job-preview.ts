@@ -15,24 +15,24 @@ export class HotJobPreview {
   private misService = inject(MisApi)
 
 
-  protected hotJobs = toSignal( 
+  protected hotJobs = toSignal(
     this.misService.getAllHotJobs().pipe(
-      map(data=>{
-        return data.map(job => ({
+      map(data =>
+        data.map(job => ({
           ...job,
-          jobTitleList: this.splitingJobTitles(job.jobTitles)
-        }));
-       
-      }),
-      tap(
-        res=>console.log("res",res)
-      )
+          jobTitleList: this.splitingJobTitles(job.jobTitles),
+        }))
+      ),
+      tap(res => console.log('res', res))
     ),
     { initialValue: [] }
-  ) 
-  
-  private splitingJobTitles(jobTitle:string){
-    return jobTitle.split('\r\n').map(title => title.trim());
+  );
+
+  private splitingJobTitles(jobTitle: string): string[] {
+    return jobTitle
+      .split('\r\n')
+      .map(title => title.trim())
+      .filter(Boolean);
   }
 
 }

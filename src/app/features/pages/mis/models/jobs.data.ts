@@ -111,6 +111,7 @@ export interface HotJob {
   postedOn: string
   startDate: string
   endDate: string
+  jobTitleList:string[]
 }
 export interface SourcePerson {
   userId: number;
