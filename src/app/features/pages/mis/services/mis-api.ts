@@ -30,9 +30,9 @@ export class MisApi {
     return this.http.delete(`${this.url}/delete-company?ComId=${cpid}`);
   }
 
-  getHotJobs(): Observable<HotJob[]> {
-    return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs`);
-  }
+  // getHotJobs(): Observable<HotJob[]> {
+  //   return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs`);
+  // }
 
   getSourcePersons(): Observable<SourcePerson[]>{
     return this.http.get<SourcePerson[]>(environment.apiUrl+"SourcePerson");

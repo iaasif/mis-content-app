@@ -4,6 +4,7 @@ import { MisApi } from '../mis/services/mis-api';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, tap } from 'rxjs';
 import { HotJob } from '../mis/models/jobs.data';
+import { splitingJobTitles } from '../../../shared/utils/functions';
 
 @Component({
   selector: 'app-hot-job-preview',
@@ -18,9 +19,10 @@ export class HotJobPreview {
   protected hotJobs = toSignal(
     this.misService.getAllHotJobs().pipe(
       map(data =>
-        data.map(job => ({
+        data.map((job, i) => ({
           ...job,
-          jobTitleList: this.splitingJobTitles(job.jobTitles),
+          jobTitleList: splitingJobTitles(job.jobTitles),
+          newSerial: i + 1 
         }))
       ),
       tap(res => console.log('res', res))
@@ -28,11 +30,6 @@ export class HotJobPreview {
     { initialValue: [] }
   );
 
-  private splitingJobTitles(jobTitle: string): string[] {
-    return jobTitle
-      .split('\r\n')
-      .map(title => title.trim())
-      .filter(Boolean);
-  }
+  
 
 }
