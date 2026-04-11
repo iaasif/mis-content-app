@@ -36,5 +36,9 @@ export const routes: Routes = [
     {
         path: 'hotJobPreview',
         loadComponent:()=> import('./features/pages/hot-job-preview/hot-job-preview').then(m=>HotJobPreview)
-    }
+    },
+    {
+        path: 'searchforedit',
+        loadComponent: () => import('./features/pages/search-for-edit/search-for-edit').then(m => m.SearchForEdit)
+    },
 ];

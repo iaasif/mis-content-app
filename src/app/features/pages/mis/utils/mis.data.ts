@@ -12,7 +12,7 @@ export const Hotjobs = [
   {
     id: 2,
     title: 'Edit Hot Job',
-    url: 'edit',
+    url: 'searchforedit',
     enUrl: '',
     bnUrl: '',
     isnew: false,
