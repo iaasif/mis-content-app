@@ -212,7 +212,7 @@
         <!-- Premium Start Date -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
-          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
+          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PremiumStartOnChange()"
             (valueChange)="onFromDateChange($event)">
           </ngxsmk-datepicker>
         </div>
@@ -220,7 +220,7 @@
         <!-- Premium End Date -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
-          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
+          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PremiumEndOnChange()"
             (valueChange)="onToDateChange($event)">
           </ngxsmk-datepicker>
         </div>

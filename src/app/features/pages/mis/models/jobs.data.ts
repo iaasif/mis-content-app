@@ -71,8 +71,8 @@ export type HotJobFormControls = {
   displayPosition: FormControl<string>;
   publishedDate: FormControl<string>;
   jobDeadline: FormControl<string>;
-  premiumStartDate: FormControl<string>;
-  premiumEndDate: FormControl<string>;
+  PremiumStartOn: FormControl<string>;
+  PremiumEndOn: FormControl<string>;
   postedBy: FormControl<string>;
   sourcePerson: FormControl<string>;
 };
