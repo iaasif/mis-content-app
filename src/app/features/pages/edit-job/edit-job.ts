@@ -90,8 +90,8 @@ export class EditJob {
     publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
     jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    premiumStartDate: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
-    premiumEndDate: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
+    PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
+    PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
 
     postedBy: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
     sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
@@ -114,7 +114,7 @@ export class EditJob {
   onFromDateChange(val: DatepickerValue) {
     this.FromDate.set(val);
     const isoDate = this.datepickerToIso(val);
-    this.newHotJobForm.controls.premiumStartDate.setValue(isoDate);
+    this.newHotJobForm.controls.PremiumStartOn.setValue(isoDate);
   }
 
   onToDateChange(val: DatepickerValue) {
@@ -122,7 +122,7 @@ export class EditJob {
     this.ToDate.set(val);
     const isoDate = this.datepickerToIso(val);
     console.log('Setting premiumEndDate to:', isoDate);
-    this.newHotJobForm.controls.premiumEndDate.setValue(isoDate);
+    this.newHotJobForm.controls.PremiumEndOn.setValue(isoDate);
   }
 
   private datepickerToIso(val: DatepickerValue): string {
@@ -165,8 +165,8 @@ export class EditJob {
       isBlueCollar:            opts.includes('BlueCollar'),    // extracted from array
       isComplementary:         opts.includes('Complementary'),
       isHotjobCM:              opts.includes('HotjobCM'),
-      startOn:                 raw.premiumStartDate || null,   // renamed
-      endOn:                   raw.premiumEndDate || null,     // renamed
+      startOn:                 raw.PremiumStartOn || null,   // renamed
+      endOn:                   raw.PremiumEndOn || null,     // renamed
       publishedOn:             raw.publishedDate,              // renamed
       deadline:                raw.jobDeadline,               // renamed
       postedBy:                Number(raw.postedBy),           // ensure number

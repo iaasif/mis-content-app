@@ -2,7 +2,9 @@
   <p class="text-center text-sm text-gray-400 mb-4">
     Drag a card and drop it onto another to swap positions
   </p>
-  <button class="mx-auto flex p-3 rounded-xl bg-blue-200 mb-5 cursor-pointer">save changes </button>
+  <button class="mx-auto flex p-3 rounded-xl bg-blue-200 mb-5 cursor-pointer" (click)="updateCards()">
+    save changes
+  </button>
 
   <div class="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
 
@@ -15,9 +17,9 @@
         (dragleave)="onDragLeave()"
         (drop)="onDrop($event, $index)"
         (dragend)="onDragEnd()"
-        [class]="cardClass($index, job)"
+        [class]="cardClasses()[$index]"
       >
-        <!-- Drag handle icon -->
+        <!-- Drag handle -->
         <svg class="absolute top-3 right-3 opacity-25 group-hover:opacity-60 transition-opacity"
              width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
           <circle cx="4" cy="3" r="1.2"/>  <circle cx="10" cy="3" r="1.2"/>
@@ -27,19 +29,13 @@
 
         <!-- Header -->
         <div class="flex items-start gap-3 mb-3">
-          <!-- Serial number -->
           <div class="w-7 h-7 shrink-0 rounded-full border border-gray-200
                       flex items-center justify-center text-xs font-medium text-gray-500">
             {{ job.newSerial }}
           </div>
-
           <div class="flex-1 min-w-0 pr-5">
-            <p class="text-sm font-medium text-gray-900
-                       truncate leading-tight">
+            <p class="text-lg font-medium text-gray-900 truncate leading-tight">
               {{ job.companyName }}
-            </p>
-            <p class="text-xs text-gray-500 mt-0.5">
-              {{ job.jobTitleList.length }} position{{ job.jobTitleList.length > 1 ? 's' : '' }}
             </p>
           </div>
         </div>
@@ -47,27 +43,23 @@
         <!-- Job title tags -->
         <div class="flex flex-wrap gap-1 mb-3">
           @for (title of job.jobTitleList.slice(0, 2); track $index) {
-          <!-- Replace the static bg-white border-gray-200 tag with: -->
-          <span [class]="'text-[11px] px-1.5 py-0.5 rounded border text-gray-500 ' + tagClass(job)">
-            {{ title }}
-          </span>
+            <span [class]="'text-[12px] px-1.5 py-0.5 rounded border text-gray-900 ' + tagClasses()[$index]">
+              {{ title }}
+            </span>
           }
-          @if(job.jobTitleList.length > 2){
-            <span class="text-[11px] px-1.5 py-0.5 rounded
-                         bg-white
-                         border border-gray-200
-                         text-gray-500">
-             + {{job.jobTitleList.length - 2 }}
+          @if (job.jobTitleList.length > 2) {
+            <span class="text-[11px] px-1.5 py-0.5 rounded bg-white border border-gray-200 text-gray-500">
+              + {{ job.jobTitleList.length - 2 }}
             </span>
           }
         </div>
 
-        <!-- Footer dates -->
+        <!-- Footer dates — read from computed array, zero cost in template -->
         <div class="flex justify-between items-center pt-2 border-t border-gray-100">
-          <span class="text-[11px] text-gray-400">Posted {{ formatDate(job.postedOn) }}</span>
-          <span class="text-[11px] text-gray-400">Ends {{ formatDate(job.endDate) }}</span>
+          <span class="text-[11px] text-gray-400">Posted {{ formattedDates()[$index].posted }}</span>
+          <span class="text-[11px] text-gray-400">Ends {{ formattedDates()[$index].ends }}</span>
         </div>
       </div>
     }
   </div>
-</section> 
+</section>

@@ -51,4 +51,8 @@ export class MisApi {
     return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs/all-hotjobs`)
   }
 
+  reOrderHotJobs(body:any):Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}hotjobs/reorder-hotjob`,body)
+  }
+
 }

@@ -113,6 +113,7 @@ export interface HotJob {
   endDate: string
   jobTitleList:string[]
   newSerial: number
+  jbLogoSource: string
 }
 export interface SourcePerson {
   userId: number;
