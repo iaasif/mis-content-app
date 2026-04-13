@@ -33,19 +33,19 @@ export interface UploadHtmlResponse {
   publicUrl: string
 }
 export interface HotJobForm {
+  companyId: number | string ;
   companyName: string;
-  showCompanyNameAs: string;
-  companyNameBn: string;
+  showCompanyNameAs: string | null;
+  companyNameBn: string | null;
   jobTitle: string;
-  jobTitleBn: string;
   hotJobsUrl: string;
-  comments: string;
+  comments: string | null;
   categoryJobIds: string;
   displayLogo: boolean;
-  companyLogoId: null | string | number; // or just `any` if you're not sure
+  companyLogoId: null | string | number;
   numberOfJobs: number;
   hotJobsType: string;
-  postedOptions: Array<Array<any>>; // or more specific type if you know the inner array structure
+  postedOptions: (string | boolean)[];
   displayPosition: string;
   publishedDate: string;
   jobDeadline: string;
@@ -55,24 +55,24 @@ export interface HotJobForm {
   sourcePerson: string;
 }
 export type HotJobFormControls = {
+  companyId: FormControl<number | string>;
   companyName: FormControl<string>;
-  showCompanyNameAs: FormControl<string>;
-  companyNameBn: FormControl<string>;
+  showCompanyNameAs: FormControl<string | null>;
+  companyNameBn: FormControl<string  | null>;
   jobTitle: FormControl<string>;
-  jobTitleBn: FormControl<string>;
   hotJobsUrl: FormControl<string>;
-  comments: FormControl<string>;
+  comments: FormControl<string | null>;
   categoryJobIds: FormControl<string>;
   displayLogo: FormControl<boolean>;
   companyLogoId: FormControl<null | string | number>;
   numberOfJobs: FormControl<number>;
   hotJobsType: FormControl<string>;
-  postedOptions: FormControl<Array<Array<any>>>;
+  postedOptions: FormControl<(string | boolean)[]>;
   displayPosition: FormControl<string>;
   publishedDate: FormControl<string>;
   jobDeadline: FormControl<string>;
-  premiumStartDate: FormControl<string>;
-  premiumEndDate: FormControl<string>;
+  PremiumStartOn: FormControl<string>;
+  PremiumEndOn: FormControl<string>;
   postedBy: FormControl<string>;
   sourcePerson: FormControl<string>;
 };
@@ -111,4 +111,22 @@ export interface HotJob {
   postedOn: string
   startDate: string
   endDate: string
+  jobTitleList:string[]
+  newSerial: number
+  jbLogoSource: string
+}
+export interface SourcePerson {
+  userId: number;
+  fullName: string;
+  depSerial: number;
+}
+
+export interface postedBy {
+  userId : number;
+  fullName: string
+}
+
+export interface HotJobCreationResponse {
+  id: number;
+  message: string;
 }

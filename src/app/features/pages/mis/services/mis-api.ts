@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateCompany, HotJob } from '../models/jobs.data';
+import { CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
 
 @Injectable({
@@ -30,8 +30,29 @@ export class MisApi {
     return this.http.delete(`${this.url}/delete-company?ComId=${cpid}`);
   }
 
-  getHotJobs(): Observable<HotJob[]> {
-    return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs`);
+  // getHotJobs(): Observable<HotJob[]> {
+  //   return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs`);
+  // }
+
+  getSourcePersons(): Observable<SourcePerson[]>{
+    return this.http.get<SourcePerson[]>(environment.apiUrl+"SourcePerson");
+  }
+
+  getPostedBy(deptId:number):Observable<postedBy[]>{
+    return this.http.get<postedBy[]>(`${environment.apiUrl+"SourcePerson/"+deptId}`)
+  }
+
+  //work later
+  addHotJob(payload: any): Observable<HotJobCreationResponse>{
+    return this.http.post<HotJobCreationResponse>(`${environment.apiUrl} hotjobs/add-hotjob`,payload)
+  }
+
+  getAllHotJobs():Observable<HotJob[]>{
+    return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs/all-hotjobs`)
+  }
+
+  reOrderHotJobs(body:any):Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}hotjobs/reorder-hotjob`,body)
   }
 
 }

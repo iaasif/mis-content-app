@@ -117,3 +117,10 @@ export function IsNotEmptyObject(obj: {}): boolean {
 export function isValidDate(date: any) {
   return date instanceof Date && !isNaN(date.getTime());
 }
+
+export function splitingJobTitles(jobTitle: string): string[] {
+  return jobTitle
+    .split('\r\n')
+    .map(title => title.trim())
+    .filter(Boolean);
+}

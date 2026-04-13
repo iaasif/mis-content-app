@@ -24,11 +24,11 @@
     </div>
   </div>
 
-  <div class=" bg-red-300">
-    <div class="relative w-72">
+  <div class="">
+    <div class="relative w-full">
       <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2">
-          <label for="company-search" class="whitespace-nowrap text-sm font-medium text-slate-700">
+        <div class="flex items-center gap-2 p-6">
+          <label for="company-search" class="text-lg font-semibold text-slate-700 w-[300px]">
             Search company:
           </label>
 
@@ -37,7 +37,7 @@
               class="border rounded-lg py-2 pl-3 pr-8 w-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
               type="text" placeholder="Search company..." [ngModel]="query()" (ngModelChange)="onQueryChange($event)"
               (focus)="onFocus()" (blur)="onBlur()" autocomplete="off" aria-autocomplete="list"
-              [attr.aria-expanded]="isFocused() && suggestions().length > 0" aria-controls="company-suggestions"
+              [attr.aria-expanded]="isFocused() && companyNameSuggestions().length > 0" aria-controls="company-suggestions"
               role="combobox" />
 
             @if (query().length > 0) {
@@ -56,21 +56,32 @@
           </div>
         </div>
 
-        @if (companyName() !== null) {
-        <p class="text-xs text-emerald-700 font-medium pl-1" aria-live="polite">
-          ✓ Selected: {{ companyName()?.companyName }}
+        @if (companyData() !== null) {
+        <p class="text-lg text-emerald-700 font-medium pl-1 text-center" aria-live="polite">
+          ✓ Selected: {{ companyData()?.companyName }}
         </p>
+        @if(!wantToAddHotJob()){
+          <button 
+          (click)="addHotJob()"
+          class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 
+                 text-white font-semibold text-sm shadow-md 
+                 hover:from-indigo-600 hover:to-purple-600 
+                 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-fit mx-auto">
+          ✨ Add Hot Job
+        </button>
+        }
+        
         }
       </div>
 
-      @if (isFocused() && suggestions().length > 0) {
+      @if (isFocused() && companyNameSuggestions().length > 0) {
       <ul id="company-suggestions" role="listbox" aria-label="Company suggestions"
         class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto">
-        @for (data of suggestions(); track data.comId) {
-        <li role="option" [attr.aria-selected]="data.companyName === companyName()?.companyName"
+        @for (data of companyNameSuggestions(); track data.comId) {
+        <li role="option" [attr.aria-selected]="data.companyName === companyData()?.companyName"
           class="px-3 py-2 cursor-pointer hover:bg-slate-100 text-sm"
-          [class.bg-amber-50]="data.companyName === companyName()?.companyName"
-          [class.font-semibold]="data.companyName === companyName()?.companyName" (mousedown)="selectCompany(data)">
+          [class.bg-amber-50]="data.companyName === companyData()?.companyName"
+          [class.font-semibold]="data.companyName === companyData()?.companyName" (mousedown)="selectCompany(data)">
           {{ data.companyName }}
         </li>
         }
@@ -78,13 +89,15 @@
       }
     </div>
   </div>
-  <!-- Form Content -->
+
+  @if(companyData() !== null && wantToAddHotJob()===true){
+    <!-- Form Content -->
   <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
     <div class="space-y-5 p-6">
       <!-- Company Name -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Company Name</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false">
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false" [isRequired]="true">
         </app-input>
       </div>
 
@@ -98,7 +111,7 @@
       <!-- Company Name (Bengali) -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false">
+        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
         </app-input>
       </div>
 
@@ -108,13 +121,6 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Job Title</label>
         <app-input [type]="'text'" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
-        </app-input>
-      </div>
-
-      <!-- Job Title (Bengali) -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">চাকরির শিরনাম</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.jobTitleBn" [isNumericOnly]="false">
         </app-input>
       </div>
 
@@ -149,7 +155,7 @@
       <!-- Display Logo -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Display Logo?</label>
-        <app-radio [control]="newHotJobForm.controls.displayLogo" [groupName]="'displayLogo'">
+        <app-radio [control]="newHotJobForm.controls.displayLogo" [groupName]="'displayLogo'" [radioItems]="displayLogoOptions()">
         </app-radio>
       </div>
 
@@ -162,81 +168,89 @@
 
       <!-- Number of Jobs -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Number of Jobs</label>
+        <label class="text-lg font-semibold text-slate-700">No of Job(s)</label>
         <app-input [type]="'text'" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
         </app-input>
+        
       </div>
 
       <!-- Hot-Job Type -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Hot-Job Type</label>
-        <app-radio [control]="newHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'"
-          [radioItems]="hotJobsType()">
+        <app-radio [control]="newHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'" [radioItems]="hotJobsType()">
         </app-radio>
       </div>
-
+      
       <!-- Hot-Job Category -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Hot-Job Category</label>
-        <app-checkbox-new [checkboxItems]="hotJobCategory()">
+        <app-checkbox-new [checkboxItems]="hotJobCategory()" [(control)]="newHotJobForm.controls.postedOptions">
         </app-checkbox-new>
       </div>
-
-      <!-- Display Position -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Display Position</label>
-        <app-dropdown-component class="w-2xl" [options]="position()">
-        </app-dropdown-component>
-      </div>
+      
+      
 
       <div class="border-t border-slate-200 pt-5"></div>
 
       <!-- Published Date -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Published Date</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.publishedDate" [isNumericOnly]="false">
-        </app-input>
+        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PublishedDate()"
+          (valueChange)="onPublishedDateChange($event)">
+        </ngxsmk-datepicker>
       </div>
 
-      <!-- Job Deadline -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Job Deadline</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.jobDeadline" [isNumericOnly]="false">
-        </app-input>
-      </div>
-
-      <!-- Premium Start Date -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
-          (valueChange)="onFromDateChange($event)">
+        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="Deadline()"
+          (valueChange)="onJobDeadlineChange($event)">
         </ngxsmk-datepicker>
-      </div>
-
-      <!-- Premium End Date -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
-          (valueChange)="onToDateChange($event)">
-        </ngxsmk-datepicker>
-      </div>
+        </div>
+        
+        
+        @if(isPremium()){
+        <!-- Premium Start Date -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+          <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
+          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PremiumStartOnChange()"
+            (valueChange)="onFromDateChange($event)">
+          </ngxsmk-datepicker>
+        </div>
+        
+        <!-- Premium End Date -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+          <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
+          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PremiumEndOnChange()"
+            (valueChange)="onToDateChange($event)">
+          </ngxsmk-datepicker>
+        </div>
+        }
 
       <div class="border-t border-slate-200 pt-5"></div>
 
+       <!-- Display Position -->
+       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        <label class="text-lg font-semibold text-slate-700">Display Position</label>
+        <app-dropdown-component class="w-2xl" [options]="position()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
+        </app-dropdown-component>
+      </div>
       <!-- Posted By -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Posted By</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
-        </app-input>
+        <!-- <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
+        </app-input> -->
+        <app-dropdown-component class="w-2xl" [options]="postedBy()" [control]="newHotJobForm.controls.postedBy" [isRequired]="true">
+        </app-dropdown-component>
       </div>
 
       <!-- Source Person -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Source Person</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.sourcePerson" [isNumericOnly]="false">
-        </app-input>
+        <app-dropdown-component class="w-2xl" [options]="sorcePerson()" [control]="newHotJobForm.controls.sourcePerson" [isRequired]="true">
+        </app-dropdown-component>
       </div>
-
+      
+     
       <!-- Inline Submit/Reset Buttons (Inside Form) -->
       <div class="pt-4 flex gap-3">
         <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
@@ -257,9 +271,20 @@
       class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
       Cancel
     </button>
-    <button type="button" (click)="submit()" [disabled]="!newHotJobForm.valid"
+    <button type="button" (click)="submit()" 
       class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
       Save Changes
     </button>
   </div>
+  }
+  @else{
+
+    
+   <div class="w-full bg-blue-100 mx-auto text-center h-36 flex justify-center items-center text-4xl m-4">
+    <div>
+      Please search and select a company
+    </div> 
+   </div>
+  }
+  
 </div>
