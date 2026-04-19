@@ -8,7 +8,7 @@
             <span class="text-sm font-semibold text-slate-700">Company List</span>
           </div>
           <input
-            [formControl]="companyNameControl"
+          [formControl]="form.controls.companyName"
             (input)="onCompanyInput()"
             type="text"
             placeholder="Search company"
@@ -41,7 +41,7 @@
           </div>
           <app-dropdown-component
             [options]="jobType()"
-            [control]="jobTypeControl"
+            [control]="form.controls.jobType"
             class="w-2xl">
           </app-dropdown-component>
         </div>
@@ -123,30 +123,30 @@
   
       <!-- Body -->
       <div class="divide-y divide-slate-100">
-        @for (item of results(); track item.id; let i = $index) {
+        @for (item of results(); track $index) {
           <div class="grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] gap-4 px-6 py-4
                       items-center hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
   
-            <div class="text-sm font-semibold text-slate-400">{{ i + 1 }}</div>
+            <div class="text-sm font-semibold text-slate-400">{{ $index + 1 }}</div>
   
-            <div class="text-sm font-semibold text-slate-800 wrap-anywhere">{{ item.jobTitle }}</div>
+            <div class="text-sm font-semibold text-slate-800 wrap-anywhere">{{ item.jobTitles }}</div>
   
-            <div class="text-sm text-slate-600">{{ item.publishedDate }}</div>
+            <div class="text-sm text-slate-600">{{ item.publishedOn |date:'mediumDate' }}</div>
   
-            <div class="text-sm text-slate-600">{{ item.jobdeadline }}</div>
+            <div class="text-sm text-slate-600">{{ item.deadLine | date:'mediumDate'}}</div>
   
-            <div class="text-sm text-slate-600">{{ item.displaypostion }}</div>
+            <div class="text-sm text-slate-600">{{ item.serialNo }}</div>
   
             <div>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs
                            font-semibold bg-blue-100 text-blue-700">
-                {{ item.totalJob }}
+                {{ item.totalHotJobs }}
               </span>
             </div>
   
             <div class="text-sm text-slate-600 truncate">{{ item.comments }}</div>
   
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <button
                 (click)="$event.stopPropagation(); onEdit(item)"
                 class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold

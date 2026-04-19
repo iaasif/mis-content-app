@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
+import { CompanyHotJobsPayload, CompanyHotJobsResponse } from '../utils/mis.data';
 
 @Injectable({
   providedIn: 'root',
@@ -42,52 +43,23 @@ export class MisApi {
     return this.http.put<any>(`${environment.apiUrl}hotjobs/reorder-hotjob`,body)
   }
 
-  /**
-   * Optional dates: omit query params when null so the API can treat them as unset.
-   */
-  getCompanyHotJobs(payload: {
-    companyId: number;
-    jobType?: string | null;
-    fromDate?: unknown;
-    toDate?: unknown;
-  }): Observable<unknown> {
-    let params = new HttpParams().set(
-      'companyId',
-      String(payload.companyId ?? 0)
-    );
-    const jt = payload.jobType?.trim();
-    if (jt) {
-      params = params.set('jobType', jt);
+  getCompanyHotJobs(payload: CompanyHotJobsPayload): Observable<CompanyHotJobsResponse> {
+    let params = new HttpParams().set('CompanyId', payload.companyId);
+
+    if (payload.jobType) {
+      params = params.set('JobType', payload.jobType);
     }
-    const from = MisApi.formatDateForQuery(payload.fromDate);
-    const to = MisApi.formatDateForQuery(payload.toDate);
-    if (from !== undefined) {
-      params = params.set('fromDate', from);
+    if (payload.fromDate) {
+      params = params.set('ValidFromDate', payload.fromDate.toISOString());
     }
-    if (to !== undefined) {
-      params = params.set('toDate', to);
+    if (payload.toDate) {
+      params = params.set('ValidToDate', payload.toDate.toISOString());
     }
-    return this.http.get<unknown>(
+
+    return this.http.get<CompanyHotJobsResponse>(
       `${environment.apiUrl}hotjobs/companyHotJobs`,
       { params }
     );
-  }
-
-  /** ngxsmk single mode uses `Date`; range mode uses `{ start, end }`. */
-  private static formatDateForQuery(value: unknown): string | undefined {
-    if (value == null) {
-      return undefined;
-    }
-    if (value instanceof Date) {
-      return value.toISOString().slice(0, 10);
-    }
-    if (typeof value === 'object' && value !== null && 'start' in value) {
-      const start = (value as { start: Date | null }).start;
-      if (start instanceof Date) {
-        return start.toISOString().slice(0, 10);
-      }
-    }
-    return undefined;
   }
 
 }
