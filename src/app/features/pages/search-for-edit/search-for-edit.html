@@ -1,132 +1,175 @@
 <div class="container">
     <div class="flex items-center gap-x-10 justify-between">
-        <div class="flex items-center gap-x-4">
-            <div class="space-y-2">
-                <!-- Company List header -->
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-slate-700">Company List</span>
-                </div>
-
-                <!-- Search input with dropdown styling -->
-                <input type="text" placeholder="Search company"
-                    class="w-fit rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-500 hover:border-slate-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20">
-            </div>
+  
+      <!-- Company Search -->
+      <div class="flex items-center gap-x-4">
+        <div class="space-y-2 relative">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-slate-700">Company List</span>
+          </div>
+          <input
+            [formControl]="companyNameControl"
+            (input)="onCompanyInput()"
+            type="text"
+            placeholder="Search company"
+            class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm
+                   text-slate-900 shadow-sm transition placeholder:text-slate-500
+                   hover:border-slate-400 focus:border-amber-500 focus:outline-none
+                   focus:ring-2 focus:ring-amber-500/20"
+          >
+          @if (shouldShowList()) {
+            <ul class="absolute left-0 right-0 z-50 mt-1 max-h-60 min-w-full overflow-auto rounded-md bg-white
+                       py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+              @for (item of companies(); track item.comId) {
+                <li
+                  (click)="selectCompany(item)"
+                  class="relative cursor-pointer select-none px-4 py-2 text-slate-900 hover:bg-amber-100"
+                >
+                  {{ item.companyName }}
+                </li>
+              }
+            </ul>
+          }
         </div>
-
-        <div class="flex items-center gap-x-4">
-            <div class="space-y-2">
-                <!-- Job Type header -->
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-slate-700">Job Type</span>
-                </div>
-
-                <!-- Dropdown with custom styling -->
-                <app-dropdown-component [options]="jobType()" class="w-2xl"  [control]="testformcontrol"></app-dropdown-component>
-            </div>
+      </div>
+  
+      <!-- Job Type -->
+      <div class="flex items-center gap-x-4">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-slate-700">Job Type</span>
+          </div>
+          <app-dropdown-component
+            [options]="jobType()"
+            [control]="jobTypeControl"
+            class="w-2xl">
+          </app-dropdown-component>
         </div>
-
-        <div class="flex items-center gap-x-4">
-            <div class="space-y-2">
-                <!-- From Date header -->
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-slate-700">From Date</span>
-                </div>
-
-                <!-- Datepicker with custom styling -->
-                <ngxsmk-datepicker mode="single" [showRanges]="true" [value]="FromDate()"
-                    (valueChange)="FromDate.set($event)"></ngxsmk-datepicker>
-            </div>
+      </div>
+  
+      <!-- From Date -->
+      <div class="flex items-center gap-x-4">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-slate-700">From Date</span>
+          </div>
+          <ngxsmk-datepicker
+            mode="single"
+            [showRanges]="true"
+            [value]="form.controls.fromDate.value"
+            (valueChange)="setFromDate($event)">
+          </ngxsmk-datepicker>
         </div>
-
-        <div class="flex items-center gap-x-4">
-            <div class="space-y-2">
-                <!-- To Date header -->
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-slate-700">To Date</span>
-                </div>
-
-                <!-- Datepicker with custom styling -->
-                <ngxsmk-datepicker mode="single" [showRanges]="true" [value]="ToDate()"
-                    (valueChange)="ToDate.set($event)"></ngxsmk-datepicker>
-            </div>
+      </div>
+  
+      <!-- To Date -->
+      <div class="flex items-center gap-x-4">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-slate-700">To Date</span>
+          </div>
+          <ngxsmk-datepicker
+            mode="single"
+            [showRanges]="true"
+            [value]="form.controls.toDate.value"
+            (valueChange)="setToDate($event)">
+          </ngxsmk-datepicker>
         </div>
+      </div>
+  
     </div>
+  
+    <!-- Submit -->
     <div class="w-full mt-4">
-        <div class="flex justify-center rounded-lg bg-green-400 w-60 px-5 py-2 cursor-pointer mx-auto font-semibold"
-            (click)="test()">
-            Submit</div>
+      <div
+        (click)="submit()"
+        class="flex justify-center rounded-lg bg-green-400 w-60 px-5 py-2
+               cursor-pointer mx-auto font-semibold hover:bg-green-500 transition-colors">
+        @if (isLoading()) {
+          Loading...
+        } @else {
+          Submit
+        }
+      </div>
     </div>
-
-    <div class="flex gap-x-2">
-        <div class="font-semibold text-2xl text-[#ac016d]">Total Hot Job: 38 ||</div>
-        <div class="font-semibold text-2xl text-[#ac016d]">No. of Positions: 38</div>
-    </div>
-
-
-    <!-- Header Row - 7 columns, no action column -->
-    <div class="w-full overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
-
-        <!-- Table Header -->
-        <div
-            class="grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] gap-4 px-6 py-4 bg-slate-50 border-b border-slate-200 rounded-t-2xl">
-            <div class="text-xs font-bold uppercase tracking-widest">#</div>
-            <div class="text-xs font-bold uppercase tracking-widest">Job Title</div>
-            <div class="text-xs font-bold uppercase tracking-widest">Published</div>
-            <div class="text-xs font-bold uppercase tracking-widest">Deadline</div>
-            <div class="text-xs font-bold uppercase tracking-widest">Position</div>
-            <div class="text-xs font-bold uppercase tracking-widest">Total</div>
-            <div class="text-xs font-bold uppercase tracking-widest ">Comments</div>
-            <div class="text-xs font-bold uppercase tracking-widest ">Actions</div>
+  
+    <!-- Summary -->
+    @if (results().length > 0) {
+      <div class="flex gap-x-2 mt-4">
+        <div class="font-semibold text-2xl text-[#ac016d]">
+          Total Hot Job: {{ results().length }} ||
         </div>
-
-        <!-- Table Body -->
-        <div class="divide-y divide-slate-100">
-            @for (item of data; track $index) {
-            <div
-                class="grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] gap-4 px-6 py-4 items-center hover:bg-blue-50 transition-colors duration-150 cursor-pointer group">
-
-              
-                <div class="text-sm font-semibold text-slate-400">{{ $index + 1 }}</div>
-
-                <div class="text-sm font-semibold text-slate-800 wrap-anywhere">{{ item.jobTitle }}</div>
-
-                <div class="text-sm ">{{ item.publishedDate }}</div>
-
-                <div class="text-sm ">{{ item.jobdeadline }}</div>
-
-                <div class="text-sm ">{{ item.displaypostion }}</div>
-
-                <div>
-                    <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                        {{ item.totalJob }}
-                    </span>
-                </div>
-
-                <div class="text-sm  truncate">{{ item.comments }}</div>
-
-                <div class="flex items-center gap-2">
-                    <button
-                        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors duration-150"
-                        (click)="$event.stopPropagation(); ">
-                        ✏️ Edit
-                    </button>
-                    <button
-                        class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-500 hover:bg-red-100 transition-colors duration-150"
-                        (click)="$event.stopPropagation(); ">
-                        🗑️ Del
-                    </button>
-                </div>
-
-            </div>
-            }
-
-            @empty {
-            <div class="py-16 text-center text-slate-400 text-sm font-medium">
-                No job listings found.
-            </div>
-            }
+        <div class="font-semibold text-2xl text-[#ac016d]">
+          No. of Positions: {{ totalPositions() }}
         </div>
-
+      </div>
+    }
+  
+    <!-- Table -->
+    <div class="w-full overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white mt-4">
+  
+      <!-- Header -->
+      <div class="grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] gap-4 px-6 py-4
+                  bg-slate-50 border-b border-slate-200 rounded-t-2xl">
+        <div class="text-xs font-bold uppercase tracking-widest">#</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Job Title</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Published</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Deadline</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Position</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Total</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Comments</div>
+        <div class="text-xs font-bold uppercase tracking-widest">Actions</div>
+      </div>
+  
+      <!-- Body -->
+      <div class="divide-y divide-slate-100">
+        @for (item of results(); track item.id; let i = $index) {
+          <div class="grid grid-cols-[60px_2fr_1fr_1fr_1fr_1fr_1fr_120px] gap-4 px-6 py-4
+                      items-center hover:bg-blue-50 transition-colors duration-150 cursor-pointer">
+  
+            <div class="text-sm font-semibold text-slate-400">{{ i + 1 }}</div>
+  
+            <div class="text-sm font-semibold text-slate-800 wrap-anywhere">{{ item.jobTitle }}</div>
+  
+            <div class="text-sm text-slate-600">{{ item.publishedDate }}</div>
+  
+            <div class="text-sm text-slate-600">{{ item.jobdeadline }}</div>
+  
+            <div class="text-sm text-slate-600">{{ item.displaypostion }}</div>
+  
+            <div>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs
+                           font-semibold bg-blue-100 text-blue-700">
+                {{ item.totalJob }}
+              </span>
+            </div>
+  
+            <div class="text-sm text-slate-600 truncate">{{ item.comments }}</div>
+  
+            <div class="flex items-center gap-2">
+              <button
+                (click)="$event.stopPropagation(); onEdit(item)"
+                class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                       bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                ✏️ Edit
+              </button>
+              <button
+                (click)="$event.stopPropagation(); onDelete(item)"
+                class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                       bg-red-50 text-red-500 hover:bg-red-100 transition-colors">
+                🗑️ Del
+              </button>
+            </div>
+  
+          </div>
+        }
+  
+        @empty {
+          <div class="py-16 text-center text-slate-400 text-sm font-medium">
+            No job listings found.
+          </div>
+        }
+      </div>
+  
     </div>
-</div>
+  </div>

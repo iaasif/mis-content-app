@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
@@ -13,15 +13,6 @@ export class MisApi {
 
 
   addCompany(payload: CreateCompany): Observable<unknown> {
-    // const formData = new FormData();
-    // Object.keys(payload).forEach(key => {
-    //   const value = (payload as any)[key];
-    //   if (value !== null && value !== undefined) {
-    //     formData.append(key, value instanceof Blob ? value : value.toString());
-    //   }
-    // });
-
-
     return this.http.post(`${this.url}/add-company`, payload);
   }
 
@@ -29,10 +20,6 @@ export class MisApi {
     const cpid = companyId.toString()
     return this.http.delete(`${this.url}/delete-company?ComId=${cpid}`);
   }
-
-  // getHotJobs(): Observable<HotJob[]> {
-  //   return this.http.get<HotJob[]>(`${environment.apiUrl}hotjobs`);
-  // }
 
   getSourcePersons(): Observable<SourcePerson[]>{
     return this.http.get<SourcePerson[]>(environment.apiUrl+"SourcePerson");
@@ -53,6 +40,54 @@ export class MisApi {
 
   reOrderHotJobs(body:any):Observable<any>{
     return this.http.put<any>(`${environment.apiUrl}hotjobs/reorder-hotjob`,body)
+  }
+
+  /**
+   * Optional dates: omit query params when null so the API can treat them as unset.
+   */
+  getCompanyHotJobs(payload: {
+    companyId: number;
+    jobType?: string | null;
+    fromDate?: unknown;
+    toDate?: unknown;
+  }): Observable<unknown> {
+    let params = new HttpParams().set(
+      'companyId',
+      String(payload.companyId ?? 0)
+    );
+    const jt = payload.jobType?.trim();
+    if (jt) {
+      params = params.set('jobType', jt);
+    }
+    const from = MisApi.formatDateForQuery(payload.fromDate);
+    const to = MisApi.formatDateForQuery(payload.toDate);
+    if (from !== undefined) {
+      params = params.set('fromDate', from);
+    }
+    if (to !== undefined) {
+      params = params.set('toDate', to);
+    }
+    return this.http.get<unknown>(
+      `${environment.apiUrl}hotjobs/companyHotJobs`,
+      { params }
+    );
+  }
+
+  /** ngxsmk single mode uses `Date`; range mode uses `{ start, end }`. */
+  private static formatDateForQuery(value: unknown): string | undefined {
+    if (value == null) {
+      return undefined;
+    }
+    if (value instanceof Date) {
+      return value.toISOString().slice(0, 10);
+    }
+    if (typeof value === 'object' && value !== null && 'start' in value) {
+      const start = (value as { start: Date | null }).start;
+      if (start instanceof Date) {
+        return start.toISOString().slice(0, 10);
+      }
+    }
+    return undefined;
   }
 
 }
