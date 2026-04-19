@@ -189,28 +189,7 @@ export class EditJob {
     // ).subscribe();
   }
 
-  onQueryChange(value: string): void {
-    this.wantToAddHotJob.set(false);
-    this.query.set(value);
-
-    if (this.debounceTimer) clearTimeout(this.debounceTimer);
-
-    if (!value.trim()) {
-      this.companyNameSuggestions.set([]);
-      return;
-    }
-
-    this.debounceTimer = setTimeout(() => {
-      this.companyApi.companyNamesSuggestions(value.trim()).pipe(
-        tap((res) => {
-          console.log('API call for suggestions with query:', res);
-        })
-      ).subscribe({
-        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
-        error: () => this.companyNameSuggestions.set([]),
-      });
-    }, 150);
-  }
+ 
 
   selectCompany(data: CompanySuggestion): void {
     localStorage.setItem('SELECTED_COMPANY', JSON.stringify(data));
@@ -233,21 +212,6 @@ export class EditJob {
     this.wantToAddHotJob.set(false);
   }
 
-  onFocus(): void {
-    this.isFocused.set(true);
-    const q = this.query().trim();
-    if (q) {
-      this.companyApi.companyNamesSuggestions(q).subscribe({
-        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
-        error: () => this.companyNameSuggestions.set([]),
-      });
-    }
-  }
-
-  onBlur(): void {
-    setTimeout(() => this.isFocused.set(false), 120);
-  }
-  
   addHotJob():void{
     this.wantToAddHotJob.set(true);
     this.newHotJobForm.patchValue({
