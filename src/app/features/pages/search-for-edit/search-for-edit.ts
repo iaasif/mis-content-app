@@ -6,10 +6,11 @@ import { DropdownComponent } from "../../../shared/components/dropdown-component
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MisApi } from '../mis/services/mis-api';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
-import { catchError, debounceTime, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
 import { CompanySuggestion } from '../mis/models/jobs.data';
 import { CompanyHotJob, CompanyHotJobsPayload } from '../mis/utils/mis.data';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 export const JobType: DropdownOption[] = [
   { label: "All Jobs",     value: "1" },
@@ -26,6 +27,7 @@ export const JobType: DropdownOption[] = [
 export class SearchForEdit {
   private companyNameService = inject(CompanyNameSuggestion);
   private misApiService = inject(MisApi);
+  private router = inject(Router)
 
   companyId = signal(0);
   results   = signal<CompanyHotJob[]>([]);
@@ -101,20 +103,23 @@ export class SearchForEdit {
       toDate:    this.form.value.toDate    ?? null,
     };
 
-    this.misApiService.getCompanyHotJobs(payload).subscribe({
+    this.misApiService.getCompanyHotJobs(payload)
+    .pipe(finalize(() => this.isLoading.set(false)))
+    .subscribe({
       next: (response) => {
-        this.results.set(response.success ? response.data : []);
-        this.isLoading.set(false);
+        this.results.set(response.success ? response.data : []);    
       },
       error: (err) => {
         console.error('Search failed:', err);
-        this.isLoading.set(false);
       },
     });
   }
 
   onEdit(item: CompanyHotJob): void {
     console.log('Edit:', item);
+    this.router.navigate(['/edit'],{
+      queryParams:{comID:item.id}
+    })
   }
 
   onDelete(item: CompanyHotJob): void {

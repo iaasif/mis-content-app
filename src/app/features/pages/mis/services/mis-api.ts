@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
@@ -11,8 +11,7 @@ import { CompanyHotJobsPayload, CompanyHotJobsResponse } from '../utils/mis.data
 export class MisApi {
   private readonly http = inject(HttpClient);
   private readonly url = environment.apiUrl + 'hotjobs';
-
-
+  
   addCompany(payload: CreateCompany): Observable<unknown> {
     return this.http.post(`${this.url}/add-company`, payload);
   }

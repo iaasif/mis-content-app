@@ -7,7 +7,7 @@ import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-ne
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
 import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { map, tap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
@@ -24,6 +24,7 @@ import { DropdownOption } from '../../../shared/models/models';
   styleUrl: './edit-job.css',
 })
 export class EditJob {
+  private readonly activeRouter = inject(ActivatedRoute)
   private readonly router = inject(Router);
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
@@ -61,6 +62,12 @@ export class EditJob {
       }
     });
     this.destroyRef.onDestroy(() => sub.unsubscribe());
+
+    
+    this.activeRouter.queryParamMap.subscribe(params => {
+      const category = params.get('comID');
+      console.log("get id",category);
+    });
   }
   
   newHotJobForm = new FormGroup<HotJobFormControls>({
