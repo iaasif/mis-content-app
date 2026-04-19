@@ -110,6 +110,7 @@ export class SearchForEdit {
     this.results().reduce((sum, item) => sum + (item.displaypostion ?? 0), 0)
   );
 
+  // will work later 
   submit(): void {
     this.isLoading.set(true);
 
@@ -122,6 +123,7 @@ export class SearchForEdit {
 
     this.misApiService.getCompanyHotJobs(payload).subscribe({
       next: (result) => {
+        console.log("uu",result)
         this.results.set(Array.isArray(result) ? result : []);
         this.isLoading.set(false);
       },
