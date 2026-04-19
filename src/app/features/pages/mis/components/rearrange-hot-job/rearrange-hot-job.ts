@@ -31,6 +31,7 @@ export class RearrangeHotJob {
           newSerial: i + 1,
         }))
       ),
+      tap(res=> console.log('tap tap',res))
     ),
     { initialValue: [] as HotJob[] }
   );
