@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
+import { CompanyLogoData, CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
 import { CompanyHotJobsPayload, CompanyHotJobsResponse } from '../utils/mis.data';
 
@@ -61,4 +61,10 @@ export class MisApi {
     );
   }
 
+  getCompanyLogo(comID: string | number): Observable<CompanyLogoData[]> {
+    const params = new HttpParams().set('ComId', comID.toString());
+    return this.http.get<CompanyLogoData[]>(`${environment.apiUrl}hotjobs/companyLogo`, { params });
+  }
+
 }
+

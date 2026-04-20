@@ -130,3 +130,9 @@ export interface HotJobCreationResponse {
   id: number;
   message: string;
 }
+
+export interface CompanyLogoData {
+  comId: number;
+  companyNameBng: string;
+  logoSource: string[];
+}

@@ -157,17 +157,29 @@
         <label class="text-lg font-semibold text-slate-700">Display Logo?</label>
         <app-radio [control]="newHotJobForm.controls.displayLogo" [groupName]="'displayLogo'" [radioItems]="displayLogoOptions()">
         </app-radio>
-      </div>
-
-      <!-- Select company logo -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-        <label class="text-lg font-semibold text-slate-700">Select company logo</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.companyLogoId" [isNumericOnly]="true">
-        </app-input>
-      </div>
-
-      <!-- Number of Jobs -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
+        </div>
+        
+        <!-- Select company logo -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
+          <label class="text-lg font-semibold text-slate-700">Select company logo</label>
+        
+          <div class="flex flex-wrap gap-3">
+            @if (CompanyLogoData()?.length) {
+            @for (logo of CompanyLogoData()[0].logoSource; track logo) {
+            <button type="button" class="rounded-lg border p-2 transition"
+              [class.border-blue-500]="newHotJobForm.controls.companyLogoId.value === logo"
+              [class.ring-4]="newHotJobForm.controls.companyLogoId.value === logo"
+              [class.ring-blue-300]="newHotJobForm.controls.companyLogoId.value === logo"
+              (click)="newHotJobForm.controls.companyLogoId.setValue(logo)">
+              <img [src]="logo" alt="Company Logo" class="h-16 w-16 object-contain" />
+            </button>
+            }
+            }
+          </div>
+        </div>
+        
+        <!-- Number of Jobs -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">No of Job(s)</label>
         <app-input [type]="'text'" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
         </app-input>
@@ -195,17 +207,23 @@
       <!-- Published Date -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Published Date</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PublishedDate()"
+        <ngxsmk-datepicker  [required]="true" class="w-2xl" mode="single" [showRanges]="true" [value]="PublishedDate()"
           (valueChange)="onPublishedDateChange($event)">
         </ngxsmk-datepicker>
+        @if(newHotJobForm.controls.publishedDate.errors?.['required']) {
+          <div class="text-red-600 text-sm col-start-2">Published Date is required</div>
+        }
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
         <label class="text-lg font-semibold text-slate-700">Job Deadline</label>
-        <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="Deadline()"
+        <ngxsmk-datepicker [required]="true" class="w-2xl" mode="single" [showRanges]="true" [value]="Deadline()"
           (valueChange)="onJobDeadlineChange($event)">
         </ngxsmk-datepicker>
-        </div>
+        @if(newHotJobForm.controls.jobDeadline.errors?.['required']) {
+          <div class="text-red-600 text-sm w-full col-start-2 ">Job Deadline is required</div>
+        }
+      </div>
         
         
         @if(isPremium()){

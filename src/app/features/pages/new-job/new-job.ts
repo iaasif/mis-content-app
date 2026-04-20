@@ -6,7 +6,7 @@ import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanyLogoData, CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { map, tap } from 'rxjs';
@@ -35,6 +35,7 @@ export class NewJob implements OnInit {
   query = signal('');
   isFocused = signal(false);
   companyNameSuggestions = signal<CompanySuggestion[]>([]);
+  CompanyLogoData = signal<CompanyLogoData[]>([]);
 
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -248,6 +249,16 @@ export class NewJob implements OnInit {
       showCompanyNameAs : this.companyData()?.displayCompanyName,
       companyNameBn: this.companyData()?.companyNameBng,
     })
+
+    this.misApi.getCompanyLogo(this.companyData()?.comId.toString() || '').subscribe({
+      next: (res) => {
+        console.log("Company logo", res);
+        this.CompanyLogoData.set(res);
+      },
+      error: (err) => {
+        console.log("Error getting company logo", err);
+      }
+    });
   }
 
   private premiumValidator(group: AbstractControl) {
