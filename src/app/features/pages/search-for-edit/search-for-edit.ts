@@ -65,7 +65,7 @@ export class SearchForEdit {
 
   shouldShowList = computed(() => {
     const { query, suggestions } = this.companySuggestState();
-    return this.companyId() === 0 && query.length >= 1 && suggestions.length > 0;
+    return this.companyId() === 0 && query.length >= 1;
   });
 
   totalPositions = computed(() =>
@@ -112,7 +112,10 @@ export class SearchForEdit {
     }))
     .subscribe({
       next: (response) => {
-        this.results.set(response.success ? response.data : []);    
+        this.results.set(response.success ? response.data : []);   
+        if(this.results().length<1){
+          this.hotToaster.error('Please Select a Company');
+        } 
       },
       error: (err) => {
         console.error('Search failed:', err);

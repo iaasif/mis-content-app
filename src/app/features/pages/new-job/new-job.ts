@@ -293,7 +293,7 @@ export class NewJob implements OnInit {
     { initialValue: [] }
   );
   
-  sorcePerson = toSignal(
+  sourcePerson = toSignal(
     this.misApi.getSourcePersons().pipe(
       map((res) =>
         res.map((person: any): DropdownOption => ({

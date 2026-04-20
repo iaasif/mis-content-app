@@ -28,6 +28,11 @@
                   {{ item.companyName }}
                 </li>
               }
+              @empty {
+                <li class="relative cursor-pointer select-none px-4 py-2 text-slate-900">
+                  No companies found
+                </li>
+              }
             </ul>
           }
         </div>
