@@ -164,7 +164,7 @@
           <label class="text-lg font-semibold text-slate-700">Select company logo</label>
         
           <div class="flex flex-wrap gap-3">
-            @if (CompanyLogoData()?.length) {
+            @if (CompanyLogoData().length) {
             @for (logo of CompanyLogoData()[0].logoSource; track logo) {
             <button type="button" class="rounded-lg border p-2 transition"
               [class.border-blue-500]="newHotJobForm.controls.companyLogoId.value === logo"
