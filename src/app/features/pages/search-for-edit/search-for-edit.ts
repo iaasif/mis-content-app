@@ -11,6 +11,7 @@ import { CompanySuggestion } from '../mis/models/jobs.data';
 import { CompanyHotJob, CompanyHotJobsPayload } from '../mis/utils/mis.data';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 export const JobType: DropdownOption[] = [
   { label: "All Jobs",     value: "1" },
@@ -28,6 +29,7 @@ export class SearchForEdit {
   private companyNameService = inject(CompanyNameSuggestion);
   private misApiService = inject(MisApi);
   private router = inject(Router)
+  private hotToaster = inject(HotToastService)
 
   companyId = signal(0);
   results   = signal<CompanyHotJob[]>([]);
@@ -95,6 +97,7 @@ export class SearchForEdit {
 
   submit(): void {
     this.isLoading.set(true);
+    
 
     const payload: CompanyHotJobsPayload = {
       companyId: this.form.value.companyId ?? 0,
@@ -104,13 +107,16 @@ export class SearchForEdit {
     };
 
     this.misApiService.getCompanyHotJobs(payload)
-    .pipe(finalize(() => this.isLoading.set(false)))
+    .pipe(finalize(() => {
+      this.isLoading.set(false)
+    }))
     .subscribe({
       next: (response) => {
         this.results.set(response.success ? response.data : []);    
       },
       error: (err) => {
         console.error('Search failed:', err);
+        this.hotToaster.error('Search failed');
       },
     });
   }
