@@ -66,5 +66,15 @@ export class MisApi {
     return this.http.get<CompanyLogoData[]>(`${environment.apiUrl}hotjobs/companyLogo`, { params });
   }
 
+
+  getHotJobDataById(jobId: string | number): Observable<HotJob> {
+    const params = new HttpParams().set('Id', jobId.toString());
+    return this.http.get<HotJob>(`${environment.apiUrl}hotjobs/single-hotjob`, { params });
+  }
+  
+  updateHotJob(payload: any): Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}hotjobs/update-single-hotjob`,payload)
+  }
+
 }
 

@@ -15,6 +15,7 @@ import { StoreDataService } from '../mis/services/store-data-service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MisApi } from '../mis/services/mis-api';
 import { DropdownOption } from '../../../shared/models/models';
+import { error } from 'console';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class EditJob {
   protected storeData = inject(StoreDataService);
   protected misApi = inject(MisApi);
 
+  private hotJobId = signal<number>(0);
   wantToAddHotJob = signal(false); 
   companyData = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
@@ -63,10 +65,20 @@ export class EditJob {
     });
     this.destroyRef.onDestroy(() => sub.unsubscribe());
 
-    
     this.activeRouter.queryParamMap.subscribe(params => {
-      const category = params.get('comID');
-      // console.log("get id",category);
+      const jobId = params.get('jobId');
+      if (jobId) {
+        this.misApi.getHotJobDataById(jobId).subscribe({
+          next: (res) => {
+            this.hotJobId.set(res.id);   // ← store the id
+            console.log("get hot job data", res);
+            this.populateForm(res);
+          },
+          error: (err) => {
+            console.log("get hot job data error", err);
+          }
+        });
+      }
     });
   }
   
@@ -147,45 +159,46 @@ export class EditJob {
       this.newHotJobForm.markAllAsTouched();
       return;
     }
-  
+
     const raw = this.newHotJobForm.getRawValue();
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
-  
+
     const payload = {
-      companyId:               raw.companyId,
-      companyName:             raw.companyName,
-      alternativeCompanyName:  raw.showCompanyNameAs,       // renamed
-      alternativeCompanyNameBN: raw.companyNameBn,          // renamed
-      jobTitles:               raw.jobTitle,                // renamed (plural)
-      jobTitlesBN:             '',                          // add a form control for this
-      jobUrl:                  raw.hotJobsUrl,              // renamed
-      comments:                raw.comments ?? '',
-      categoryJobIds:          raw.categoryJobIds,
-      displayLogo:             raw.displayLogo,
-      logoSource:              String(raw.companyLogoId ?? ''), // renamed + string
-      totalJobs:               raw.numberOfJobs,            // renamed
-      whiteCollarCount:        0,                           // add form controls if needed
-      blueCollarCount:         0,
-      complementaryCount:      0,
-      hotjobCMCount:           0,
-      isPremium:               raw.hotJobsType === 'Premium',  // transformed
-      isBlueCollar:            opts.includes('BlueCollar'),    // extracted from array
-      isComplementary:         opts.includes('Complementary'),
-      isHotjobCM:              opts.includes('HotjobCM'),
-      startOn:                 raw.PremiumStartOn || null,   // renamed
-      endOn:                   raw.PremiumEndOn || null,     // renamed
-      publishedOn:             raw.publishedDate,              // renamed
-      deadline:                raw.jobDeadline,               // renamed
-      postedBy:                Number(raw.postedBy),           // ensure number
-      referredBy:              Number(raw.sourcePerson),       // renamed
-      serialNo:                Number(raw.displayPosition),    // renamed
-      hotJobId:                0,
-      pageMode:                'Add',
+      Id: this.hotJobId(),              // ← from fetched response
+      pageMode: 'Edit',                       // ← Edit mode
+      comId: raw.companyId,
+      companyName: raw.companyName,
+      displayCompanyName: raw.showCompanyNameAs,
+      displayCompanyNameBng: raw.companyNameBn,
+      jobTitles: raw.jobTitle,
+      jobTitlesBng: raw.jobTitle,                 // use same if no BN field
+      linkPage: raw.hotJobsUrl,
+      comments: raw.comments ?? '',
+      jP_Ids: raw.categoryJobIds,
+      showLogo: raw.displayLogo,
+      jbLogoSource: String(raw.companyLogoId ?? ''),
+      totalJobs: raw.numberOfJobs,
+      totalWC: 0,
+      totalBC: 0,
+      totalComplementary: 0,
+      totalHotJobsCM: 0,
+      premiumJob: raw.hotJobsType === 'Premium' ? 1 : 0,
+      blueCollerJob: opts.includes('BlueCollar'),
+      complementaryJob: opts.includes('Complementary'),
+      hotJobsCM: opts.includes('HotjobCM'),
+      startDate: raw.PremiumStartOn || null,
+      endDate: raw.PremiumEndOn || null,
+      publishedOn: raw.publishedDate,
+      deadLine: raw.jobDeadline,
+      postedBy: Number(raw.postedBy),
+      referredBy: Number(raw.sourcePerson),
+      serialNo: Number(raw.displayPosition),
     };
-    console.log("payloiad",payload)
-  
-    // this.misApi.addHotJob(payload).pipe(
-    //   tap(d => console.log('response -->', d))
+
+    console.log("payload", payload);
+
+    // this.misApi.updateHotJob(payload).pipe(
+    //   tap(d => console.log('response update hotjob -->', d))
     // ).subscribe();
   }
 
@@ -265,6 +278,44 @@ export class EditJob {
     ),
     { initialValue: [] }
   );
+
+  private populateForm(res: any): void {
+    // --- Build postedOptions array from booleans ---
+    const opts: string[] = [];
+    if (res.blueCollerJob) opts.push('BlueCollar');
+    if (res.complementaryJob) opts.push('Complementary');
+    if (res.hotJobsCM) opts.push('HotjobCM');
+
+    // --- Patch only available fields ---
+    this.newHotJobForm.patchValue({
+      companyId: res.comId ?? this.newHotJobForm.value.companyId,
+      companyName: res.companyName ?? this.newHotJobForm.value.companyName,
+      showCompanyNameAs: res.displayCompanyName ?? this.newHotJobForm.value.showCompanyNameAs,
+      companyNameBn: res.displayCompanyNameBng ?? this.newHotJobForm.value.companyNameBn,
+      jobTitle: res.jobTitles ?? this.newHotJobForm.value.jobTitle,
+      hotJobsUrl: res.linkPage ?? this.newHotJobForm.value.hotJobsUrl,
+      comments: res.comments ?? null,
+      categoryJobIds: res.jP_Ids ?? this.newHotJobForm.value.categoryJobIds,
+      displayLogo: res.showLogo ?? false,
+      companyLogoId: res.jbLogoSource ?? null,
+      numberOfJobs: res.totalJobs ?? 0,
+      hotJobsType: res.premiumJob === 1 ? 'Premium' : 'Normal',
+      postedOptions: opts,
+      displayPosition: res.serialNo != null ? String(res.serialNo) : this.newHotJobForm.value.displayPosition,
+      publishedDate: res.publishedOn ?? '',
+      jobDeadline: res.deadLine ?? '',
+      PremiumStartOn: res.startDate ?? '',
+      PremiumEndOn: res.endDate ?? '',
+      postedBy: res.postedBy != null ? String(res.postedBy) : this.newHotJobForm.value.postedBy,
+      sourcePerson: res.referredBy != null ? String(res.referredBy) : this.newHotJobForm.value.sourcePerson,
+    });
+
+    // --- Sync datepicker signals ---
+    if (res.publishedOn) this.PublishedDate.set(new Date(res.publishedOn));
+    if (res.deadLine) this.Deadline.set(new Date(res.deadLine));
+    if (res.startDate) this.FromDate.set(new Date(res.startDate));
+    if (res.endDate) this.ToDate.set(new Date(res.endDate));
+  }
 
 }
 

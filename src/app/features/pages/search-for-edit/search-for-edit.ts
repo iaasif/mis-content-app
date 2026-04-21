@@ -31,6 +31,7 @@ export class SearchForEdit {
   private router = inject(Router)
   private hotToaster = inject(HotToastService)
 
+  isLoadingCompanies = signal(false);
   companyId = signal(0);
   results   = signal<CompanyHotJob[]>([]);
   isLoading = signal(false);
@@ -51,13 +52,19 @@ export class SearchForEdit {
       map((value) => value?.trim() ?? ''),
       debounceTime(300),
       distinctUntilChanged(),
+      tap((query) => {
+        if (query.length >= 2) this.isLoadingCompanies.set(true);
+      }),
       switchMap((query) =>
         query.length >= 2
           ? this.companyNameService.companyNamesSuggestions(query).pipe(
               map((suggestions) => ({ query, suggestions })),
-              catchError(() => of({ query, suggestions: [] as CompanySuggestion[] }))
+              catchError(() => of({ query, suggestions: [] as CompanySuggestion[] })),
+              finalize(() => this.isLoadingCompanies.set(false))
             )
-          : of({ query, suggestions: [] as CompanySuggestion[] })
+          : of({ query, suggestions: [] as CompanySuggestion[] }).pipe(
+              finalize(() => this.isLoadingCompanies.set(false))
+            )
       ),
     ),
     { initialValue: { query: '', suggestions: [] as CompanySuggestion[] } }
@@ -65,7 +72,7 @@ export class SearchForEdit {
 
   shouldShowList = computed(() => {
     const { query, suggestions } = this.companySuggestState();
-    return this.companyId() === 0 && query.length >= 1;
+    return this.companyId() === 0 && query.length >= 1 || this.isLoadingCompanies();
   });
 
   totalPositions = computed(() =>
@@ -125,9 +132,9 @@ export class SearchForEdit {
   }
 
   onEdit(item: CompanyHotJob): void {
-    // console.log('Edit:', item);
+    console.log('Edit:', item);
     this.router.navigate(['/edit'],{
-      queryParams:{comID:item.id}
+      queryParams:{jobId:item.id}
     })
   }
 

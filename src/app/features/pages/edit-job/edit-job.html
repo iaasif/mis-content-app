@@ -33,8 +33,9 @@
         <!-- Company Name -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Company Name</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false" [isRequired]="true">
-          </app-input>
+          <div class="text-xl font-semibold text-slate-900">
+            {{newHotJobForm.controls.companyName.value}}
+          </div>
         </div>
   
         <!-- Show Company Name As -->

@@ -7,33 +7,36 @@
           <div class="flex items-center gap-2">
             <span class="text-sm font-semibold text-slate-700">Company List</span>
           </div>
-          <input
-          [formControl]="form.controls.companyName"
-            (input)="onCompanyInput()"
-            type="text"
-            placeholder="Search company"
+          <input [formControl]="form.controls.companyName" (input)="onCompanyInput()" type="text" placeholder="Search company"
             class="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm
-                   text-slate-900 shadow-sm transition placeholder:text-slate-500
-                   hover:border-slate-400 focus:border-amber-500 focus:outline-none
-                   focus:ring-2 focus:ring-amber-500/20"
-          >
+                         text-slate-900 shadow-sm transition placeholder:text-slate-500
+                         hover:border-slate-400 focus:border-amber-500 focus:outline-none
+                         focus:ring-2 focus:ring-amber-500/20">
           @if (shouldShowList()) {
-            <ul class="absolute left-0 right-0 z-50 mt-1 max-h-60 min-w-full overflow-auto rounded-md bg-white
-                       py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              @for (item of companies(); track item.comId) {
-                <li
-                  (click)="selectCompany(item)"
-                  class="relative cursor-pointer select-none px-4 py-2 text-slate-900 hover:bg-amber-100"
-                >
-                  {{ item.companyName }}
-                </li>
-              }
-              @empty {
-                <li class="relative cursor-pointer select-none px-4 py-2 text-slate-900">
-                  No companies found
-                </li>
-              }
-            </ul>
+          <ul class="absolute left-0 right-0 z-50 mt-1 max-h-60 min-w-full overflow-auto rounded-md bg-white
+                                       py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+      
+            @if (isLoadingCompanies()) {
+            <li class="flex items-center gap-2 px-4 py-2 text-slate-500">
+              <span
+                class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-amber-500 border-t-transparent"></span>
+              <span>Searching...</span>
+            </li>
+            } @else {
+            @for (item of companies(); track $index) {
+            <li (click)="selectCompany(item)"
+              class="relative cursor-pointer select-none px-4 py-2 text-slate-900 hover:bg-amber-100">
+              {{ item.companyName }}
+            </li>
+            }
+            @empty {
+            <li class="relative cursor-pointer select-none px-4 py-2 text-slate-500">
+              No companies found
+            </li>
+            }
+            }
+      
+          </ul>
           }
         </div>
       </div>
