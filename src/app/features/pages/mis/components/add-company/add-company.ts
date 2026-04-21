@@ -6,10 +6,11 @@ import { MisApi } from '../../services/mis-api';
 import { CreateCompany } from '../../models/jobs.data';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { StoreDataService } from '../../services/store-data-service';
+import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 
 @Component({
   selector: 'app-add-company',
-  imports: [ReactiveFormsModule, InputComponent],
+  imports: [ReactiveFormsModule, InputComponent, FileUploadComponent],
   templateUrl: './add-company.html',
   styleUrl: './add-company.css',
 })
