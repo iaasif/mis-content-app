@@ -81,7 +81,7 @@ export class AddCompany {
 
     this.misApi.addCompany(payload).subscribe({
       next: (res) => {
-        console.log('res', res);
+        // console.log('res', res);
         this.hotToast.success('Company added successfully');
         this.newCompanyForm.reset();
       },

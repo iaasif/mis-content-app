@@ -66,7 +66,7 @@ export class EditJob {
     
     this.activeRouter.queryParamMap.subscribe(params => {
       const category = params.get('comID');
-      console.log("get id",category);
+      // console.log("get id",category);
     });
   }
   
@@ -109,7 +109,7 @@ export class EditJob {
     this.PublishedDate.set(val);
     const isoDate = this.datepickerToIso(val);
     this.newHotJobForm.controls.publishedDate.setValue(isoDate);
-    console.log(isoDate)
+    // console.log(isoDate)
   }
   
   onJobDeadlineChange(val: DatepickerValue) {

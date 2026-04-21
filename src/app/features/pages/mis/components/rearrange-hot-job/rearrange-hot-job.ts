@@ -30,8 +30,8 @@ export class RearrangeHotJob {
           jobTitleList: splitingJobTitles(job.jobTitles),
           newSerial: i + 1,
         }))
-      ),
-      tap(res=> console.log('tap tap',res))
+      )
+      // tap(res=> console.log('tap tap',res))
     ),
     { initialValue: [] as HotJob[] }
   );
@@ -155,14 +155,14 @@ export class RearrangeHotJob {
       serialNo: index + 1
     }));
 
-    console.log(payload);
+    // console.log(payload);
 
     this.misService
       .reOrderHotJobs(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          console.log('Reordered successfully', res);
+          // console.log('Reordered successfully', res);
           this.hotToasterService.success('Rearrange Successful')
           window.location.reload();
         },

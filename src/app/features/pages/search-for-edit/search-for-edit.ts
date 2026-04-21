@@ -125,13 +125,13 @@ export class SearchForEdit {
   }
 
   onEdit(item: CompanyHotJob): void {
-    console.log('Edit:', item);
+    // console.log('Edit:', item);
     this.router.navigate(['/edit'],{
       queryParams:{comID:item.id}
     })
   }
 
   onDelete(item: CompanyHotJob): void {
-    console.log('Delete:', item);
+    // console.log('Delete:', item);
   }
 }

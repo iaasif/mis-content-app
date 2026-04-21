@@ -177,9 +177,9 @@ export class NewJob implements OnInit {
     };
     console.log("payloiad",payload)
   
-    // this.misApi.addHotJob(payload).pipe(
-    //   tap(d => console.log('response -->', d))
-    // ).subscribe();
+    this.misApi.addHotJob(payload).pipe(
+      tap(d => console.log('response -->', d))
+    ).subscribe();
   }
 
   onQueryChange(value: string): void {

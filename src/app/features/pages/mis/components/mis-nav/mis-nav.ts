@@ -50,7 +50,7 @@ export class MisNav {
     this.debounceTimer = setTimeout(() => {
       this.companyApi.companyNamesSuggestions(value.trim()).pipe(
         tap((res) => {
-          console.log('API call for suggestions with query:', res);
+          // console.log('API call for suggestions with query:', res);
         })
       ).subscribe({
         next: list => this.suggestions.set(list.slice(0, 8)),
