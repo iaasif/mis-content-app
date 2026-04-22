@@ -15,6 +15,7 @@ import { StoreDataService } from '../mis/services/store-data-service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MisApi } from '../mis/services/mis-api';
 import { DropdownOption } from '../../../shared/models/models';
+import { mapToDropdownOptions } from '../../../shared/utils/functions';
 
 
 @Component({
@@ -78,10 +79,10 @@ export class EditJob {
         return forkJoin({
           hotJob: this.misApi.getHotJobDataById(jobId),
           postedBy: this.misApi.getPostedBy().pipe(
-            map(res => this.mapToDropdownOptions(res))
+            map(res => mapToDropdownOptions(res))
           ),
           sourcePerson: this.misApi.getSourcePersons().pipe(
-            map(res => this.mapToDropdownOptions(res))
+            map(res => mapToDropdownOptions(res))
           ),
         }).pipe(
           catchError(err => {
@@ -100,13 +101,6 @@ export class EditJob {
       this.populateForm(hotJob);
       this.setPreselectValue(postedBy, sourcePerson, hotJob);
     });
-  }
-
-  private mapToDropdownOptions(items: any[]): DropdownOption[] {
-    return items.map((item): DropdownOption => ({
-      label: item.fullName,
-      value: item.userId
-    }));
   }
 
   newHotJobForm = new FormGroup<HotJobFormControls>({
