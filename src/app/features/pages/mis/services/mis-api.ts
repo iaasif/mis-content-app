@@ -25,8 +25,9 @@ export class MisApi {
     return this.http.get<SourcePerson[]>(environment.apiUrl+"SourcePerson");
   }
 
-  getPostedBy(deptId:number):Observable<postedBy[]>{
-    return this.http.get<postedBy[]>(`${environment.apiUrl+"SourcePerson/"+deptId}`)
+  getPostedBy():Observable<postedBy[]>{
+    const deptIdParam = "3"
+    return this.http.get<postedBy[]>(`${environment.apiUrl+"SourcePerson/"+deptIdParam}`)
   }
 
   //work later

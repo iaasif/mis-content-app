@@ -279,7 +279,7 @@ export class NewJob implements OnInit {
   );
 
   postedBy = toSignal(
-    this.misApi.getPostedBy(deptId).pipe(
+    this.misApi.getPostedBy().pipe(
       map((res) =>
         res.map((item: any): DropdownOption => ({
           label: item.fullName,   // label = fullname

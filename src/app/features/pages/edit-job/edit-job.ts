@@ -1,21 +1,20 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory, priorities } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanySuggestion, HotJobFormControls } from '../mis/models/jobs.data';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { map, tap } from 'rxjs';
+import { catchError, filter, forkJoin, map, of, switchMap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
 import { StoreDataService } from '../mis/services/store-data-service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MisApi } from '../mis/services/mis-api';
 import { DropdownOption } from '../../../shared/models/models';
-import { error } from 'console';
 
 
 @Component({
@@ -32,15 +31,17 @@ export class EditJob {
   protected storeData = inject(StoreDataService);
   protected misApi = inject(MisApi);
 
+
+  preselectPostedBy = signal<DropdownOption | null>(null);
+  preselectSourcePerson = signal<DropdownOption | null>(null);
+
   private hotJobId = signal<number>(0);
-  wantToAddHotJob = signal(false); 
+  wantToAddHotJob = signal(false);
   companyData = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
   companyNameSuggestions = signal<CompanySuggestion[]>([]);
-
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
@@ -54,39 +55,66 @@ export class EditJob {
   displayLogoOptions = signal([
     { label: 'Yes', value: true },
     { label: 'No', value: false },
-  ]) ;
+  ]);
 
+  postedBy = signal<DropdownOption[]>([]);
+  sourcePerson = signal<DropdownOption[]>([]);
   ngOnInit(): void {
-    const sub = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.currentRoute.set(event.urlAfterRedirects);
-      }
+    // 1. Router events — auto-cleanup with takeUntilDestroyed
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(event => {
+      this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
     });
-    this.destroyRef.onDestroy(() => sub.unsubscribe());
 
-    this.activeRouter.queryParamMap.subscribe(params => {
-      const jobId = params.get('jobId');
-      if (jobId) {
-        this.misApi.getHotJobDataById(jobId).subscribe({
-          next: (res) => {
-            this.hotJobId.set(res.id);   // ← store the id
-            console.log("get hot job data", res);
-            this.populateForm(res);
-          },
-          error: (err) => {
-            console.log("get hot job data error", err);
-          }
-        });
-      }
+    // 2. Query params with switchMap to prevent race conditions + auto-cleanup
+    this.activeRouter.queryParamMap.pipe(
+      map(params => params.get('jobId')),
+      filter((jobId): jobId is string => !!jobId), // filter out null/undefined
+      switchMap(jobId => {
+        // const deptId = 3; // TODO: replace with actual deptId from config
+
+        return forkJoin({
+          hotJob: this.misApi.getHotJobDataById(jobId),
+          postedBy: this.misApi.getPostedBy().pipe(
+            map(res => this.mapToDropdownOptions(res))
+          ),
+          sourcePerson: this.misApi.getSourcePersons().pipe(
+            map(res => this.mapToDropdownOptions(res))
+          ),
+        }).pipe(
+          catchError(err => {
+            console.error('Error loading data:', err);
+            return of({ hotJob: null, postedBy: [], sourcePerson: [] });
+          })
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(({ hotJob, postedBy, sourcePerson }) => {
+      if (!hotJob) return; // handled by catchError fallback
+      this.hotJobId.set(hotJob.id);
+      this.postedBy.set(postedBy);
+      this.sourcePerson.set(sourcePerson);
+
+      this.populateForm(hotJob);
+      this.setPreselectValue(postedBy, sourcePerson, hotJob);
     });
   }
-  
+
+  private mapToDropdownOptions(items: any[]): DropdownOption[] {
+    return items.map((item): DropdownOption => ({
+      label: item.fullName,
+      value: item.userId
+    }));
+  }
+
   newHotJobForm = new FormGroup<HotJobFormControls>({
-    companyId : new FormControl(0, {nonNullable: true,validators:[Validators.required]}),
+    companyId: new FormControl(0, { nonNullable: true, validators: [Validators.required] }),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
-    companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     jobTitle: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     hotJobsUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -97,25 +125,25 @@ export class EditJob {
     displayLogo: new FormControl(false, { nonNullable: true }),
     companyLogoId: new FormControl<null | string | number>(null),
 
-    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0),Validators.required] }),
+    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.required] }),
 
     hotJobsType: new FormControl('Normal', { nonNullable: true, validators: [Validators.required] }),
 
     postedOptions: new FormControl<(string | boolean)[]>([], { nonNullable: true }),
 
-    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
-    publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
-    jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
-    PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
+    PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
 
     postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  
+
   onPublishedDateChange(val: DatepickerValue): void {
     this.PublishedDate.set(val);
     this.newHotJobForm.controls.publishedDate.setValue(this.datepickerToIso(val));
@@ -139,7 +167,7 @@ export class EditJob {
   private datepickerToIso(val: DatepickerValue): string {
     if (!val) return '';
     if (val instanceof Date) return val.toISOString();
-    
+
     // @ts-ignore - depends on your lib's actual type
     if (val?.start instanceof Date) return val.start.toISOString();
 
@@ -194,7 +222,7 @@ export class EditJob {
     // ).subscribe();
   }
 
- 
+
 
   selectCompany(data: CompanySuggestion): void {
     localStorage.setItem('SELECTED_COMPANY', JSON.stringify(data));
@@ -213,16 +241,16 @@ export class EditJob {
     this.storeData.SELECTED_COMPANY.set(null);
     this.query.set('');
     this.companyNameSuggestions.set([]);
-    
+
     this.wantToAddHotJob.set(false);
   }
 
-  addHotJob():void{
+  addHotJob(): void {
     this.wantToAddHotJob.set(true);
     this.newHotJobForm.patchValue({
       companyId: this.companyData()?.comId,
-      companyName :  this.companyData()?.companyName,
-      showCompanyNameAs : this.companyData()?.displayCompanyName,
+      companyName: this.companyData()?.companyName,
+      showCompanyNameAs: this.companyData()?.displayCompanyName,
       companyNameBn: this.companyData()?.companyNameBng,
     })
   }
@@ -231,11 +259,11 @@ export class EditJob {
     const type = group.get('hotJobsType')?.value;
     const start = group.get('premiumStartDate')?.value;
     const end = group.get('premiumEndDate')?.value;
-  
+
     if (type === 'Premium' && (!start || !end)) {
       return { premiumRequired: true };
     }
-  
+
     return null;
   }
   isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
@@ -244,32 +272,32 @@ export class EditJob {
     { initialValue: this.newHotJobForm.get('hotJobsType')!.value }
   );
 
-  postedBy = toSignal(
-    this.misApi.getPostedBy(deptId).pipe(
-      map((res) =>
-        res.map((item: any): DropdownOption => ({
-          label: item.fullName,   // label = fullname
-          value: item.userId      // value = userid
-        }))
-      ),
-      tap((mapped) => {
-        console.log("posted by", mapped);
-      })
-    ),
-    { initialValue: [] }
-  );
-  
-  sorcePerson = toSignal(
-    this.misApi.getSourcePersons().pipe(
-      map((res) =>
-        res.map((person: any): DropdownOption => ({
-            label: person.fullName,
-            value: person.userId
-          }))
-      )
-    ),
-    { initialValue: [] }
-  );
+  // postedBy = toSignal(
+  //   this.misApi.getPostedBy(deptId).pipe(
+  //     map((res) =>
+  //       res.map((item: any): DropdownOption => ({
+  //         label: item.fullName,   // label = fullname
+  //         value: item.userId      // value = userid
+  //       }))
+  //     ),
+  //     tap((mapped) => {
+  //       console.log("posted by", mapped);
+  //     })
+  //   ),
+  //   { initialValue: [] }
+  // );
+
+  // sourcePerson = toSignal(
+  //   this.misApi.getSourcePersons().pipe(
+  //     map((res) =>
+  //       res.map((person: any): DropdownOption => ({
+  //           label: person.fullName,
+  //           value: person.userId
+  //         }))
+  //     )
+  //   ),
+  //   { initialValue: [] }
+  // );
 
   private populateForm(res: any): void {
     // --- Build postedOptions array from booleans ---
@@ -308,7 +336,19 @@ export class EditJob {
     if (res.startDate) this.FromDate.set(new Date(res.startDate));
     if (res.endDate) this.ToDate.set(new Date(res.endDate));
   }
-  
+
+
+  setPreselectValue(postedBy: any, sourcePerson: any, fullData: any): void {
+    const found = postedBy.find((item: any) => item.value === Number(fullData.postedBy));
+    if (found) {
+      this.preselectPostedBy.set({ value: found.value, label: found.label });
+    }
+
+    const foundSource = sourcePerson.find((item: any) => item.value === Number(fullData.referredBy));
+    if (foundSource) {
+      this.preselectSourcePerson.set({ value: foundSource.value, label: foundSource.label });
+    }
+  }
 
 }
 

@@ -27,7 +27,7 @@ export class DropdownComponent<T extends string | number> {
   readonly control = input.required<FormControl<T | null>>();
 
   // NEW: preselected value from parent
-  readonly preselectedOption = input<T | null>(null);
+  readonly preselectedOption = input<DropdownOption | null>(null);
 
   readonly selectionChange = output<DropdownOption>();
   readonly isOpen = signal(false);
