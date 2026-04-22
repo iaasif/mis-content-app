@@ -13,11 +13,11 @@
           class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100">
           Add Company
         </button>
-        <!-- <button [routerLink]="'/edit'" type="button"
+        <button [routerLink]="'/edit-company'" type="button"
           class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-lg font-semibold text-blue-700 transition hover:bg-blue-100">
           Edit
-        </button> -->
-        <button [routerLink]="'/delete'" type="button"
+        </button>
+        <button [routerLink]="'/delete-company'" type="button"
           class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100">
           Delete Company
         </button>
@@ -176,6 +176,7 @@
           <label class="text-lg font-semibold text-slate-700">Posted By</label>
           <!-- <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
           </app-input> -->
+          
           <app-dropdown-component class="w-2xl" [options]="postedBy()" [control]="newHotJobForm.controls.postedBy" [isRequired]="true">
           </app-dropdown-component>
         </div>
@@ -193,20 +194,18 @@
           <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
             Save
           </button>
-  
           <button type="button" (click)="newHotJobForm.reset()"
-            class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
+          class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
             Reset
           </button>
         </div>
       </div>
     </form>
-  
     <!-- Footer Actions -->
     <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
       <button type="button"
-        class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
-        Cancel
+      class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
+      Cancel
       </button>
       <button type="button" (click)="submit()" 
         class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">

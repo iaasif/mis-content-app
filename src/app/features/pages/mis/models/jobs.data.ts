@@ -73,8 +73,8 @@ export type HotJobFormControls = {
   jobDeadline: FormControl<string>;
   PremiumStartOn: FormControl<string>;
   PremiumEndOn: FormControl<string>;
-  postedBy: FormControl<string>;
-  sourcePerson: FormControl<string>;
+  postedBy: FormControl<number>;
+  sourcePerson: FormControl<number>;
 };
 
 export type newCompanyForm = {

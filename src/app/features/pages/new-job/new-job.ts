@@ -93,8 +93,8 @@ export class NewJob implements OnInit {
     PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
     PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
 
-    postedBy: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
-    sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
+    sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
   });
 
   

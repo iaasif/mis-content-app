@@ -48,7 +48,6 @@ export class EditJob {
 
   PublishedDate = signal<DatepickerValue>(null);
   Deadline = signal<DatepickerValue>(null);
-
   FromDate = signal<DatepickerValue>(null);
   ToDate = signal<DatepickerValue>(null);
 
@@ -112,36 +111,29 @@ export class EditJob {
     PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
     PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
 
-    postedBy: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
-    sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
   });
 
   
-  onPublishedDateChange(val: DatepickerValue) {
+  onPublishedDateChange(val: DatepickerValue): void {
     this.PublishedDate.set(val);
-    const isoDate = this.datepickerToIso(val);
-    this.newHotJobForm.controls.publishedDate.setValue(isoDate);
-    // console.log(isoDate)
+    this.newHotJobForm.controls.publishedDate.setValue(this.datepickerToIso(val));
   }
-  
-  onJobDeadlineChange(val: DatepickerValue) {
+
+  onJobDeadlineChange(val: DatepickerValue): void {
     this.Deadline.set(val);
-    const isoDate = this.datepickerToIso(val);
-    this.newHotJobForm.controls.jobDeadline.setValue(isoDate);
+    this.newHotJobForm.controls.jobDeadline.setValue(this.datepickerToIso(val));
   }
 
-  onFromDateChange(val: DatepickerValue) {
+  onFromDateChange(val: DatepickerValue): void {
     this.FromDate.set(val);
-    const isoDate = this.datepickerToIso(val);
-    this.newHotJobForm.controls.PremiumStartOn.setValue(isoDate);
+    this.newHotJobForm.controls.PremiumStartOn.setValue(this.datepickerToIso(val));
   }
 
-  onToDateChange(val: DatepickerValue) {
-    console.log('To date changed:', val);
+  onToDateChange(val: DatepickerValue): void {
     this.ToDate.set(val);
-    const isoDate = this.datepickerToIso(val);
-    console.log('Setting premiumEndDate to:', isoDate);
-    this.newHotJobForm.controls.PremiumEndOn.setValue(isoDate);
+    this.newHotJobForm.controls.PremiumEndOn.setValue(this.datepickerToIso(val));
   }
 
   private datepickerToIso(val: DatepickerValue): string {
@@ -190,8 +182,8 @@ export class EditJob {
       endDate: raw.PremiumEndOn || null,
       publishedOn: raw.publishedDate,
       deadLine: raw.jobDeadline,
-      postedBy: Number(raw.postedBy),
-      referredBy: Number(raw.sourcePerson),
+      postedBy: raw.postedBy,       // already a number
+      referredBy: raw.sourcePerson, // already a number
       serialNo: Number(raw.displayPosition),
     };
 
@@ -261,7 +253,7 @@ export class EditJob {
         }))
       ),
       tap((mapped) => {
-        // console.log("posted by", mapped);
+        console.log("posted by", mapped);
       })
     ),
     { initialValue: [] }
@@ -272,7 +264,7 @@ export class EditJob {
       map((res) =>
         res.map((person: any): DropdownOption => ({
             label: person.fullName,
-            value: person.depSerial
+            value: person.userId
           }))
       )
     ),
@@ -306,8 +298,8 @@ export class EditJob {
       jobDeadline: res.deadLine ?? '',
       PremiumStartOn: res.startDate ?? '',
       PremiumEndOn: res.endDate ?? '',
-      postedBy: res.postedBy != null ? String(res.postedBy) : this.newHotJobForm.value.postedBy,
-      sourcePerson: res.referredBy != null ? String(res.referredBy) : this.newHotJobForm.value.sourcePerson,
+      postedBy: res.postedBy ?? 0,        // ← was String(res.postedBy)
+      sourcePerson: res.referredBy ?? 0,  // ← was String(res.referredBy)
     });
 
     // --- Sync datepicker signals ---
@@ -316,6 +308,7 @@ export class EditJob {
     if (res.startDate) this.FromDate.set(new Date(res.startDate));
     if (res.endDate) this.ToDate.set(new Date(res.endDate));
   }
+  
 
 }
 

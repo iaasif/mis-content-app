@@ -24,7 +24,11 @@
     <div>
       <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">File Upload</h1>
     </div>
-
+    <div class="flex gap-4">
+      <button [routerLink]="['/add-company']" class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100" >Add Company</button>
+      <button [routerLink]="['/edit-company']" class="cursor-pointer rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-lg font-semibold text-amber-700 transition hover:bg-amber-100" >Edit Company</button>
+      <button [routerLink]="['/delete-company']" class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100" >Delete Company</button>
+    </div>
     @if (currentRoute() === '/up' || currentRoute() === '/delete')
     {
     <div class="relative w-72">

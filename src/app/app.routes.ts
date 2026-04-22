@@ -30,8 +30,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pages/mis/components/add-company/add-company').then(m => m.AddCompany)
     },
     {
-        path: 'delete',
+        path: 'delete-company',
         loadComponent: () => import('./features/pages/mis/components/delete-company/delete-company').then(m => m.DeleteCompany)
+    },
+    {
+        path: 'edit-company',
+        loadComponent: () => import('./features/pages/edit-company/edit-company').then(m => m.EditCompany)
     },
     {
         path: 'hotJobPreview',
