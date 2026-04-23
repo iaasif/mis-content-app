@@ -68,7 +68,7 @@ export type HotJobFormControls = {
   numberOfJobs: FormControl<number>;
   hotJobsType: FormControl<string>;
   postedOptions: FormControl<(string | boolean)[]>;
-  displayPosition: FormControl<string>;
+  displayPosition: FormControl<string | number | null>;
   publishedDate: FormControl<string>;
   jobDeadline: FormControl<string>;
   PremiumStartOn: FormControl<string>;

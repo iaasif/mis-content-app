@@ -48,8 +48,8 @@ export class EditJob {
 
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
-  position = signal(priorities);
-
+  totalPositionCount = signal<DropdownOption[]>([]);
+  // Date signals
   PublishedDate = signal<DatepickerValue>(null);
   Deadline = signal<DatepickerValue>(null);
   FromDate = signal<DatepickerValue>(null);
@@ -62,6 +62,8 @@ export class EditJob {
 
   postedBy = signal<DropdownOption[]>([]);
   sourcePerson = signal<DropdownOption[]>([]);
+  preSelectedPosition = signal<DropdownOption | null>(null);
+  
   ngOnInit(): void {
     // 1. Router events — auto-cleanup with takeUntilDestroyed
     this.router.events.pipe(
@@ -86,19 +88,31 @@ export class EditJob {
           sourcePerson: this.misApi.getSourcePersons().pipe(
             map(res => mapToDropdownOptions(res))
           ),
+          totalActiveHotJobsCount: this.misApi.getTotalActiveHotJobsCount().pipe(
+            map(res => {
+              const count = res.totalHotJobs;
+
+              return Array.from({ length: count }, (_, i) => ({
+                label: (i + 1).toString(),
+                value: i + 1
+              })) as DropdownOption[];
+            })
+          )
         }).pipe(
           catchError(err => {
             console.error('Error loading data:', err);
-            return of({ hotJob: null, postedBy: [], sourcePerson: [] });
+            return of({ hotJob: null, postedBy: [], sourcePerson: [], totalActiveHotJobsCount: 0 });
           })
         );
       }),
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(({ hotJob, postedBy, sourcePerson }) => {
+    ).subscribe(({ hotJob, postedBy, sourcePerson, totalActiveHotJobsCount }) => {
       if (!hotJob) return; // handled by catchError fallback
       this.hotJobId.set(hotJob.id);
       this.postedBy.set(postedBy);
       this.sourcePerson.set(sourcePerson);
+      this.totalPositionCount.set(totalActiveHotJobsCount); 
+      // console.log('totalPositionCount', this.totalPositionCount());
 
       this.populateForm(hotJob);
       this.setPreselectValue(postedBy, sourcePerson, hotJob);
@@ -127,7 +141,7 @@ export class EditJob {
 
     postedOptions: new FormControl<(string | boolean)[]>([], { nonNullable: true }),
 
-    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    displayPosition: new FormControl<number | null>(null, { validators: [Validators.required] }),
 
     publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -302,7 +316,7 @@ export class EditJob {
       numberOfJobs: res.totalJobs ?? 0,
       hotJobsType: res.premiumJob === 1 ? 'Premium' : 'Normal',
       postedOptions: opts,
-      displayPosition: res.serialNo != null ? String(res.serialNo) : this.newHotJobForm.value.displayPosition,
+      displayPosition: res.serialNo != null ? res.serialNo : this.newHotJobForm.value.displayPosition,
       publishedDate: res.publishedOn ?? '',
       jobDeadline: res.deadLine ?? '',
       PremiumStartOn: res.startDate ?? '',
@@ -329,6 +343,16 @@ export class EditJob {
     if (foundSource) {
       this.preselectSourcePerson.set({ value: foundSource.value, label: foundSource.label });
     }
+
+    const fullDisplayPosition = this.totalPositionCount().find((item: any) => item.value === Number(fullData.serialNo));
+    if (fullDisplayPosition) {
+      this.preSelectedPosition.set(fullDisplayPosition);
+    }
+    // console.log("fullDisplayPosition", fullDisplayPosition);
+    // console.log("totalPositionCount", this.totalPositionCount());
+    // // console.log("fullData", fullData);
+    // console.log("fullData.serialNo", fullData.serialNo);
+    // console.log("preSelectedPosition", this.preSelectedPosition());
   }
 
 }
