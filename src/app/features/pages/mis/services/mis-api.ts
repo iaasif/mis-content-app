@@ -32,7 +32,7 @@ export class MisApi {
 
   //work later
   addHotJob(payload: any): Observable<HotJobCreationResponse>{
-    return this.http.post<HotJobCreationResponse>(`${environment.apiUrl} hotjobs/add-hotjob`,payload)
+    return this.http.post<HotJobCreationResponse>(`${environment.apiUrl}hotjobs/add-hotjob`,payload)
   }
 
   getAllHotJobs():Observable<HotJob[]>{

@@ -1,15 +1,18 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
 import { MisApi } from '../../services/mis-api';
-import { CreateCompany } from '../../models/jobs.data';
+import { CreateCompany, UploadImgApiResponse } from '../../models/jobs.data';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { StoreDataService } from '../../services/store-data-service';
+import { FileUploadComponent } from '../../../../../shared/components/file-upload/file-upload.component';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { startWith } from 'rxjs';
 
 @Component({
   selector: 'app-add-company',
-  imports: [ReactiveFormsModule, InputComponent],
+  imports: [ReactiveFormsModule, InputComponent,FileUploadComponent],
   templateUrl: './add-company.html',
   styleUrl: './add-company.css',
 })
@@ -17,6 +20,8 @@ export class AddCompany {
   private misApi = inject(MisApi);
   private hotToast = inject(HotToastService);
   private storeDataService = inject(StoreDataService);
+
+  readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
 
   readonly imagePayload: Record<string, string | File | undefined> = {
     id: 'idfromPayloadIMG',
@@ -56,8 +61,35 @@ export class AddCompany {
     }),
   });
 
+  private nameValue = toSignal(
+    this.newCompanyForm.controls.companyName.valueChanges.pipe(
+      startWith(this.newCompanyForm.controls.companyName.value ?? '')
+    )
+  );
+  // will work later  here 
+  readonly imgUploadPayload = computed<Record<string, string | number | undefined> | null>(() => {
+    const name = this.nameValue();
+
+    if (name && name.length > 0) {
+      return {
+        id: '-1',
+        imageName: 'HotJobLogo',
+        CompanyName: name
+      };
+    }
+
+    return null;
+  });
 
   submit(): void {
+    // console.log('submit');
+    // console.log('imgUploadPayload', this.imgUploadPayload());
+    // console.log('form values', this.newCompanyForm.value);
+    // console.log('-----------------------------------------------');
+    // console.log('1. raw form value:', this.newCompanyForm.controls.companyName.value);
+    // console.log('2. nameValue signal:', this.nameValue());
+    // console.log('3. imgUploadPayload:', this.imgUploadPayload());
+
     if (this.newCompanyForm.invalid) {
       this.hotToast.error('Please fill all required fields');
       this.newCompanyForm.markAllAsTouched();
@@ -93,4 +125,12 @@ export class AddCompany {
     });
   }
 
+  
+ 
+  onImageResponse(res: UploadImgApiResponse): void {
+    const variants = res.variants ?? [];
+    // this.storeDataService.storeImgData(variants);
+    console.log('variants', variants);
+    this.newCompanyForm.controls.logoSource.setValue(variants[0]?.publicUrl || '');
+  }
 }
