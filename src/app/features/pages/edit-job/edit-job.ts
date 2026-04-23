@@ -9,7 +9,7 @@ import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
 import { CompanySuggestion, HotJobFormControls } from '../mis/models/jobs.data';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { catchError, filter, forkJoin, map, of, switchMap } from 'rxjs';
+import { catchError, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
 import { StoreDataService } from '../mis/services/store-data-service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -207,13 +207,19 @@ export class EditJob {
       postedBy: raw.postedBy,       // already a number
       referredBy: raw.sourcePerson, // already a number
       serialNo: Number(raw.displayPosition),
+      updatedOn: new Date().toISOString(),
     };
 
     console.log("payload", payload);
 
-    // this.misApi.updateHotJob(payload).pipe(
-    //   tap(d => console.log('response update hotjob -->', d))
-    // ).subscribe();
+    this.misApi.updateHotJob(payload).pipe(
+      tap((d) => console.log('response update hotjob -->', d)),
+      catchError((err) => {
+        console.error('Error updating hotjob:', err);
+        return of(null);
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe();
   }
 
 
