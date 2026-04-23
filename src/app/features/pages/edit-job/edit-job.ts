@@ -16,6 +16,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MisApi } from '../mis/services/mis-api';
 import { DropdownOption } from '../../../shared/models/models';
 import { mapToDropdownOptions } from '../../../shared/utils/functions';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class EditJob {
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
   protected misApi = inject(MisApi);
+  private hottoasterService = inject(HotToastService)  
 
 
   preselectPostedBy = signal<DropdownOption | null>(null);
@@ -106,7 +108,7 @@ export class EditJob {
   newHotJobForm = new FormGroup<HotJobFormControls>({
     companyId: new FormControl(0, { nonNullable: true, validators: [Validators.required] }),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    showCompanyNameAs: new FormControl<string | null>(null, { validators: [Validators.required] }),
 
     companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     jobTitle: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -171,6 +173,7 @@ export class EditJob {
   submit(): void {
     if (this.newHotJobForm.invalid) {
       this.newHotJobForm.markAllAsTouched();
+      this.hottoasterService.error('Please fill all required fields');
       return;
     }
 
@@ -213,9 +216,13 @@ export class EditJob {
     console.log("payload", payload);
 
     this.misApi.updateHotJob(payload).pipe(
-      tap((d) => console.log('response update hotjob -->', d)),
+      tap((d) =>{ 
+        console.log('response update hotjob -->', d)
+        this.hottoasterService.success('Hot-Job is up to date')
+      }),
       catchError((err) => {
         console.error('Error updating hotjob:', err);
+        this.hottoasterService.error('Failed to update Hot-Job')
         return of(null);
       }),
       takeUntilDestroyed(this.destroyRef)
@@ -272,32 +279,6 @@ export class EditJob {
     { initialValue: this.newHotJobForm.get('hotJobsType')!.value }
   );
 
-  // postedBy = toSignal(
-  //   this.misApi.getPostedBy(deptId).pipe(
-  //     map((res) =>
-  //       res.map((item: any): DropdownOption => ({
-  //         label: item.fullName,   // label = fullname
-  //         value: item.userId      // value = userid
-  //       }))
-  //     ),
-  //     tap((mapped) => {
-  //       console.log("posted by", mapped);
-  //     })
-  //   ),
-  //   { initialValue: [] }
-  // );
-
-  // sourcePerson = toSignal(
-  //   this.misApi.getSourcePersons().pipe(
-  //     map((res) =>
-  //       res.map((person: any): DropdownOption => ({
-  //           label: person.fullName,
-  //           value: person.userId
-  //         }))
-  //     )
-  //   ),
-  //   { initialValue: [] }
-  // );
 
   private populateForm(res: any): void {
     // --- Build postedOptions array from booleans ---

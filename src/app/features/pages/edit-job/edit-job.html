@@ -41,14 +41,14 @@
         <!-- Show Company Name As -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Show Company Name As</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
           </app-input>
         </div>
   
         <!-- Company Name (Bengali) -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
           </app-input>
         </div>
   
@@ -57,7 +57,7 @@
         <!-- Job Title -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Job Title</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
           </app-input>
         </div>
   
@@ -66,7 +66,7 @@
         <!-- Hot Jobs URL -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Hot Jobs URL</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
           </app-input>
         </div>
   
@@ -81,7 +81,7 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
           <label class="text-lg font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
           <div class="space-y-1">
-            <app-input [type]="'text'" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
+            <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
             </app-input>
             <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
           </div>
@@ -106,7 +106,7 @@
         <!-- Number of Jobs -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">No of Job(s)</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
           </app-input>
           
         </div>
