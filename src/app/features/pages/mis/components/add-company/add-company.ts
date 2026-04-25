@@ -118,10 +118,18 @@ export class AddCompany {
         this.newCompanyForm.reset();
       },
       error: (err) => {
+        // Check if error response has data/message
+        const errorMessage = err?.error?.message || err?.message || err?.data?.message;
+
+        if (errorMessage === 'Company already exists.') {
+          this.hotToast.error('Company with this name already exists');
+        } else {
+          this.hotToast.error('Failed to add company');
+        }
+
         console.log('err-------->', err);
         console.log('status', err.status);
         console.log('err', err.error);
-        this.hotToast.error('Failed to add company');
       },
     });
   }
