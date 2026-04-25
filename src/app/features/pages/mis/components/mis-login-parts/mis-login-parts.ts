@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { IJobs } from '../../models/jobs.data';
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { COMPANY_NAME, HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
+import { HotJobCategory, HotJobType, priorities } from '../../utils/mis.data';
 import { InputComponent } from '../../../../../shared/components/input/input.component';
 import { FileUploadComponent } from "../../../../../shared/components/file-upload/file-upload.component";
 import { MisApi } from '../../services/mis-login-api';
@@ -18,7 +18,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-hot-jobs-and-tender',
-  imports: [RouterLink,ReactiveFormsModule, InputComponent, FileUploadComponent],
+  imports: [RouterLink,ReactiveFormsModule, InputComponent],
   templateUrl: './mis-login-parts.html',
   styleUrl: './mis-login-parts.css'
 })
@@ -38,11 +38,7 @@ export class HotJobsAndTender {
 //export class AddCompany {
   private misApi = inject(MisApi);
   private hotToast = inject(HotToastService);
-  readonly imagePayload: Record<string, string | File | undefined> = {
-    id: 'idfromPayloadIMG',
-    imageName: 'HotJobLogo',
-    CompanyName: COMPANY_NAME(),
-  };
+
 
   readonly hotJobCategory = signal(HotJobCategory);
   readonly hotJobsType = signal(HotJobType);
