@@ -6,7 +6,7 @@ import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanyLogoData, CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { map, tap } from 'rxjs';
@@ -35,6 +35,7 @@ export class NewJob implements OnInit {
   query = signal('');
   isFocused = signal(false);
   companyNameSuggestions = signal<CompanySuggestion[]>([]);
+  CompanyLogoData = signal<CompanyLogoData[]>([]);
 
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -92,8 +93,8 @@ export class NewJob implements OnInit {
     PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
     PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
 
-    postedBy: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
-    sourcePerson: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
+    sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
   });
 
   
@@ -176,9 +177,9 @@ export class NewJob implements OnInit {
     };
     console.log("payloiad",payload)
   
-    // this.misApi.addHotJob(payload).pipe(
-    //   tap(d => console.log('response -->', d))
-    // ).subscribe();
+    this.misApi.addHotJob(payload).pipe(
+      tap(d => console.log('response -->', d))
+    ).subscribe();
   }
 
   onQueryChange(value: string): void {
@@ -248,6 +249,16 @@ export class NewJob implements OnInit {
       showCompanyNameAs : this.companyData()?.displayCompanyName,
       companyNameBn: this.companyData()?.companyNameBng,
     })
+
+    this.misApi.getCompanyLogo(this.companyData()?.comId.toString() || '').subscribe({
+      next: (res) => {
+        console.log("Company logo", res);
+        this.CompanyLogoData.set(res);
+      },
+      error: (err) => {
+        console.log("Error getting company logo", err);
+      }
+    });
   }
 
   private premiumValidator(group: AbstractControl) {
@@ -268,7 +279,7 @@ export class NewJob implements OnInit {
   );
 
   postedBy = toSignal(
-    this.misApi.getPostedBy(deptId).pipe(
+    this.misApi.getPostedBy().pipe(
       map((res) =>
         res.map((item: any): DropdownOption => ({
           label: item.fullName,   // label = fullname
@@ -282,7 +293,7 @@ export class NewJob implements OnInit {
     { initialValue: [] }
   );
   
-  sorcePerson = toSignal(
+  sourcePerson = toSignal(
     this.misApi.getSourcePersons().pipe(
       map((res) =>
         res.map((person: any): DropdownOption => ({

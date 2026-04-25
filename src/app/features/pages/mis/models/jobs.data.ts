@@ -68,13 +68,13 @@ export type HotJobFormControls = {
   numberOfJobs: FormControl<number>;
   hotJobsType: FormControl<string>;
   postedOptions: FormControl<(string | boolean)[]>;
-  displayPosition: FormControl<string>;
+  displayPosition: FormControl<string | number | null>;
   publishedDate: FormControl<string>;
   jobDeadline: FormControl<string>;
   PremiumStartOn: FormControl<string>;
   PremiumEndOn: FormControl<string>;
-  postedBy: FormControl<string>;
-  sourcePerson: FormControl<string>;
+  postedBy: FormControl<number>;
+  sourcePerson: FormControl<number>;
 };
 
 export type newCompanyForm = {
@@ -129,4 +129,10 @@ export interface postedBy {
 export interface HotJobCreationResponse {
   id: number;
   message: string;
+}
+
+export interface CompanyLogoData {
+  comId: number;
+  companyNameBng: string;
+  logoSource: string[];
 }

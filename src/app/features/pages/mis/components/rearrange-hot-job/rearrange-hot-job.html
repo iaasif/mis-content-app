@@ -2,10 +2,11 @@
   <p class="text-center text-sm text-gray-400 mb-4">
     Drag a card and drop it onto another to swap positions
   </p>
-  <button class="mx-auto flex p-3 rounded-xl bg-blue-200 mb-5 cursor-pointer" (click)="updateCards()">
-    save changes
-  </button>
-
+  <div class="flex justify-end">
+    <button class="flex p-3 rounded-xl bg-blue-200 mb-5 cursor-pointer" (click)="updateCards()">
+      save changes
+    </button>
+  </div>
   <div class="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
 
     @for (job of cards(); track trackById($index, job)) {

@@ -4,7 +4,7 @@
       <div>
         <div class="flex items-center gap-2">
           <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
-          <h3 class="text-xl font-semibold tracking-wide text-slate-900">Edit Hot Job</h3>
+          <h3 class="text-xl font-semibold tracking-wide text-slate-900">Edit Hot Job !!</h3>
         </div>
         <p class="mt-1 text-xs text-slate-600">Edit hot job listings</p>
       </div>
@@ -13,105 +13,42 @@
           class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100">
           Add Company
         </button>
-        <button [routerLink]="'/edit'" type="button"
+        <button [routerLink]="'/edit-company'" type="button"
           class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-lg font-semibold text-blue-700 transition hover:bg-blue-100">
           Edit
         </button>
-        <button [routerLink]="'/delete'" type="button"
+        <button [routerLink]="'/delete-company'" type="button"
           class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100">
           Delete Company
         </button>
       </div>
     </div>
   
-    <div class="">
-      <div class="relative w-full">
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-2 p-6">
-            <label for="company-search" class="text-lg font-semibold text-slate-700 w-[300px]">
-              Search company:
-            </label>
+    
   
-            <div class="relative flex items-center w-full">
-              <input id="company-search"
-                class="border rounded-lg py-2 pl-3 pr-8 w-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
-                type="text" placeholder="Search company..." [ngModel]="query()" (ngModelChange)="onQueryChange($event)"
-                (focus)="onFocus()" (blur)="onBlur()" autocomplete="off" aria-autocomplete="list"
-                [attr.aria-expanded]="isFocused() && companyNameSuggestions().length > 0" aria-controls="company-suggestions"
-                role="combobox" />
-  
-              @if (query().length > 0) {
-              <button type="button"
-                class="absolute right-2 text-slate-400 hover:text-red-500 focus:outline-none focus:text-red-500 transition-colors cursor-pointer"
-                (click)="clearCompany()" aria-label="Clear selected company">
-                <!-- X icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"
-                  aria-hidden="true">
-                  <path fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd" />
-                </svg>
-              </button>
-              }
-            </div>
-          </div>
-  
-          @if (companyData() !== null) {
-          <p class="text-lg text-emerald-700 font-medium pl-1 text-center" aria-live="polite">
-            ✓ Selected: {{ companyData()?.companyName }}
-          </p>
-          @if(!wantToAddHotJob()){
-            <button 
-            (click)="addHotJob()"
-            class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 
-                   text-white font-semibold text-sm shadow-md 
-                   hover:from-indigo-600 hover:to-purple-600 
-                   hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out w-fit mx-auto">
-            ✨ Add Hot Job
-          </button>
-          }
-          
-          }
-        </div>
-  
-        @if (isFocused() && companyNameSuggestions().length > 0) {
-        <ul id="company-suggestions" role="listbox" aria-label="Company suggestions"
-          class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto">
-          @for (data of companyNameSuggestions(); track data.comId) {
-          <li role="option" [attr.aria-selected]="data.companyName === companyData()?.companyName"
-            class="px-3 py-2 cursor-pointer hover:bg-slate-100 text-sm"
-            [class.bg-amber-50]="data.companyName === companyData()?.companyName"
-            [class.font-semibold]="data.companyName === companyData()?.companyName" (mousedown)="selectCompany(data)">
-            {{ data.companyName }}
-          </li>
-          }
-        </ul>
-        }
-      </div>
-    </div>
-  
-    @if(companyData() !== null && wantToAddHotJob()===true){
+   
       <!-- Form Content -->
     <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
       <div class="space-y-5 p-6">
         <!-- Company Name -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Company Name</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.companyName" [isNumericOnly]="false" [isRequired]="true">
-          </app-input>
+          <div class="text-xl font-semibold text-slate-900">
+            {{newHotJobForm.controls.companyName.value}}
+          </div>
         </div>
   
         <!-- Show Company Name As -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Show Company Name As</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
           </app-input>
         </div>
   
         <!-- Company Name (Bengali) -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
           </app-input>
         </div>
   
@@ -120,7 +57,7 @@
         <!-- Job Title -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Job Title</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
           </app-input>
         </div>
   
@@ -129,7 +66,7 @@
         <!-- Hot Jobs URL -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Hot Jobs URL</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
           </app-input>
         </div>
   
@@ -144,7 +81,7 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
           <label class="text-lg font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
           <div class="space-y-1">
-            <app-input [type]="'text'" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
+            <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
             </app-input>
             <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
           </div>
@@ -169,7 +106,7 @@
         <!-- Number of Jobs -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">No of Job(s)</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
+          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
           </app-input>
           
         </div>
@@ -231,7 +168,7 @@
          <!-- Display Position -->
          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Display Position</label>
-          <app-dropdown-component class="w-2xl" [options]="position()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
+          <app-dropdown-component class="w-2xl" [preselectedOption]="preSelectedPosition()" [options]="totalPositionCount()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
           </app-dropdown-component>
         </div>
         <!-- Posted By -->
@@ -239,14 +176,17 @@
           <label class="text-lg font-semibold text-slate-700">Posted By</label>
           <!-- <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
           </app-input> -->
-          <app-dropdown-component class="w-2xl" [options]="postedBy()" [control]="newHotJobForm.controls.postedBy" [isRequired]="true">
+          
+          <app-dropdown-component class="w-2xl" [preselectedOption]="preselectPostedBy()" [options]="postedBy()" [control]="newHotJobForm.controls.postedBy" [isRequired]="true">
           </app-dropdown-component>
         </div>
   
         <!-- Source Person -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Source Person</label>
-          <app-dropdown-component class="w-2xl" [options]="sorcePerson()" [control]="newHotJobForm.controls.sourcePerson" [isRequired]="true">
+          <app-dropdown-component 
+          [preselectedOption]="preselectSourcePerson()"
+          class="w-2xl" [options]="sourcePerson()" [control]="newHotJobForm.controls.sourcePerson" [isRequired]="true">
           </app-dropdown-component>
         </div>
         
@@ -256,35 +196,24 @@
           <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
             Save
           </button>
-  
           <button type="button" (click)="newHotJobForm.reset()"
-            class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
+          class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
             Reset
           </button>
         </div>
       </div>
     </form>
-  
     <!-- Footer Actions -->
     <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
       <button type="button"
-        class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
-        Cancel
+      class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
+      Cancel
       </button>
       <button type="button" (click)="submit()" 
         class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
         Save Changes
       </button>
     </div>
-    }
-    @else{
   
-      
-     <div class="w-full bg-blue-100 mx-auto text-center h-36 flex justify-center items-center text-4xl m-4">
-      <div>
-        Please search and select a company
-      </div> 
-     </div>
-    }
     
   </div>

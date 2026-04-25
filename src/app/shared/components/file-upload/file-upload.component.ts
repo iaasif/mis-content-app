@@ -84,6 +84,7 @@ export class FileUploadComponent implements AfterViewChecked {
   readonly fileInputId = `app-file-upload-input-${++fileInputIdCounter}`;
 
   // ── Inputs ───────────────────────────────────────────────────────────────────
+  readonly autoUpload = input<boolean>(false);
   readonly maxFileSizeInBytes = input<number>(DefaultMaxSize);
   readonly maxWidth = input<number>(20_000);
   readonly maxHeight = input<number>(20_000);
@@ -92,9 +93,10 @@ export class FileUploadComponent implements AfterViewChecked {
   readonly imgUrl = input.required<string>();   // endpoint for images
   readonly fileUploadUrl = input.required<string>();   // endpoint for pdf/zip/html
   readonly payload = input.required<Record<string, string | number | undefined>>();
+  readonly receiveCompanyNameFromParent = input(false)
 
   // ── Outputs ──────────────────────────────────────────────────────────────────
-  readonly response = output<UploadImgApiResponse>();
+  readonly responseImgUp = output<UploadImgApiResponse>();
   readonly responseHtmlUp = output<UploadHtmlResponse>();
   readonly uploadInProgress = output<boolean>();
 
@@ -196,6 +198,10 @@ export class FileUploadComponent implements AfterViewChecked {
 
     if (newEntries.length) {
       this.files.update(prev => [...prev, ...newEntries]);
+      if (this.autoUpload()) {
+        // Run after signal has propagated so upload() can find the new entries
+        newEntries.forEach(entry => this.upload(entry.id));
+      }
     }
   }
 
@@ -217,7 +223,13 @@ export class FileUploadComponent implements AfterViewChecked {
     this.uploadInProgress.emit(true);
 
     const form = new FormData();
-    const companyName = this.storeDataService.SELECTED_COMPANY()?.companyName ?? '';
+    let companyName = '';
+    if (this.receiveCompanyNameFromParent()) {
+      companyName = (this.payload()['CompanyName'] || '').toString();
+    }
+    else {
+      companyName = this.storeDataService.SELECTED_COMPANY()?.companyName ?? '';
+    }
     const payloadId = String(this.payload()['id'] ?? '');
 
     if (mf.detectedType === 'image') {
@@ -262,7 +274,7 @@ export class FileUploadComponent implements AfterViewChecked {
             if (mf.detectedType === 'image') {
               const r = res as UploadImgApiResponse;
               resultUrl = r.profile ?? r.id ?? '';
-              this.response.emit(r);
+              this.responseImgUp.emit(r);
             } else {
               const r = res as UploadHtmlResponse;
               resultUrl = r.publicUrl ?? r.id ?? '';

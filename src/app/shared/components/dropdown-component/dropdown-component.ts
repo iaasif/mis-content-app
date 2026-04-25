@@ -26,6 +26,9 @@ export class DropdownComponent<T extends string | number> {
   readonly validationText = input<string>('');
   readonly control = input.required<FormControl<T | null>>();
 
+  // NEW: preselected value from parent
+  readonly preselectedOption = input<DropdownOption | null>(null);
+
   readonly selectionChange = output<DropdownOption>();
   readonly isOpen = signal(false);
   readonly selectedOption = signal<DropdownOption | null>(null);
@@ -33,41 +36,62 @@ export class DropdownComponent<T extends string | number> {
   private readonly controlStatus = signal<string>('');
 
   constructor() {
-    // ✅ ctrl.events catches ALL changes: value, status, touched, dirty, pristine
     effect(() => {
       const ctrl = this.control();
-      this.controlStatus.set(this.snapshot(ctrl)); // seed
-      
+      this.controlStatus.set(this.snapshot(ctrl));
+
       ctrl.events
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => this.controlStatus.set(this.snapshot(ctrl)));
     });
 
+    // UPDATED: show preselected option in UI if control has no value
     effect(() => {
-      const value = this.control().value;
+      const controlValue = this.control().value;
+      const preselectedValue = this.preselectedOption();
       const opts = this.options();
-      if (value === null || value === undefined || value === '') {
+
+      const valueToUse =
+        controlValue !== null && controlValue !== undefined && controlValue !== ''
+          ? controlValue
+          : preselectedValue;
+
+      if (valueToUse === null || valueToUse === undefined || valueToUse === '') {
         this.selectedOption.set(null);
         return;
       }
-      this.selectedOption.set(opts.find((opt) => opt.value === value) ?? null);
+
+      const matchedOption = opts.find((opt) => opt.value === valueToUse) ?? null;
+      this.selectedOption.set(matchedOption);
+
+      // Optional: sync into form control too
+      if (
+        matchedOption &&
+        (controlValue === null || controlValue === undefined || controlValue === '')
+      ) {
+        this.control().setValue(matchedOption.value as T, { emitEvent: false });
+      }
     });
 
     effect(() => {
       const disabled = this.isDisabled();
       const control = this.control();
-      if (disabled && !control.disabled) { control.disable({ emitEvent: false }); this.isOpen.set(false); }
-      if (!disabled && control.disabled) { control.enable({ emitEvent: false }); }
+      if (disabled && !control.disabled) {
+        control.disable({ emitEvent: false });
+        this.isOpen.set(false);
+      }
+      if (!disabled && control.disabled) {
+        control.enable({ emitEvent: false });
+      }
     });
   }
 
-  // Snapshot all the state we care about into one string
   private snapshot(ctrl: FormControl<T | null>): string {
     return `${ctrl.status}|${ctrl.touched}|${ctrl.dirty}`;
   }
 
   readonly showError = computed(() => {
-    this.controlStatus(); // establishes reactivity
+    this.controlStatus();
     const ctrl = this.control();
     return ctrl.invalid && (ctrl.touched || ctrl.dirty);
   });

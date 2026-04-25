@@ -1,74 +1,144 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DropdownOption } from '../../../shared/models/models';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MisApi } from '../mis/services/mis-api';
+import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
+import { CompanySuggestion } from '../mis/models/jobs.data';
+import { CompanyHotJob, CompanyHotJobsPayload } from '../mis/utils/mis.data';
+import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { HotToastService } from '@ngxpert/hot-toast';
+
+export const JobType: DropdownOption[] = [
+  { label: "All Jobs",     value: "1" },
+  { label: "Active Jobs",  value: "2" },
+  { label: "Expired Jobs", value: "3" },
+];
 
 @Component({
   selector: 'app-search-for-edit',
-  imports: [NgxsmkDatepickerComponent, DropdownComponent],
+  imports: [NgxsmkDatepickerComponent, DropdownComponent, ReactiveFormsModule,DatePipe],
   templateUrl: './search-for-edit.html',
   styleUrl: './search-for-edit.css',
 })
 export class SearchForEdit {
-  jobType = signal(JobType)
-  FromDate = signal<DatepickerValue>(null);
-  ToDate = signal<DatepickerValue>(null);
-  
-  test():void{
-    console.log(this.FromDate(),this.ToDate())
+  private companyNameService = inject(CompanyNameSuggestion);
+  private misApiService = inject(MisApi);
+  private router = inject(Router)
+  private hotToaster = inject(HotToastService)
+
+  isLoadingCompanies = signal(false);
+  companyId = signal(0);
+  results   = signal<CompanyHotJob[]>([]);
+  isLoading = signal(false);
+  jobType   = signal(JobType);
+
+  companies = computed(() => this.companySuggestState().suggestions);
+
+  form = new FormGroup({
+    companyName: new FormControl(''),
+    companyId:   new FormControl(0),
+    jobType:     new FormControl(''),
+    fromDate:    new FormControl<Date | null>(null),
+    toDate:      new FormControl<Date | null>(null),
+  });
+
+  private companySuggestState = toSignal(
+    this.form.controls.companyName.valueChanges.pipe(
+      map((value) => value?.trim() ?? ''),
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap((query) => {
+        if (query.length >= 2) this.isLoadingCompanies.set(true);
+      }),
+      switchMap((query) =>
+        query.length >= 2
+          ? this.companyNameService.companyNamesSuggestions(query).pipe(
+              map((suggestions) => ({ query, suggestions })),
+              catchError(() => of({ query, suggestions: [] as CompanySuggestion[] })),
+              finalize(() => this.isLoadingCompanies.set(false))
+            )
+          : of({ query, suggestions: [] as CompanySuggestion[] }).pipe(
+              finalize(() => this.isLoadingCompanies.set(false))
+            )
+      ),
+    ),
+    { initialValue: { query: '', suggestions: [] as CompanySuggestion[] } }
+  );
+
+  shouldShowList = computed(() => {
+    const { query, suggestions } = this.companySuggestState();
+    return this.companyId() === 0 && query.length >= 1 || this.isLoadingCompanies();
+  });
+
+  totalPositions = computed(() =>
+    this.results().reduce((sum, item) => sum + (item.totalJobs ?? 0), 0)
+  );
+
+  selectCompany(company: CompanySuggestion): void {
+    this.form.controls.companyName.setValue(company.companyName, { emitEvent: false });
+    this.form.controls.companyId.setValue(company.comId,         { emitEvent: false });
+    this.companyId.set(company.comId);
   }
-  data = data;
 
-  testformcontrol = new FormControl
-} 
+  onCompanyInput(): void {
+    if (this.companyId() !== 0) {
+      this.companyId.set(0);
+      this.form.controls.companyId.setValue(0, { emitEvent: false });
+    }
+  }
 
-const data= [
-  {
-    id:1,
-    jobTitle:"corporate sales manager ",
-    publishedDate:"2022-01-01",
-    expiryDate:"2022-01-01",
-    jobdeadline:"2022-01-01",
-    displaypostion:10,
-    totalJob :1,
-    comments:"",
+  setFromDate(value: DatepickerValue): void {
+    const date = value instanceof Date ? value : (value as any)?.start ?? null;
+    this.form.controls.fromDate.setValue(date);
+  }
+
+  setToDate(value: DatepickerValue): void {
+    const date = value instanceof Date ? value : (value as any)?.start ?? null;
+    this.form.controls.toDate.setValue(date);
+  }
+
+  submit(): void {
+    this.isLoading.set(true);
     
-  },
-  {
-    id:2,
-    jobTitle:"corporatee corporate sales manager corporate sales manager corporate sales manager corporate sales manager ee ",
-    publishedDate:"2022-01-01",
-    expiryDate:"2022-01-01",
-    jobdeadline:"2022-01-01",
-    displaypostion:10,
-    totalJob :1,
-    comments:"",
-  },
-  {
-    id:3,
-    jobTitle:"corporate asdfdasss",
-    publishedDate:"2022-01-01",
-    expiryDate:"2022-01-01",
-    jobdeadline:"2022-01-01",
-    displaypostion:10,
-    totalJob :1,
-    comments:"",
+
+    const payload: CompanyHotJobsPayload = {
+      companyId: this.form.value.companyId ?? 0,
+      jobType:   this.form.value.jobType   ?? null,
+      fromDate:  this.form.value.fromDate  ?? null,
+      toDate:    this.form.value.toDate    ?? null,
+    };
+
+    this.misApiService.getCompanyHotJobs(payload)
+    .pipe(finalize(() => {
+      this.isLoading.set(false)
+    }))
+    .subscribe({
+      next: (response) => {
+        this.results.set(response.success ? response.data : []);   
+        if(this.results().length<1){
+          this.hotToaster.error('Please Select a Company');
+        } 
+      },
+      error: (err) => {
+        console.error('Search failed:', err);
+        this.hotToaster.error('Search failed');
+      },
+    });
   }
-]
 
-export const JobType: DropdownOption[] = [
-  {
-    label: "All Jobs",
-    value: "allJobs",
-  },
-  {
-    label: "Active Jobs",
-    value: "activeJobs",
-  },
-  {
-    label: "Expired Jobs",
-    value: "expiredJobs",
-  },
-];
+  onEdit(item: CompanyHotJob): void {
+    console.log('Edit:', item);
+    this.router.navigate(['/edit'],{
+      queryParams:{jobId:item.id}
+    })
+  }
 
+  onDelete(item: CompanyHotJob): void {
+    // console.log('Delete:', item);
+  }
+}

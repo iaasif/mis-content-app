@@ -353,3 +353,28 @@ export const RearrangeData = [
 ];
 
 export const deptId = 3; 
+
+
+export interface CompanyHotJobsPayload {
+  companyId: number;
+  jobType?: string | null;
+  fromDate?: Date | null;
+  toDate?: Date | null;
+}
+
+export interface CompanyHotJob {
+  id: number;
+  jobTitles: string;
+  publishedOn: string;
+  deadLine: string;
+  serialNo: number;
+  comments: string;
+  totalJobs: number;
+  numberOfRow: number;
+  totalHotJobs: number;
+}
+
+export interface CompanyHotJobsResponse {
+  success: boolean;
+  data: CompanyHotJob[];
+}
