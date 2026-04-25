@@ -95,7 +95,7 @@ export class AddCompany {
       this.newCompanyForm.markAllAsTouched();
       return;
     }
-    console.log('formValue', this.newCompanyForm.getRawValue(), this.newCompanyForm.valid);
+    // console.log('formValue', this.newCompanyForm.getRawValue(), this.newCompanyForm.valid);
 
     const formValue = this.newCompanyForm.getRawValue();
 
@@ -127,9 +127,9 @@ export class AddCompany {
           this.hotToast.error('Failed to add company');
         }
 
-        console.log('err-------->', err);
-        console.log('status', err.status);
-        console.log('err', err.error);
+        // console.log('err-------->', err);
+        // console.log('status', err.status);
+        // console.log('err', err.error);
       },
     });
   }
