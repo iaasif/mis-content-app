@@ -8,7 +8,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { StoreDataService } from '../../services/store-data-service';
 import { FileUploadComponent } from '../../../../../shared/components/file-upload/file-upload.component';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { startWith } from 'rxjs';
+import { startWith, tap } from 'rxjs';
 
 @Component({
   selector: 'app-add-company',
@@ -61,9 +61,10 @@ export class AddCompany {
     }),
   });
 
-  private nameValue = toSignal(
+  protected  nameValue = toSignal(
     this.newCompanyForm.controls.companyName.valueChanges.pipe(
-      startWith(this.newCompanyForm.controls.companyName.value ?? '')
+      startWith(this.newCompanyForm.controls.companyName.value ?? ''),
+      tap(value => console.log('nameValue', value))
     )
   );
   // will work later  here 
@@ -117,6 +118,7 @@ export class AddCompany {
         this.newCompanyForm.reset();
       },
       error: (err) => {
+        console.log('err-------->', err);
         console.log('status', err.status);
         console.log('err', err.error);
         this.hotToast.error('Failed to add company');
