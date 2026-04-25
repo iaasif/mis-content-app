@@ -93,6 +93,7 @@ export class FileUploadComponent implements AfterViewChecked {
   readonly imgUrl = input.required<string>();   // endpoint for images
   readonly fileUploadUrl = input.required<string>();   // endpoint for pdf/zip/html
   readonly payload = input.required<Record<string, string | number | undefined>>();
+  readonly receiveCompanyNameFromParent = input(false)
 
   // ── Outputs ──────────────────────────────────────────────────────────────────
   readonly responseImgUp = output<UploadImgApiResponse>();
@@ -222,7 +223,13 @@ export class FileUploadComponent implements AfterViewChecked {
     this.uploadInProgress.emit(true);
 
     const form = new FormData();
-    const companyName = this.storeDataService.SELECTED_COMPANY()?.companyName ?? '';
+    let companyName = '';
+    if (this.receiveCompanyNameFromParent()) {
+      companyName = (this.payload()['CompanyName'] || '').toString();
+    }
+    else {
+      companyName = this.storeDataService.SELECTED_COMPANY()?.companyName ?? '';
+    }
     const payloadId = String(this.payload()['id'] ?? '');
 
     if (mf.detectedType === 'image') {

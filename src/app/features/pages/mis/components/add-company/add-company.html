@@ -34,7 +34,11 @@
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
                 <label class="text-lg font-semibold text-slate-700">Logo From Local Drive</label>
-                <app-file-upload [autoUpload]="true" [imgUrl]="'fds'" [maxHeight]="20000" [maxWidth]="20000" [payload]="imgUploadPayload() || {}" [imgUrl]="imageApiUrl"
+                <app-file-upload [autoUpload]="true" [imgUrl]="'fds'" 
+                [receiveCompanyNameFromParent]="true"
+                [maxHeight]="20000" [maxWidth]="20000" 
+                [payload]="imgUploadPayload() || {}" 
+                [imgUrl]="imageApiUrl"
                 [fileUploadUrl]="'/'"
                 
                 (responseImgUp)="onImageResponse($event)">

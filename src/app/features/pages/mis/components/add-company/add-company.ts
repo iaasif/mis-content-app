@@ -69,7 +69,6 @@ export class AddCompany {
   // will work later  here 
   readonly imgUploadPayload = computed<Record<string, string | number | undefined> | null>(() => {
     const name = this.nameValue();
-
     if (name && name.length > 0) {
       return {
         id: '-1',
