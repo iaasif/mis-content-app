@@ -81,5 +81,10 @@ export class MisApi {
     return this.http.get<{totalHotJobs: number}>(`${environment.apiUrl}hotjobs/total-active-hotjobs-count`)
   }
 
+  getCompanyById(companyId: string | number): Observable<any>{
+    const params = new HttpParams().set('CompanyId', companyId.toString());
+    return this.http.get<any>(`${environment.apiUrl}hotjobs/single-company`, { params });
+  }
+
 }
 
