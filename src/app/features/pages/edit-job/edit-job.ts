@@ -32,7 +32,7 @@ export class EditJob {
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
   protected misApi = inject(MisApi);
-  private hottoasterService = inject(HotToastService)  
+  private hottoasterService = inject(HotToastService)
 
 
   preselectPostedBy = signal<DropdownOption | null>(null);
@@ -62,7 +62,7 @@ export class EditJob {
   postedBy = signal<DropdownOption[]>([]);
   sourcePerson = signal<DropdownOption[]>([]);
   preSelectedPosition = signal<DropdownOption | null>(null);
-  
+
   ngOnInit(): void {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -73,7 +73,7 @@ export class EditJob {
 
     this.activeRouter.queryParamMap.pipe(
       map(params => params.get('jobId')),
-      filter((jobId): jobId is string => !!jobId),  
+      filter((jobId): jobId is string => !!jobId),
       switchMap(jobId => {
 
         return forkJoin({
@@ -111,7 +111,7 @@ export class EditJob {
       this.hotJobId.set(hotJob.id);
       this.postedBy.set(postedBy);
       this.sourcePerson.set(sourcePerson);
-      this.totalPositionCount.set(totalActiveHotJobsCount); 
+      this.totalPositionCount.set(totalActiveHotJobsCount);
 
       this.populateForm(hotJob);
       this.setPreselectValue(postedBy, sourcePerson, hotJob);
@@ -194,14 +194,14 @@ export class EditJob {
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
 
     const payload = {
-      Id: this.hotJobId(),             
-      pageMode: 'Edit',                       
+      Id: this.hotJobId(),
+      pageMode: 'Edit',
       comId: raw.companyId,
       companyName: raw.companyName,
       displayCompanyName: raw.showCompanyNameAs,
       displayCompanyNameBng: raw.companyNameBn,
       jobTitles: raw.jobTitle,
-      jobTitlesBng: raw.jobTitle,                 
+      jobTitlesBng: raw.jobTitle,
       linkPage: raw.hotJobsUrl,
       comments: raw.comments ?? '',
       jP_Ids: raw.categoryJobIds,
@@ -220,8 +220,8 @@ export class EditJob {
       endDate: raw.PremiumEndOn || null,
       publishedOn: raw.publishedDate,
       deadLine: raw.jobDeadline,
-      postedBy: raw.postedBy,       
-      referredBy: raw.sourcePerson, 
+      postedBy: raw.postedBy,
+      referredBy: raw.sourcePerson,
       serialNo: Number(raw.displayPosition),
       updatedOn: new Date().toISOString(),
     };
@@ -229,7 +229,7 @@ export class EditJob {
     console.log("payload", payload);
 
     this.misApi.updateHotJob(payload).pipe(
-      tap((d) =>{ 
+      tap((d) => {
         console.log('response update hotjob -->', d)
         this.hottoasterService.success('Hot-Job is up to date')
       }),
@@ -294,7 +294,7 @@ export class EditJob {
 
 
   private populateForm(res: any): void {
-    
+
     const opts: string[] = [];
     if (res.blueCollerJob) opts.push('BlueCollar');
     if (res.complementaryJob) opts.push('Complementary');
@@ -319,8 +319,8 @@ export class EditJob {
       jobDeadline: res.deadLine ?? '',
       PremiumStartOn: res.startDate ?? '',
       PremiumEndOn: res.endDate ?? '',
-      postedBy: res.postedBy ?? 0,        
-      sourcePerson: res.referredBy ?? 0,  
+      postedBy: res.postedBy ?? 0,
+      sourcePerson: res.referredBy ?? 0,
     });
 
     if (res.publishedOn) this.PublishedDate.set(new Date(res.publishedOn));
@@ -345,11 +345,7 @@ export class EditJob {
     if (fullDisplayPosition) {
       this.preSelectedPosition.set(fullDisplayPosition);
     }
-    // console.log("fullDisplayPosition", fullDisplayPosition);
-    // console.log("totalPositionCount", this.totalPositionCount());
-    // // console.log("fullData", fullData);
-    // console.log("fullData.serialNo", fullData.serialNo);
-    // console.log("preSelectedPosition", this.preSelectedPosition());
+    
   }
 
 }

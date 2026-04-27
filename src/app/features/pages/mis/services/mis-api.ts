@@ -76,7 +76,7 @@ export class MisApi {
   updateHotJob(payload: any): Observable<any>{
     return this.http.put<any>(`${environment.apiUrl}hotjobs/update-single-hotjob`,payload)
   }
-
+  
   getTotalActiveHotJobsCount(): Observable<any>{
     return this.http.get<any>(`${environment.apiUrl}hotjobs/total-active-hotjobs-count`)
   }
@@ -84,6 +84,10 @@ export class MisApi {
   getCompanyById(companyId: string | number): Observable<any>{
     const params = new HttpParams().set('CompanyId', companyId.toString());
     return this.http.get<any>(`${environment.apiUrl}hotjobs/single-company`, { params });
+  }
+
+  updateCompany(payload: any):Observable<any>{
+    return this.http.put<any>(`${environment.apiUrl}hotjobs/update-company`,payload)
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component, computed, inject, NgZone, OnInit, signal } from '@angular/core';
 import { HotJobCategory, HotJobType, priorities } from '../mis/utils/mis.data';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotToastService } from '@ngxpert/hot-toast';
 import {
@@ -38,12 +38,6 @@ export class EditCompany implements OnInit {
 
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
 
-  readonly imagePayload: Record<string, string | File | undefined> = {
-    id: 'idfromPayloadIMG',
-    imageName: 'HotJobLogo',
-    CompanyName: this.storeDataService.SELECTED_COMPANY()?.companyName ?? '',
-  };
-
   readonly hotJobCategory = signal(HotJobCategory);
   readonly hotJobsType = signal(HotJobType);
   readonly position = signal(priorities);
@@ -74,9 +68,7 @@ export class EditCompany implements OnInit {
     companyId: new FormControl(0),
   });
 
-  // ✅ Plain signal — updated via subscription in ngOnInit.
-  // toSignal(valueChanges) only captures user-driven input events reliably;
-  // programmatic patchValue() can be missed depending on zone/CD timing.
+  
   protected nameValue = signal<string>('');
 
   readonly imgUploadPayload = computed<Record<string, string | number | undefined> | null>(() => {
@@ -159,7 +151,21 @@ export class EditCompany implements OnInit {
       CompanyNameBng: formValue.companyNameBng || '',
     };
 
-    console.log('payload', payload);
+    this.misApi.updateCompany(payload).pipe(
+      takeUntilDestroyed(),
+      map(res=>{
+        console.log('update company',res)
+        if(res.message==="Company updated successfully!"){
+          this.hotToast.success("Company Update Successfully");
+          this.editCompanyForm.reset()
+        }
+        else{
+          this.hotToast.error("Something is error")
+        }
+      }),
+    
+    ).subscribe()
+    // console.log('payload', payload);
   }
 
   onImageResponse(res: UploadImgApiResponse): void {
@@ -178,7 +184,7 @@ export class EditCompany implements OnInit {
       next: (res) => {
         console.log('getCompanyById', res);
         this.ngZone.run(() => {
-          this.populateForm(res);
+          this.populateForm(res.data);
         });
       },
       error: (err) => {
@@ -194,8 +200,6 @@ export class EditCompany implements OnInit {
   }
 
   populateForm(company: any): void {
-    // ✅ patchValue with emitEvent: true (default) so valueChanges fires,
-    // which triggers the ngOnInit subscription and updates nameValue signal.
     this.editCompanyForm.patchValue({
       companyName: company.companyName,
       companyNameBng: company.companyNameBng,
