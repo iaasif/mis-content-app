@@ -109,14 +109,9 @@ export class FileUploadComponent implements AfterViewChecked {
     this.files().some(f => f.uploadStatus === 'uploading')
   );
 
-  /** All uploaded result URLs grouped by type (for parent to consume via output,
-   *  but also visible inside this component if needed) */
+
   readonly imageFiles = computed(() => this.files().filter(f => f.isImage));
   readonly otherFiles = computed(() => this.files().filter(f => !f.isImage));
-
-  // ── Preview ref ───────────────────────────────────────────────────────────────
-  // We use a map of ElementRef per file; simpler to handle in template with
-  // an id-based approach rather than viewChild for dynamic lists.
 
   ngAfterViewChecked(): void {
     // Validate image dimensions once a previewUrl is set

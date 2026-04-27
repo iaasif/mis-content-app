@@ -49,7 +49,6 @@ export class EditJob {
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
   totalPositionCount = signal<DropdownOption[]>([]);
-  // Date signals
   PublishedDate = signal<DatepickerValue>(null);
   Deadline = signal<DatepickerValue>(null);
   FromDate = signal<DatepickerValue>(null);
@@ -65,7 +64,6 @@ export class EditJob {
   preSelectedPosition = signal<DropdownOption | null>(null);
   
   ngOnInit(): void {
-    // 1. Router events — auto-cleanup with takeUntilDestroyed
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       takeUntilDestroyed(this.destroyRef)
@@ -73,12 +71,10 @@ export class EditJob {
       this.currentRoute.set((event as NavigationEnd).urlAfterRedirects);
     });
 
-    // 2. Query params with switchMap to prevent race conditions + auto-cleanup
     this.activeRouter.queryParamMap.pipe(
       map(params => params.get('jobId')),
-      filter((jobId): jobId is string => !!jobId), // filter out null/undefined
+      filter((jobId): jobId is string => !!jobId),  
       switchMap(jobId => {
-        // const deptId = 3; // TODO: replace with actual deptId from config
 
         return forkJoin({
           hotJob: this.misApi.getHotJobDataById(jobId),
@@ -90,7 +86,7 @@ export class EditJob {
           ),
           totalActiveHotJobsCount: this.misApi.getTotalActiveHotJobsCount().pipe(
             map(res => {
-              const count = res.totalHotJobs;
+              const count = res.data;
 
               return Array.from({ length: count }, (_, i) => ({
                 label: (i + 1).toString(),
@@ -107,12 +103,15 @@ export class EditJob {
       }),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(({ hotJob, postedBy, sourcePerson, totalActiveHotJobsCount }) => {
-      if (!hotJob) return; // handled by catchError fallback
+      if (!hotJob) return;
+      console.log('hotJob', hotJob);
+      console.log('postedBy', postedBy);
+      console.log('sourcePerson', sourcePerson);
+      console.log('totalActiveHotJobsCount', totalActiveHotJobsCount);
       this.hotJobId.set(hotJob.id);
       this.postedBy.set(postedBy);
       this.sourcePerson.set(sourcePerson);
       this.totalPositionCount.set(totalActiveHotJobsCount); 
-      // console.log('totalPositionCount', this.totalPositionCount());
 
       this.populateForm(hotJob);
       this.setPreselectValue(postedBy, sourcePerson, hotJob);
@@ -195,14 +194,14 @@ export class EditJob {
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
 
     const payload = {
-      Id: this.hotJobId(),              // ← from fetched response
-      pageMode: 'Edit',                       // ← Edit mode
+      Id: this.hotJobId(),             
+      pageMode: 'Edit',                       
       comId: raw.companyId,
       companyName: raw.companyName,
       displayCompanyName: raw.showCompanyNameAs,
       displayCompanyNameBng: raw.companyNameBn,
       jobTitles: raw.jobTitle,
-      jobTitlesBng: raw.jobTitle,                 // use same if no BN field
+      jobTitlesBng: raw.jobTitle,                 
       linkPage: raw.hotJobsUrl,
       comments: raw.comments ?? '',
       jP_Ids: raw.categoryJobIds,
@@ -221,8 +220,8 @@ export class EditJob {
       endDate: raw.PremiumEndOn || null,
       publishedOn: raw.publishedDate,
       deadLine: raw.jobDeadline,
-      postedBy: raw.postedBy,       // already a number
-      referredBy: raw.sourcePerson, // already a number
+      postedBy: raw.postedBy,       
+      referredBy: raw.sourcePerson, 
       serialNo: Number(raw.displayPosition),
       updatedOn: new Date().toISOString(),
     };
@@ -295,13 +294,12 @@ export class EditJob {
 
 
   private populateForm(res: any): void {
-    // --- Build postedOptions array from booleans ---
+    
     const opts: string[] = [];
     if (res.blueCollerJob) opts.push('BlueCollar');
     if (res.complementaryJob) opts.push('Complementary');
     if (res.hotJobsCM) opts.push('HotjobCM');
 
-    // --- Patch only available fields ---
     this.newHotJobForm.patchValue({
       companyId: res.comId ?? this.newHotJobForm.value.companyId,
       companyName: res.companyName ?? this.newHotJobForm.value.companyName,
@@ -321,11 +319,10 @@ export class EditJob {
       jobDeadline: res.deadLine ?? '',
       PremiumStartOn: res.startDate ?? '',
       PremiumEndOn: res.endDate ?? '',
-      postedBy: res.postedBy ?? 0,        // ← was String(res.postedBy)
-      sourcePerson: res.referredBy ?? 0,  // ← was String(res.referredBy)
+      postedBy: res.postedBy ?? 0,        
+      sourcePerson: res.referredBy ?? 0,  
     });
 
-    // --- Sync datepicker signals ---
     if (res.publishedOn) this.PublishedDate.set(new Date(res.publishedOn));
     if (res.deadLine) this.Deadline.set(new Date(res.deadLine));
     if (res.startDate) this.FromDate.set(new Date(res.startDate));
