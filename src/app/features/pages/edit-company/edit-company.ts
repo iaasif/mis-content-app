@@ -1,6 +1,6 @@
 import { Component, computed, inject, NgZone, OnInit, signal } from '@angular/core';
 import { HotJobCategory, HotJobType, priorities } from '../mis/utils/mis.data';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HotToastService } from '@ngxpert/hot-toast';
 import {
@@ -152,14 +152,20 @@ export class EditCompany implements OnInit {
     };
 
     this.misApi.updateCompany(payload).pipe(
+      takeUntilDestroyed(),
       map(res=>{
         console.log('update company',res)
         if(res.message==="Company updated successfully!"){
-          this.hotToast.success("Company Update Successfully")
+          this.hotToast.success("Company Update Successfully");
+          this.editCompanyForm.reset()
         }
-      })
+        else{
+          this.hotToast.error("Something is error")
+        }
+      }),
+    
     ).subscribe()
-    console.log('payload', payload);
+    // console.log('payload', payload);
   }
 
   onImageResponse(res: UploadImgApiResponse): void {
