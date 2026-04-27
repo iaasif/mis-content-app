@@ -64,7 +64,7 @@ export class AddCompany {
   protected  nameValue = toSignal(
     this.newCompanyForm.controls.companyName.valueChanges.pipe(
       startWith(this.newCompanyForm.controls.companyName.value ?? ''),
-      tap(value => console.log('nameValue', value))
+      // tap(value => console.log('nameValue', value))
     )
   );
   // will work later  here 
@@ -82,20 +82,12 @@ export class AddCompany {
   });
 
   submit(): void {
-    // console.log('submit');
-    // console.log('imgUploadPayload', this.imgUploadPayload());
-    // console.log('form values', this.newCompanyForm.value);
-    // console.log('-----------------------------------------------');
-    // console.log('1. raw form value:', this.newCompanyForm.controls.companyName.value);
-    // console.log('2. nameValue signal:', this.nameValue());
-    // console.log('3. imgUploadPayload:', this.imgUploadPayload());
-
+    
     if (this.newCompanyForm.invalid) {
       this.hotToast.error('Please fill all required fields');
       this.newCompanyForm.markAllAsTouched();
       return;
     }
-    // console.log('formValue', this.newCompanyForm.getRawValue(), this.newCompanyForm.valid);
 
     const formValue = this.newCompanyForm.getRawValue();
 
@@ -109,16 +101,15 @@ export class AddCompany {
       CompanyNameBng: formValue.companyNameBng || '',
     };
 
-    console.log('payload', payload);
+    // console.log('payload', payload);
 
     this.misApi.addCompany(payload).subscribe({
       next: (res) => {
-        // console.log('res', res);
         this.hotToast.success('Company added successfully');
         this.newCompanyForm.reset();
       },
       error: (err) => {
-        // Check if error response has data/message
+        
         const errorMessage = err?.error?.message || err?.message || err?.data?.message;
 
         if (errorMessage === 'Company already exists.') {
@@ -127,9 +118,6 @@ export class AddCompany {
           this.hotToast.error('Failed to add company');
         }
 
-        // console.log('err-------->', err);
-        // console.log('status', err.status);
-        // console.log('err', err.error);
       },
     });
   }
@@ -139,7 +127,7 @@ export class AddCompany {
   onImageResponse(res: UploadImgApiResponse): void {
     const variants = res.variants ?? [];
     // this.storeDataService.storeImgData(variants);
-    console.log('variants', variants);
+    // console.log('variants', variants);
     this.newCompanyForm.controls.logoSource.setValue(variants[0]?.publicUrl || '');
   }
 }
