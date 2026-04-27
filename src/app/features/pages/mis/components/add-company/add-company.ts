@@ -67,7 +67,7 @@ export class AddCompany {
       // tap(value => console.log('nameValue', value))
     )
   );
-  // will work later  here 
+
   readonly imgUploadPayload = computed<Record<string, string | number | undefined> | null>(() => {
     const name = this.nameValue();
     if (name && name.length > 0) {
