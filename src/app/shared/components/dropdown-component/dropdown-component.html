@@ -1,31 +1,50 @@
 <div class="relative w-full">
   @if (label()) {
-    <label class="mb-1.5 block text-sm font-semibold text-slate-700">
+    <label class="mb-1.5 block text-sm font-semibold text-slate-700 ">
       {{ label() }}
+      @if (isRequired()) {
+        <span class="text-red-400">*</span>
+      }
     </label>
   }
-  
+
   <div class="relative">
     <button
       type="button"
       (click)="toggleDropdown()"
-      [disabled]="disabled()"
-      [class]="disabled() ? 'cursor-not-allowed bg-slate-100' : 'cursor-pointer bg-white hover:border-slate-400'"
-      class="flex w-full items-center justify-between rounded-lg border border-slate-300 px-4 py-2.5 text-left text-sm font-medium text-slate-700 shadow-sm transition focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+      [disabled]="isDisabled() || control().disabled"
+      class="flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-left text-sm font-medium shadow-sm transition focus:outline-none focus:ring-2"
+      [class.cursor-not-allowed]="isDisabled() || control().disabled"
+      [class.bg-slate-100]="isDisabled() || control().disabled"
+      [class.cursor-pointer]="!isDisabled() && !control().disabled"
+      [class.bg-white]="!isDisabled() && !control().disabled"
+      [class.hover:border-slate-400]="!isDisabled() && !control().disabled"
+      [class.border-red-500]="showError()"
+      [class.focus:ring-red-500/20]="showError()"
+      [class.border-slate-300]="!showError()"
+      [class.focus:border-amber-500]="!showError()"
+      [class.focus:ring-amber-500/20]="!showError()"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-invalid]="showError()"
     >
       <span [class]="selectedOption() ? 'text-slate-900' : 'text-slate-500'">
         {{ selectedOption()?.label || placeholder() }}
       </span>
-      
+
       <svg
-        [class]="isOpen() ? 'rotate-180' : ''"
         class="h-4 w-4 text-slate-400 transition-transform duration-200"
+        [class.rotate-180]="isOpen()"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 9l-7 7-7-7"
+        />
       </svg>
     </button>
 
@@ -37,16 +56,35 @@
               type="button"
               (click)="selectOption(option)"
               [disabled]="option.disabled"
-              [class]="option.disabled ? 'cursor-not-allowed bg-slate-50 text-slate-400' : 'cursor-pointer hover:bg-amber-50'"
               class="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition"
+              [class.cursor-not-allowed]="!!option.disabled"
+              [class.bg-slate-50]="!!option.disabled"
+              [class.text-slate-400]="!!option.disabled"
+              [class.cursor-pointer]="!option.disabled"
+              [class.hover:bg-amber-50]="!option.disabled"
             >
-              <span [class]="selectedOption()?.value === option.value ? 'font-semibold text-slate-900' : 'text-slate-700'">
+              <span
+                [class.font-semibold]="selectedOption()?.value === option.value"
+                [class.text-slate-900]="selectedOption()?.value === option.value"
+                [class.text-slate-700]="selectedOption()?.value !== option.value"
+              >
                 {{ option.label }}
               </span>
-              
+
               @if (selectedOption()?.value === option.value) {
-                <svg class="h-4 w-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                <svg
+                  class="h-4 w-4 text-amber-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               }
             </button>
@@ -55,4 +93,10 @@
       </div>
     }
   </div>
+
+  @if (showError()) {
+    <p class="mt-2 text-sm text-red-600">
+      {{ errorMessage() }}
+    </p>
+  }
 </div>

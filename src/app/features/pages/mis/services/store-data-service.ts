@@ -7,8 +7,8 @@ import { CompanySuggestion, UploadHtmlResponse, Variant } from '../models/jobs.d
 export class StoreDataService {
   imgUrls = signal<Variant[]>([]);
   fileUploadUrls = signal<UploadHtmlResponse[]>([]);
-  pdfUrls = signal<UploadHtmlResponse[]>([]);   // ← add
-  zipUrls = signal<UploadHtmlResponse[]>([]);   // ← add
+  pdfUrls = signal<UploadHtmlResponse[]>([]);
+  zipUrls = signal<UploadHtmlResponse[]>([]);
 
   SELECTED_COMPANY = signal<CompanySuggestion | null>(null);
 
@@ -20,11 +20,4 @@ export class StoreDataService {
     this.fileUploadUrls.update(prev => [...prev, data]);
   }
 
-  storePdfData(data: UploadHtmlResponse) {       // ← add
-    this.pdfUrls.update(prev => [...prev, data]);
-  }
-
-  storeZipData(data: UploadHtmlResponse) {       // ← add
-    this.zipUrls.update(prev => [...prev, data]);
-  }
 }

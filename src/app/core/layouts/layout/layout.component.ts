@@ -7,7 +7,7 @@ import {
   signal,
   Type,
 } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { CircularLoaderService } from '../../services/circularLoader/circular-loader.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '../../services/modal/modal.service';
@@ -29,7 +29,8 @@ import { MisNav } from "../../../features/pages/mis/components/mis-nav/mis-nav";
     ModalContainerWoPComponent,
     ConfirmationModalComponent,
     ReactiveFormsModule,
-    MisNav
+    MisNav,
+    RouterLink
 ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.css',

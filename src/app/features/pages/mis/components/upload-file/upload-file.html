@@ -32,7 +32,7 @@
   <div class="w-full lg:w-1/2">
     <app-file-upload [uploadTitle]="'Upload Files'" [uploadIcon]="'images/img-upload.png'" [maxWidth]="20000"
       [maxHeight]="20000" [payload]="sharedPayload()" [imgUrl]="imageApiUrl" [fileUploadUrl]="fileUploadApiUrl"
-      (response)="onImageResponse($event)" (responseHtmlUp)="onHtmlResponse($event)" />
+      (responseImgUp)="onImageResponse($event)" (responseHtmlUp)="onHtmlResponse($event)" />
   </div>
 
   <!-- ── Results panel (right) ──────────────────────────────────────────────── -->

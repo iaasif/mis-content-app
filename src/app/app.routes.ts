@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { checkRefGuard } from './features/pages/mis/guards/check-ref-guard';
+import { HotJobPreview } from './features/pages/hot-job-preview/hot-job-preview';
+
 
 export const routes: Routes = [
     {
@@ -28,7 +30,19 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pages/mis/components/add-company/add-company').then(m => m.AddCompany)
     },
     {
-        path: 'delete',
+        path: 'delete-company',
         loadComponent: () => import('./features/pages/mis/components/delete-company/delete-company').then(m => m.DeleteCompany)
+    },
+    {
+        path: 'edit-company',
+        loadComponent: () => import('./features/pages/edit-company/edit-company').then(m => m.EditCompany)
+    },
+    {
+        path: 'hotJobPreview',
+        loadComponent:()=> import('./features/pages/hot-job-preview/hot-job-preview').then(m=>HotJobPreview)
+    },
+    {
+        path: 'searchforedit',
+        loadComponent: () => import('./features/pages/search-for-edit/search-for-edit').then(m => m.SearchForEdit)
     },
 ];

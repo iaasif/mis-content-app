@@ -1,17 +1,20 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
-import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanyLogoData, CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
 import { StoreDataService } from '../mis/services/store-data-service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MisApi } from '../mis/services/mis-api';
+import { DropdownOption } from '../../../shared/models/models';
 
 @Component({
   selector: 'app-new-job',
@@ -19,17 +22,20 @@ import { StoreDataService } from '../mis/services/store-data-service';
   templateUrl: './new-job.html',
   styleUrl: './new-job.css'
 })
-export class NewJob {
+export class NewJob implements OnInit {
   private readonly router = inject(Router);
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
+  protected misApi = inject(MisApi);
 
-  companyName = this.storeData.SELECTED_COMPANY ?? null;
+  wantToAddHotJob = signal(false); 
+  companyData = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
-  suggestions = signal<CompanySuggestion[]>([]);
+  companyNameSuggestions = signal<CompanySuggestion[]>([]);
+  CompanyLogoData = signal<CompanyLogoData[]>([]);
 
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -37,16 +43,18 @@ export class NewJob {
   hotJobsType = signal(HotJobType);
   position = signal(priorities);
 
-  FromDate = signal<DatepickerValue>(null);
-  ToDate = signal<DatepickerValue>(null);
+  PublishedDate = signal<DatepickerValue>(null);
+  Deadline = signal<DatepickerValue>(null);
 
-  // for Display Logo radio
-  displayLogoOptions = [
+  PremiumStartOnChange = signal<DatepickerValue>(null);
+  PremiumEndOnChange = signal<DatepickerValue>(null);
+
+  displayLogoOptions = signal([
     { label: 'Yes', value: true },
     { label: 'No', value: false },
-  ];
+  ]) ;
 
-  constructor() {
+  ngOnInit(): void {
     const sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute.set(event.urlAfterRedirects);
@@ -56,62 +64,71 @@ export class NewJob {
   }
   
   newHotJobForm = new FormGroup<HotJobFormControls>({
+    companyId : new FormControl(0, {nonNullable: true,validators:[Validators.required]}),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
-    companyNameBn: new FormControl('', { nonNullable: true }),
+    companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
     jobTitle: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    jobTitleBn: new FormControl('', { nonNullable: true }),
 
-    hotJobsUrl: new FormControl('', { nonNullable: true }),
-    comments: new FormControl('', { nonNullable: true }),
+    hotJobsUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    comments: new FormControl<string | null>(null),
 
-    categoryJobIds: new FormControl('', { nonNullable: true }),
+    categoryJobIds: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     displayLogo: new FormControl(false, { nonNullable: true }),
     companyLogoId: new FormControl<null | string | number>(null),
 
-    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0)] }),
+    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0),Validators.required] }),
 
-    hotJobsType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    hotJobsType: new FormControl('Normal', { nonNullable: true, validators: [Validators.required] }),
 
-    // you are using this as checkbox selected values (fine, but type should match your component)
-    postedOptions: new FormControl<Array<Array<any>>>([], { nonNullable: true }),
+    postedOptions: new FormControl<(string | boolean)[]>([], { nonNullable: true }),
 
-    displayPosition: new FormControl('', { nonNullable: true }),
+    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    publishedDate: new FormControl('', { nonNullable: true }),
-    jobDeadline: new FormControl('', { nonNullable: true }),
+    publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
 
-    premiumStartDate: new FormControl('', { nonNullable: true }),
-    premiumEndDate: new FormControl('', { nonNullable: true }),
+    PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
+    PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
 
-    postedBy: new FormControl('', { nonNullable: true }),
-    sourcePerson: new FormControl('', { nonNullable: true }),
+    postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
+    sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
   });
 
-  onFromDateChange(val: DatepickerValue) {
-    console.log('From date changed:', val);
-    this.FromDate.set(val);
+  
+  onPublishedDateChange(val: DatepickerValue) {
+    this.PublishedDate.set(val);
     const isoDate = this.datepickerToIso(val);
-    console.log('Setting premiumStartDate to:', isoDate);
-    this.newHotJobForm.controls.premiumStartDate.setValue(isoDate);
+    this.newHotJobForm.controls.publishedDate.setValue(isoDate);
+    console.log(isoDate)
+  }
+  
+  onJobDeadlineChange(val: DatepickerValue) {
+    this.Deadline.set(val);
+    const isoDate = this.datepickerToIso(val);
+    this.newHotJobForm.controls.jobDeadline.setValue(isoDate);
+  }
+
+  onFromDateChange(val: DatepickerValue) {
+    this.PremiumStartOnChange.set(val);
+    const isoDate = this.datepickerToIso(val);
+    this.newHotJobForm.controls.PremiumStartOn.setValue(isoDate);
   }
 
   onToDateChange(val: DatepickerValue) {
     console.log('To date changed:', val);
-    this.ToDate.set(val);
+    this.PremiumEndOnChange.set(val);
     const isoDate = this.datepickerToIso(val);
     console.log('Setting premiumEndDate to:', isoDate);
-    this.newHotJobForm.controls.premiumEndDate.setValue(isoDate);
+    this.newHotJobForm.controls.PremiumEndOn.setValue(isoDate);
   }
 
   private datepickerToIso(val: DatepickerValue): string {
-    // ngxsmk DatepickerValue is often Date | null (or sometimes {start,end})
     if (!val) return '';
     if (val instanceof Date) return val.toISOString();
-
-    // If your picker returns range objects sometimes:
+    
     // @ts-ignore - depends on your lib's actual type
     if (val?.start instanceof Date) return val.start.toISOString();
 
@@ -119,41 +136,60 @@ export class NewJob {
   }
 
   submit(): void {
-    console.log('=== FORM SUBMISSION TRIGGERED ===');
-    console.log('Form valid:', this.newHotJobForm.valid);
-    console.log('Form status:', this.newHotJobForm.status);
-
-    // Log all form values
-    console.log('Form value:', this.newHotJobForm.value);
-    console.log('Form raw value:', this.newHotJobForm.getRawValue());
-
-    // Log validation errors if any
     if (this.newHotJobForm.invalid) {
-      console.log('=== FORM VALIDATION ERRORS ===');
-      Object.keys(this.newHotJobForm.controls).forEach(key => {
-        const control = this.newHotJobForm.get(key);
-        if (control && control.invalid) {
-          console.log(`Field "${key}" errors:`, control.errors);
-        }
-      });
-      console.log('Marking all fields as touched for validation display');
       this.newHotJobForm.markAllAsTouched();
       return;
     }
-
-    const payload: HotJobForm = this.newHotJobForm.getRawValue();
-    console.log('=== FINAL PAYLOAD ===');
-    console.log('Hot job payload:', payload);
-    console.log('=== END SUBMISSION ===');
+  
+    const raw = this.newHotJobForm.getRawValue();
+    const opts: (string | boolean)[] = raw.postedOptions ?? [];
+  
+    const payload = {
+      companyId:               raw.companyId,
+      companyName:             raw.companyName,
+      alternativeCompanyName:  raw.showCompanyNameAs,       // renamed
+      alternativeCompanyNameBN: raw.companyNameBn,          // renamed
+      jobTitles:               raw.jobTitle,                // renamed (plural)
+      jobTitlesBN:             '',                          // add a form control for this
+      jobUrl:                  raw.hotJobsUrl,              // renamed
+      comments:                raw.comments ?? '',
+      categoryJobIds:          raw.categoryJobIds,
+      displayLogo:             raw.displayLogo,
+      logoSource:              String(raw.companyLogoId ?? ''), // renamed + string
+      totalJobs:               raw.numberOfJobs,            // renamed
+      whiteCollarCount:        0,                           // add form controls if needed
+      blueCollarCount:         0,
+      complementaryCount:      0,
+      hotjobCMCount:           0,
+      isPremium:               raw.hotJobsType === 'Premium',  // transformed
+      isBlueCollar:            opts.includes('BlueCollar'),    // extracted from array
+      isComplementary:         opts.includes('Complementary'),
+      isHotjobCM:              opts.includes('HotjobCM'),
+      PremiumStartOn:            raw.PremiumStartOn || null,   // renamed
+      PremiumEndOn:            raw.PremiumEndOn || null,     // renamed
+      publishedOn:             raw.publishedDate,              // renamed
+      deadline:                raw.jobDeadline,               // renamed
+      postedBy:                Number(raw.postedBy),           // ensure number
+      referredBy:              Number(raw.sourcePerson),       // renamed
+      serialNo:                Number(raw.displayPosition),    // renamed
+      hotJobId:                0,
+      pageMode:                'Add',
+    };
+    console.log("payloiad",payload)
+  
+    this.misApi.addHotJob(payload).pipe(
+      tap(d => console.log('response -->', d))
+    ).subscribe();
   }
 
   onQueryChange(value: string): void {
+    this.wantToAddHotJob.set(false);
     this.query.set(value);
 
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
 
     if (!value.trim()) {
-      this.suggestions.set([]);
+      this.companyNameSuggestions.set([]);
       return;
     }
 
@@ -163,8 +199,8 @@ export class NewJob {
           console.log('API call for suggestions with query:', res);
         })
       ).subscribe({
-        next: list => this.suggestions.set(list.slice(0, 8)),
-        error: () => this.suggestions.set([]),
+        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
+        error: () => this.companyNameSuggestions.set([]),
       });
     }, 150);
   }
@@ -174,10 +210,10 @@ export class NewJob {
     this.storeData.SELECTED_COMPANY.set(data);
     this.query.set(data.companyName);
     this.isFocused.set(false);
-    this.suggestions.set([]);
+    this.companyNameSuggestions.set([]);
     console.log("data", data)
     console.log("selected company", this.storeData.SELECTED_COMPANY())
-    console.log("this.suggestions", this.suggestions())
+    console.log("this.suggestions", this.companyNameSuggestions())
 
   }
 
@@ -185,7 +221,9 @@ export class NewJob {
     localStorage.removeItem('SELECTED_COMPANY');
     this.storeData.SELECTED_COMPANY.set(null);
     this.query.set('');
-    this.suggestions.set([]);
+    this.companyNameSuggestions.set([]);
+    
+    this.wantToAddHotJob.set(false);
   }
 
   onFocus(): void {
@@ -193,8 +231,8 @@ export class NewJob {
     const q = this.query().trim();
     if (q) {
       this.companyApi.companyNamesSuggestions(q).subscribe({
-        next: list => this.suggestions.set(list.slice(0, 8)),
-        error: () => this.suggestions.set([]),
+        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
+        error: () => this.companyNameSuggestions.set([]),
       });
     }
   }
@@ -202,4 +240,69 @@ export class NewJob {
   onBlur(): void {
     setTimeout(() => this.isFocused.set(false), 120);
   }
+  
+  addHotJob():void{
+    this.wantToAddHotJob.set(true);
+    this.newHotJobForm.patchValue({
+      companyId: this.companyData()?.comId,
+      companyName :  this.companyData()?.companyName,
+      showCompanyNameAs : this.companyData()?.displayCompanyName,
+      companyNameBn: this.companyData()?.companyNameBng,
+    })
+
+    this.misApi.getCompanyLogo(this.companyData()?.comId.toString() || '').subscribe({
+      next: (res) => {
+        console.log("Company logo", res);
+        this.CompanyLogoData.set(res);
+      },
+      error: (err) => {
+        console.log("Error getting company logo", err);
+      }
+    });
+  }
+
+  private premiumValidator(group: AbstractControl) {
+    const type = group.get('hotJobsType')?.value;
+    const start = group.get('premiumStartDate')?.value;
+    const end = group.get('premiumEndDate')?.value;
+  
+    if (type === 'Premium' && (!start || !end)) {
+      return { premiumRequired: true };
+    }
+  
+    return null;
+  }
+  isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
+  hotJobsTypeSignal = toSignal(
+    this.newHotJobForm.get('hotJobsType')!.valueChanges,
+    { initialValue: this.newHotJobForm.get('hotJobsType')!.value }
+  );
+
+  postedBy = toSignal(
+    this.misApi.getPostedBy().pipe(
+      map((res) =>
+        res.map((item: any): DropdownOption => ({
+          label: item.fullName,   // label = fullname
+          value: item.userId      // value = userid
+        }))
+      ),
+      tap((mapped) => {
+        // console.log("posted by", mapped);
+      })
+    ),
+    { initialValue: [] }
+  );
+  
+  sourcePerson = toSignal(
+    this.misApi.getSourcePersons().pipe(
+      map((res) =>
+        res.map((person: any): DropdownOption => ({
+            label: person.fullName,
+            value: person.depSerial
+          }))
+      )
+    ),
+    { initialValue: [] }
+  );
+
 }

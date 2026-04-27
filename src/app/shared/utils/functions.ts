@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID } from '@angular/core';
+import { DropdownOption } from '../models/models';
 
 type FormattedDateTime = {
   formattedDate: string;
@@ -116,4 +117,18 @@ export function IsNotEmptyObject(obj: {}): boolean {
 
 export function isValidDate(date: any) {
   return date instanceof Date && !isNaN(date.getTime());
+}
+
+export function splitingJobTitles(jobTitle: string): string[] {
+  return jobTitle
+    .split('\r\n')
+    .map(title => title.trim())
+    .filter(Boolean);
+}
+
+export function mapToDropdownOptions(items: any[]): DropdownOption[] {
+  return items.map((item): DropdownOption => ({
+    label: item.fullName,
+    value: item.userId
+  }));
 }
