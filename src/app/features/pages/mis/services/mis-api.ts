@@ -90,5 +90,10 @@ export class MisApi {
     return this.http.put<any>(`${environment.apiUrl}hotjobs/update-company`,payload)
   }
 
+  getPriorityLinks(companyName:string):Observable<any>{
+    const url ='https://storage.googleapis.com/bdj-ui-hotjobs?prefix=' + companyName + '/'
+    return this.http.get<any>(url)
+  }
+
 }
 
