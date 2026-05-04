@@ -15,6 +15,7 @@ import {
 } from 'rxjs';
 import { StoreDataService } from '../../services/store-data-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MisApi } from '../../services/mis-api';
 
 @Component({
   selector: 'app-mis-nav',
@@ -28,6 +29,7 @@ export class MisNav {
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
+  private readonly misService = inject(MisApi);
 
   companyName = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
@@ -81,10 +83,13 @@ export class MisNav {
     this.isFocused.set(false);
     this.suggestions.set([]);
     this.querySubject.next('');
-    console.log("data", data)
-    console.log("selected company", this.storeData.SELECTED_COMPANY())
-    console.log("this.suggestions", this.suggestions())
-
+    this.misService.getPrevousUploadedLinks(data.companyName).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      map(response => {
+        console.log('Previous uploaded links response:', response);
+        return response;
+      })
+    ).subscribe();
   }
 
   clearCompany(): void {
