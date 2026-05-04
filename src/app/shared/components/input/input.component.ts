@@ -3,37 +3,39 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { NumericOnlyDirective } from '../../../core/directives/numeric-only.dir';
 
-export type InputType = 'text' | 'password' | 'email' | 'number';
+export type InputType = 'text' | 'password' | 'email' | 'number' | 'textarea';
 
-enum InputStype  {
+enum InputStype {
   error = 'hs-validation-name-error',
   success = 'hs-validation-name-success',
   normal = ''
-};
+}
 
 enum InputTypeStype {
   normal = 'block w-full rounded-md border-0 py-1.5 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-[#008A22] sm:text-sm sm:leading-6',
   error = 'py-3 px-4 block w-full border-red-500 rounded-lg text-sm focus:border-red-500 focus:ring-red-500',
-  success = 'py-3 px-4 block w-full border-teal-500 rounded-lg text-sm focus:border-teal-500 focus:ring-teal-500'
+  success = 'py-3 px-4 block w-full border-teal-500 rounded-lg text-sm focus:border-teal-500 focus:ring-teal-500',
+  textarea = 'block w-full rounded-md border-0 py-2 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-[#008A22] sm:text-sm sm:leading-6 resize-y min-h-[100px]',
+  textareaError = 'block w-full rounded-lg border-red-500 py-2 px-4 text-sm focus:border-red-500 focus:ring-red-500 resize-y min-h-[90px]',
 }
 
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [ReactiveFormsModule,NgClass],
+  imports: [ReactiveFormsModule, NgClass],
   templateUrl: './input.component.html',
   styleUrl: './input.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [
     {
-      directive: NumericOnlyDirective, 
+      directive: NumericOnlyDirective,
       inputs: ['isDecimalAllowed', 'minValue', 'maxValue', 'isNumericOnly']
     }
   ],
 })
 export class InputComponent<T> implements OnInit {
   readonly placeholder = input('');
-  readonly label = input('')
+  readonly label = input('');
   readonly type = input<InputType>('text');
   readonly isRequired = input<boolean>(false);
   readonly isDisabled = input<boolean>(false);
@@ -44,22 +46,32 @@ export class InputComponent<T> implements OnInit {
   readonly classes = input<string>('');
   readonly validationText = input<string>('');
   readonly isExtraAttempt = input<boolean>(false);
-  
+  readonly rows = input<number>(4);
+
   valid = true;
 
   ngOnInit() {
+    this.styleClass = this.getInitialStyleClass();
+
     this.control().valueChanges.subscribe(value => {
       this.handleValueChange(value);
     });
   }
 
-  private handleValueChange(value: T): void {
-    const numericValue = +value;
+  private getInitialStyleClass(): string {
+    return this.type() === 'textarea'
+      ? InputTypeStype.textarea
+      : InputTypeStype.normal;
+  }
 
+  private handleValueChange(value: T): void {
+    const isTextarea = this.type() === 'textarea';
+    const numericValue = +value;
     const isRequired = this.isRequired();
+
     if (!isRequired && (value === null || value === undefined || value === '')) {
       this.control().setErrors(null);
-      this.styleClass = InputTypeStype.normal;
+      this.styleClass = isTextarea ? InputTypeStype.textarea : InputTypeStype.normal;
       this.name = InputStype.normal;
       this.valid = true;
       return;
@@ -67,13 +79,13 @@ export class InputComponent<T> implements OnInit {
 
     if (isRequired && (!value || value === '')) {
       this.control().setErrors({ required: true });
-      this.styleClass = InputTypeStype.error;
+      this.styleClass = isTextarea ? InputTypeStype.textareaError : InputTypeStype.error;
       this.name = InputStype.error;
       this.valid = false;
       return;
     }
-    
-    if (numericValue > this.maxValue() || numericValue < this.minValue()) {
+
+    if (!isTextarea && (numericValue > this.maxValue() || numericValue < this.minValue())) {
       this.control().setErrors({ invalid: true });
       this.styleClass = InputTypeStype.error;
       this.name = InputStype.error;
@@ -82,11 +94,11 @@ export class InputComponent<T> implements OnInit {
     }
 
     this.control().setErrors(null);
-    this.styleClass = InputTypeStype.normal;
+    this.styleClass = isTextarea ? InputTypeStype.textarea : InputTypeStype.normal;
     this.name = InputStype.normal;
     this.valid = true;
   }
-  
+
   name = InputStype.normal;
   styleClass: string = InputTypeStype.normal;
 }
