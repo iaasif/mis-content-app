@@ -83,7 +83,9 @@ export class MisNav {
     this.isFocused.set(false);
     this.suggestions.set([]);
     this.querySubject.next('');
-    this.misService.getPrevousUploadedLinks(data.companyName).pipe(
+
+    
+    this.misService.getPrevousUploadedLinks(middleSpacesToUnderscore(data.companyName)).pipe(
       takeUntilDestroyed(this.destroyRef),
       map(response => {
         console.log('Previous uploaded links response:', response);
@@ -112,4 +114,19 @@ export class MisNav {
     setTimeout(() => this.isFocused.set(false), 120);
   }
 
+}
+
+export function middleSpacesToUnderscore(str: string): string {
+  // Track leading spaces
+  const leadingMatch = str.match(/^\s*/);
+  const leadingSpaces = leadingMatch ? leadingMatch[0] : '';
+
+  // Track trailing spaces
+  const trailingMatch = str.match(/\s*$/);
+  const trailingSpaces = trailingMatch ? trailingMatch[0] : '';
+
+  // Get middle content and replace spaces with underscores
+  const middle = str.trim().replace(/\s+/g, '_');
+
+  return leadingSpaces + middle + trailingSpaces;
 }
