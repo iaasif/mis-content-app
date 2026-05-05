@@ -12,6 +12,7 @@ import {
   of,
   Subject,
   switchMap,
+  tap,
 } from 'rxjs';
 import { StoreDataService } from '../../services/store-data-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -84,14 +85,10 @@ export class MisNav {
     this.suggestions.set([]);
     this.querySubject.next('');
 
-    
-    this.misService.getPrevousUploadedLinks(middleSpacesToUnderscore(data.companyName)).pipe(
+    this.misService.getPreviousUploadedLinks(middleSpacesToUnderscore(data.companyName)).pipe(
       takeUntilDestroyed(this.destroyRef),
-      map(response => {
-        console.log('Previous uploaded links response:', response);
-        return response;
-      })
-    ).subscribe();
+      tap(links => console.log('Previous uploaded links:', links))
+    ).subscribe(links => this.storeData.previousUploadedLinks.set(links));
   }
 
   clearCompany(): void {
@@ -100,6 +97,7 @@ export class MisNav {
     this.query.set('');
     this.suggestions.set([]);
     this.querySubject.next('');
+    this.storeData.previousUploadedLinks.set([])
   }
 
   onFocus(): void {
@@ -125,8 +123,10 @@ export function middleSpacesToUnderscore(str: string): string {
   const trailingMatch = str.match(/\s*$/);
   const trailingSpaces = trailingMatch ? trailingMatch[0] : '';
 
-  // Get middle content and replace spaces with underscores
-  const middle = str.trim().replace(/\s+/g, '_');
+  // Get middle content and replace spaces/dots with underscores
+  const middle = str.trim().replace(/[\s.]+/g, '-');
 
-  return leadingSpaces + middle + trailingSpaces;
+  const result = (leadingSpaces + middle + trailingSpaces).toLowerCase();
+
+  return result;
 }
