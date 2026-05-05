@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { CompanyLogoData, CreateCompany, HotJob, HotJobCreationResponse, postedBy, SourcePerson } from '../models/jobs.data';
 import { environment } from '../../../../../environments/environment';
 import { CompanyHotJobsPayload, CompanyHotJobsResponse } from '../utils/mis.data';
@@ -11,7 +11,8 @@ import { CompanyHotJobsPayload, CompanyHotJobsResponse } from '../utils/mis.data
 export class MisApi {
   private readonly http = inject(HttpClient);
   private readonly url = environment.apiUrl + 'hotjobs';
-  
+  private readonly BUCKET_BASE_URL = 'https://storage.googleapis.com/bdj-ui-hotjobs';
+
   addCompany(payload: CreateCompany): Observable<unknown> {
     return this.http.post(`${this.url}/add-company`, payload);
   }
@@ -89,6 +90,31 @@ export class MisApi {
   updateCompany(payload: any):Observable<any>{
     return this.http.put<any>(`${environment.apiUrl}hotjobs/update-company`,payload)
   }
+
+  // getPrevousUploadedLinks(companyName:string):Observable<any>{
+  //   const url ='https://storage.googleapis.com/bdj-ui-hotjobs?prefix=' + companyName
+  //   return this.http.get(url, { responseType: 'text' })
+  // }
+
+
+  getPreviousUploadedLinks(companyName: string): Observable<{ link: string }[]> {
+    const url = `${this.BUCKET_BASE_URL}?prefix=${companyName}`;
+
+    return this.http.get(url, { responseType: 'text' }).pipe(
+      map(xmlString => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
+        const keyElements = xmlDoc.querySelectorAll('Contents > Key');
+
+        return Array.from(keyElements).map((el,index) => ({
+          id: index,
+          name: el.textContent,
+          link: `${this.BUCKET_BASE_URL}/${el.textContent}`
+        }));
+      })
+    );
+  }
+
 
 }
 
