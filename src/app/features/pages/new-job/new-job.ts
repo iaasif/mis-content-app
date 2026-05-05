@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { afterNextRender, AfterViewInit, Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
@@ -52,6 +52,7 @@ export class NewJob implements OnInit {
   ]);
 
   ngOnInit(): void {
+    // window.scrollTo({ top: 200, behavior: 'smooth' });
     const sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute.set(event.urlAfterRedirects);
