@@ -26,10 +26,10 @@
 
   <div class="">
     <div class="relative w-full">
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 ">
         <div
-          class="grid grid-cols-1 gap-1 p-6 sm:grid-cols-[30%_70%] sm:items-center sm:gap-x-0 [&>*]:min-w-0 [&>*]:w-full [&>label]:sm:pr-4">
-          <label for="company-search" class="text-xs font-semibold text-slate-700 text-end">
+          class="flex items-center gap-2 px-4">
+          <label for="company-search" class="text-xs font-semibold text-slate-700 text-end text-nowrap">
             Search company:
           </label>
 
@@ -83,7 +83,7 @@
 
   <!-- Form Content -->
   <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
-    <div class="space-y-1 p-2 [&>div>*]:min-w-0 [&>div>*]:w-full [&>div>label]:sm:pr-4">
+    <div class="flex flex-col gap-2 p-2">
       <!-- Company Name -->
       <div class="grid grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-x-0 sm:items-center">
         <label class="text-xs font-semibold text-slate-700 text-end">Company Name</label>
@@ -93,7 +93,7 @@
       </div>
 
       <!-- Show Company Name As -->
-      <div class="grid grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-x-0 sm:items-center">
+      <div class="flex justify-center items-center">
         <label class="text-xs font-semibold text-slate-700 text-end">Show Company Name As</label>
         <app-input  [type]="'text'" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
         </app-input>
@@ -111,7 +111,7 @@
       <!-- Job Title -->
       <div class="grid grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-x-0 sm:items-center">
         <label class="text-xs font-semibold text-slate-700 text-end">Job Title</label>
-        <app-input  [type]="'text'" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
+        <app-input  [type]="'textarea'" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
         </app-input>
       </div>
 
@@ -120,7 +120,7 @@
       <!-- Hot Jobs URL -->
       <div class="grid grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-x-0 sm:items-center">
         <label class="text-xs font-semibold text-slate-700 text-end">Hot Jobs URL</label>
-        <app-input [type]="'text'" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
+        <app-input [type]="'textarea'" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
         </app-input>
       </div>
 

@@ -15,7 +15,7 @@ enum InputTypeStype {
   normal = 'block w-full rounded-md border-0 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-[#008A22] sm:text-sm sm:leading-6',
   error = 'py-1 px-4 block w-full border-red-500 rounded-lg text-sm focus:border-red-500 focus:ring-red-500',
   success = 'py-3 px-4 block w-full border-teal-500 rounded-lg text-sm focus:border-teal-500 focus:ring-teal-500',
-  textarea = 'block w-full rounded-md border-0 py-2 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-[#008A22] sm:text-sm sm:leading-6 resize-y min-h-[100px]',
+  textarea = 'block w-full rounded-md border-0 py-2 pl-5 pr-6 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-[#008A22] sm:text-sm sm:leading-6 resize-y h-10',
   textareaError = 'block w-full rounded-lg border-red-500 py-2 px-4 text-sm focus:border-red-500 focus:ring-red-500 resize-y min-h-[90px]',
 }
 
