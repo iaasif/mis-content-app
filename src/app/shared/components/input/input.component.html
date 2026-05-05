@@ -26,7 +26,7 @@
 
     <!-- Error Message -->
     @if (control().invalid && (control().touched || control().dirty)) {
-    <p class="text-sm text-red-600 mt-2" id="hs-validation-name-error-helper">
+    <p class="text-xs text-red-600 mt-1" id="hs-validation-name-error-helper">
         @if (control().errors?.['required']) {
         This field is required
         } @else if (control().errors?.['invalid']) {

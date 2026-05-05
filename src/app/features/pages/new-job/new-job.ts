@@ -34,7 +34,7 @@ export class NewJob implements OnInit {
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
-  CompanyLogoData = signal<CompanyLogoData[]>([]);
+  CompanyLogoData = signal<any[]>([]);
 
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
@@ -214,6 +214,7 @@ export class NewJob implements OnInit {
     this.isFocused.set(false);
     // this.companyNameSuggestions.set([]);
     this.querySubject.next('');
+    this.addHotJob();
   }
 
   clearCompany(): void {
@@ -248,7 +249,8 @@ export class NewJob implements OnInit {
     this.misApi.getCompanyLogo(this.companyData()?.comId.toString() || '').subscribe({
       next: (res) => {
         console.log("Company logo", res);
-        this.CompanyLogoData.set(res);
+        this.CompanyLogoData.set(res.data[0].logoSource);
+        console.log("Company logo data", this.CompanyLogoData());
       },
       error: (err) => {
         console.log("Error getting company logo", err);
@@ -297,4 +299,5 @@ export class NewJob implements OnInit {
     { initialValue: [] }
   );
 
+  
 }

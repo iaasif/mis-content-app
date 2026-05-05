@@ -10,7 +10,7 @@ export const routes: Routes = [
         title:'Hotjob & Tender manager'
     },
     {
-        path: 'new',
+        path: 'new-hotjob',
         loadComponent: () => import('./features/pages/new-job/new-job').then(m => m.NewJob),
         title: 'New Hotjob'
     },
@@ -27,9 +27,9 @@ export const routes: Routes = [
         title: 'Upload File'
     },
     {
-        path: 'rearrange',
+        path: 'rearrange-hotjobs',
         loadComponent: () => import('./features/pages/mis/components/rearrange-hot-job/rearrange-hot-job').then(m => m.RearrangeHotJob),
-        title: 'Rearrange Hotjob'
+        title: 'Rearrange Hot Jobs'
     },
     {
         path: 'add-company',

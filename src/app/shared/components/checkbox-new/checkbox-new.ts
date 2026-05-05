@@ -14,7 +14,7 @@ export class CheckboxNew {
   control = model(new FormControl<(string | boolean)[]>([])); // ✅ allow boolean too
   checkboxItems = input<SelectRadioData[]>([]);
   isHtmlLabel = input(false);
-
+  
   isChecked(value: string | boolean): boolean {
     return this.control()?.value?.includes(value) ?? false;
   }
