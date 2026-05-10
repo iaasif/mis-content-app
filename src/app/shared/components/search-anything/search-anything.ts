@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { catchError, debounceTime, distinctUntilChanged, finalize, map, of, switchMap, tap } from 'rxjs';
@@ -17,21 +17,17 @@ export class SearchAnything {
   private misApi = inject(MisApi);
   
   isLoadingCompanies = signal(false);
-  companyId = signal(0);
   companies = computed(() => this.companySuggestState().suggestions);
-  
   searchCompanyQuery = new FormControl('');
+  
+  searchResult = output<any | null>();
+  selectedResult = output<any | null>();
 
 
-  onCompanyInput(): void {
-    if (this.companyId() !== 0) {
-      this.companyId.set(0);
-    }
-  }
 
-  shouldShowList = computed(() => {
+  shouldShowList = linkedSignal(() => {
     const { query } = this.companySuggestState();
-    return (this.companyId() === 0 && query.length >= 1) || this.isLoadingCompanies();
+    return ( query.length >= 1) || this.isLoadingCompanies() ;
   });
 
   private companySuggestState = toSignal(
@@ -40,13 +36,14 @@ export class SearchAnything {
       debounceTime(300),
       distinctUntilChanged(),
       tap((query) => {
-        if (query.length >= 2) this.isLoadingCompanies.set(true);
+        if (query.length >= 1) this.isLoadingCompanies.set(true);
       }),
       switchMap((query) =>
-        query.length >= 2
+        query.length >= 1
           ? this.companyNameService.companyNamesSuggestions(query).pipe(
             map((suggestions) => {
               this.isLoadingCompanies.set(false);
+              this.searchResult.emit(suggestions);
               return { query, suggestions };
             }),
             catchError(() => of({ query, suggestions: [] as CompanySuggestion[] })),
@@ -64,17 +61,8 @@ export class SearchAnything {
     console.log('selectCompany', company);
     this.searchCompanyQuery.setValue(company.companyName, { emitEvent: false });
     this.isLoadingCompanies.set(false);
-    this.companyId.set(company.comId);
-
-    this.misApi.getCompanyById(company.comId).subscribe({
-      next: (res) => {
-        console.log('getCompanyById', res);
-        
-      },
-      error: (err) => {
-        console.log('err', err);
-      },
-    });
+    this.shouldShowList.set(false);
+    this.selectedResult.emit(company);
   }
 
 
