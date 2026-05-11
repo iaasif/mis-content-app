@@ -2,11 +2,11 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanyLogoData, CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanySuggestion, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap, tap } from 'rxjs';
@@ -34,11 +34,10 @@ export class NewJob implements OnInit {
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
-  CompanyLogoData = signal<CompanyLogoData[]>([]);
+  CompanyLogoData = signal<any[]>([]);
 
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
-  position = signal(priorities);
 
   PublishedDate = signal<DatepickerValue>(null);
   Deadline = signal<DatepickerValue>(null);
@@ -52,6 +51,7 @@ export class NewJob implements OnInit {
   ]);
 
   ngOnInit(): void {
+    // window.scrollTo({ top: 200, behavior: 'smooth' });
     const sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute.set(event.urlAfterRedirects);
@@ -214,6 +214,7 @@ export class NewJob implements OnInit {
     this.isFocused.set(false);
     // this.companyNameSuggestions.set([]);
     this.querySubject.next('');
+    this.addHotJob();
   }
 
   clearCompany(): void {
@@ -248,7 +249,8 @@ export class NewJob implements OnInit {
     this.misApi.getCompanyLogo(this.companyData()?.comId.toString() || '').subscribe({
       next: (res) => {
         console.log("Company logo", res);
-        this.CompanyLogoData.set(res);
+        this.CompanyLogoData.set(res.data[0].logoSource);
+        console.log("Company logo data", this.CompanyLogoData());
       },
       error: (err) => {
         console.log("Error getting company logo", err);
@@ -293,6 +295,24 @@ export class NewJob implements OnInit {
           value: person.depSerial
         }))
       )
+    ),
+    { initialValue: [] }
+  );
+
+  totalActiveHotJobsCount = toSignal(
+    this.misApi.getTotalActiveHotJobsCount().pipe(
+      map((res) => {
+        const totalCount = res.data + 1;
+        const dropdownOptions: DropdownOption[] = [];
+        for (let i = 1; i <= totalCount; i++) {
+          dropdownOptions.push({
+            label: i.toString(),
+            value: i
+          });
+        }
+
+        return dropdownOptions;
+      })
     ),
     { initialValue: [] }
   );

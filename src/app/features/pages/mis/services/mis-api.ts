@@ -63,9 +63,9 @@ export class MisApi {
     );
   }
 
-  getCompanyLogo(comID: string | number): Observable<CompanyLogoData[]> {
+  getCompanyLogo(comID: string | number): Observable<any> {
     const params = new HttpParams().set('ComId', comID.toString());
-    return this.http.get<CompanyLogoData[]>(`${environment.apiUrl}hotjobs/companyLogo`, { params });
+    return this.http.get<any>(`${environment.apiUrl}hotjobs/companyLogo`, { params });
   }
 
 

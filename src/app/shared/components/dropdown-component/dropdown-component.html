@@ -13,7 +13,7 @@
       type="button"
       (click)="toggleDropdown()"
       [disabled]="isDisabled() || control().disabled"
-      class="flex w-full items-center justify-between rounded-lg border px-4 py-2.5 text-left text-sm font-medium shadow-sm transition focus:outline-none focus:ring-2"
+      class="flex w-full items-center justify-between rounded-lg border px-2 py-1 text-left text-sm font-medium shadow-sm transition focus:outline-none focus:ring-2"
       [class.cursor-not-allowed]="isDisabled() || control().disabled"
       [class.bg-slate-100]="isDisabled() || control().disabled"
       [class.cursor-pointer]="!isDisabled() && !control().disabled"
@@ -95,7 +95,7 @@
   </div>
 
   @if (showError()) {
-    <p class="mt-2 text-sm text-red-600">
+    <p class="mt-2 text-xs text-red-600">
       {{ errorMessage() }}
     </p>
   }
