@@ -302,7 +302,7 @@ export class NewJob implements OnInit {
   totalActiveHotJobsCount = toSignal(
     this.misApi.getTotalActiveHotJobsCount().pipe(
       map((res) => {
-        const totalCount = res.data;
+        const totalCount = res.data + 1;
         const dropdownOptions: DropdownOption[] = [];
         for (let i = 1; i <= totalCount; i++) {
           dropdownOptions.push({
