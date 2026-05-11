@@ -2,7 +2,7 @@ import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
@@ -345,7 +345,7 @@ export class EditJob {
     if (fullDisplayPosition) {
       this.preSelectedPosition.set(fullDisplayPosition);
     }
-    
+
   }
 
 }

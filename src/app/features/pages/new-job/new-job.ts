@@ -1,12 +1,12 @@
-import { afterNextRender, AfterViewInit, Component, computed, DestroyRef, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanyLogoData, CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanySuggestion, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap, tap } from 'rxjs';
@@ -38,7 +38,6 @@ export class NewJob implements OnInit {
 
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
-  position = signal(priorities);
 
   PublishedDate = signal<DatepickerValue>(null);
   Deadline = signal<DatepickerValue>(null);
@@ -300,5 +299,22 @@ export class NewJob implements OnInit {
     { initialValue: [] }
   );
 
-  
+  totalActiveHotJobsCount = toSignal(
+    this.misApi.getTotalActiveHotJobsCount().pipe(
+      map((res) => {
+        const totalCount = res.data;
+        const dropdownOptions: DropdownOption[] = [];
+        for (let i = 1; i <= totalCount; i++) {
+          dropdownOptions.push({
+            label: i.toString(),
+            value: i
+          });
+        }
+
+        return dropdownOptions;
+      })
+    ),
+    { initialValue: [] }
+  );
+
 }

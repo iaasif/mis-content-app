@@ -65,7 +65,7 @@
 
       @if (isFocused() && companyNameSuggestions().length > 0) {
       <ul id="company-suggestions" role="listbox" aria-label="Company suggestions"
-        class="absolute z-50 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto">
+        class="absolute z-999 mt-1 w-full rounded-lg border bg-white shadow max-h-60 overflow-auto z">
         @for (data of companyNameSuggestions(); track data.comId) {
         <li role="option" [attr.aria-selected]="data.companyName === companyData()?.companyName"
           class="px-3 py-2 cursor-pointer hover:bg-slate-100 text-xs"
@@ -235,8 +235,8 @@
       <!-- Display Position -->
       <div class="grid grid-cols-[30%_70%] items-center">
         <label class="text-xs font-semibold text-slate-700 text-center ">Display Position</label>
-        <app-dropdown-component class="w-full" [options]="position()" [control]="newHotJobForm.controls.displayPosition"
-          [isRequired]="true">
+        <app-dropdown-component class="w-full" [options]="totalActiveHotJobsCount()"
+          [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
         </app-dropdown-component>
       </div>
       <!-- Posted By -->
