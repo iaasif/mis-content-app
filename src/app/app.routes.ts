@@ -7,7 +7,8 @@ export const routes: Routes = [
     {
         path: '',
         loadComponent: () => import('./features/pages/mis/components/mis-home/mis-home').then(m => m.MisHome),
-        title:'Hotjob & Tender manager'
+        title: 'Hotjob & Tender manager',
+
     },
     {
         path: 'new-hotjob',
@@ -48,7 +49,7 @@ export const routes: Routes = [
     },
     {
         path: 'hotJobPreview',
-        loadComponent:()=> import('./features/pages/hot-job-preview/hot-job-preview').then(m=>HotJobPreview),
+        loadComponent: () => import('./features/pages/hot-job-preview/hot-job-preview').then(m => HotJobPreview),
         title: 'Hot Job Preview'
     },
     {
@@ -56,4 +57,9 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pages/search-for-edit/search-for-edit').then(m => m.SearchForEdit),
         title: 'Search for Edit Hotjob'
     },
+    {
+        path: 'login',
+        loadComponent: () => import('./features/pages/login-layout/login-layout').then(m => m.LoginLayout),
+        title: 'Login'
+    }
 ];
