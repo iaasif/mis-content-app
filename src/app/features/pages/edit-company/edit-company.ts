@@ -35,10 +35,10 @@ export class EditCompany implements OnInit {
   private ngZone = inject(NgZone);
   private destroyRef = inject(DestroyRef);
 
-  isLoadingCompanies = signal(false);
-
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
 
+  isLoadingCompanies = signal(false);
+  protected nameValue = signal<string>('');
   readonly hotJobCategory = signal(HotJobCategory);
   readonly hotJobsType = signal(HotJobType);
   readonly position = signal(priorities);
@@ -69,8 +69,6 @@ export class EditCompany implements OnInit {
     companyId: new FormControl(0),
   });
 
-  
-  protected nameValue = signal<string>('');
 
   readonly imgUploadPayload = computed<Record<string, string | number | undefined> | null>(() => {
     const name = this.nameValue();
@@ -154,17 +152,17 @@ export class EditCompany implements OnInit {
 
     this.misApi.updateCompany(payload).pipe(
       takeUntilDestroyed(this.destroyRef),
-      map(res=>{
-        console.log('update company',res)
-        if(res.message==="Company updated successfully!"){
+      map(res => {
+        console.log('update company', res)
+        if (res.message === "Company updated successfully!") {
           this.hotToast.success("Company Update Successfully");
           this.editCompanyForm.reset()
         }
-        else{
+        else {
           this.hotToast.error("Something is error")
         }
       }),
-    
+
     ).subscribe()
     // console.log('payload', payload);
   }
