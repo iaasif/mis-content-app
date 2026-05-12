@@ -242,8 +242,6 @@ export class EditJob {
     ).subscribe();
   }
 
-
-
   selectCompany(data: CompanySuggestion): void {
     localStorage.setItem('SELECTED_COMPANY', JSON.stringify(data));
     this.storeData.SELECTED_COMPANY.set(data);
