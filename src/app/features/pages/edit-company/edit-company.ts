@@ -1,4 +1,4 @@
-import { Component, computed, inject, NgZone, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, NgZone, OnInit, signal } from '@angular/core';
 import { HotJobCategory, HotJobType, priorities } from '../mis/utils/mis.data';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -33,11 +33,12 @@ export class EditCompany implements OnInit {
   private hotToast = inject(HotToastService);
   private storeDataService = inject(StoreDataService);
   private ngZone = inject(NgZone);
-
-  isLoadingCompanies = signal(false);
+  private destroyRef = inject(DestroyRef);
 
   readonly imageApiUrl = 'https://api.bdjobs.com/ImageGenerator/api/Image/resize-store';
 
+  isLoadingCompanies = signal(false);
+  protected nameValue = signal<string>('');
   readonly hotJobCategory = signal(HotJobCategory);
   readonly hotJobsType = signal(HotJobType);
   readonly position = signal(priorities);
@@ -68,8 +69,6 @@ export class EditCompany implements OnInit {
     companyId: new FormControl(0),
   });
 
-  
-  protected nameValue = signal<string>('');
 
   readonly imgUploadPayload = computed<Record<string, string | number | undefined> | null>(() => {
     const name = this.nameValue();
@@ -152,18 +151,18 @@ export class EditCompany implements OnInit {
     };
 
     this.misApi.updateCompany(payload).pipe(
-      takeUntilDestroyed(),
-      map(res=>{
-        console.log('update company',res)
-        if(res.message==="Company updated successfully!"){
+      takeUntilDestroyed(this.destroyRef),
+      map(res => {
+        console.log('update company', res)
+        if (res.message === "Company updated successfully!") {
           this.hotToast.success("Company Update Successfully");
           this.editCompanyForm.reset()
         }
-        else{
+        else {
           this.hotToast.error("Something is error")
         }
       }),
-    
+
     ).subscribe()
     // console.log('payload', payload);
   }
@@ -173,6 +172,22 @@ export class EditCompany implements OnInit {
     console.log('variants', variants);
     this.editCompanyForm.controls.logoSource.setValue(variants[0]?.publicUrl || '');
   }
+
+  // have to work , api should be change
+  // onImageResponse(res: UploadImgApiResponse): void {
+  //   const variants = res.variants ?? [];
+  //   console.log('variants', variants);
+
+  //   // Get current array or initialize empty
+  //   const currentUrls = this.editCompanyForm.controls.logoSource.value || [];
+  //   const newUrl = variants[0]?.publicUrl || '';
+
+  //   // Append new URL to existing array using spread
+  //   this.editCompanyForm.controls.logoSource.setValue([
+  //     ...currentUrls,
+  //     newUrl
+  //   ]);
+  // }
 
   selectCompany(company: CompanySuggestion): void {
     console.log('selectCompany', company);

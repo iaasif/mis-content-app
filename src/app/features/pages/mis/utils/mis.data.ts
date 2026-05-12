@@ -4,7 +4,7 @@ export const Hotjobs = [
   {
     id: 1,
     title: 'New Hot Job',
-    url: 'new',
+    url: 'new-hotjob',
     enUrl: '',
     bnUrl: '',
     isnew: false,
@@ -20,7 +20,7 @@ export const Hotjobs = [
   {
     id: 3,
     title: 'Rearrange Hot Job ( 4 Column) Drag and Drop)   New',
-    url: 'rearrange',
+    url: 'rearrange-hotjobs',
     enUrl: '',
     bnUrl: '',
     isnew: true,

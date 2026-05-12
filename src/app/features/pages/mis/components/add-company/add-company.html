@@ -1,72 +1,66 @@
-<div class="rounded-2xl border border-amber-200 bg-white/90 shadow-sm backdrop-blur">
-    <div class="flex items-start justify-between gap-4 border-b border-amber-200 px-6 py-4">
+<div class="rounded-2xl border border-amber-200 bg-white/90 shadow-sm backdrop-blur flex flex-col mx-auto gap-4 w-3xl ">
+    <div class=" border-b border-amber-200 px-6 py-4">
         <div>
             <div class="flex items-center gap-2">
                 <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
-                <h3 class="text-xl font-semibold tracking-wide text-slate-900">Add New Company</h3>
+                <h3 class="text-sm font-semibold tracking-wide text-slate-900">Add New Company</h3>
             </div>
             <p class="mt-1 text-xs text-slate-600">Add or edit hot job listings</p>
         </div>
     </div>
 
     <form [formGroup]="newCompanyForm" (ngSubmit)="submit()">
-        <div class="space-y-5 p-6">
+        <div class="flex flex-col gap-2 p-2 border border-slate-300 rounded-md">
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">
+            <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+                <label class="text-xs font-semibold text-slate-700 text-center">
                     Company Name <span class="text-red-500">*</span>
                 </label>
                 <div class="flex flex-col gap-1">
                     <app-input [type]="'text'" [control]="newCompanyForm.controls.companyName" [isNumericOnly]="false"
                         [isRequired]="true">
                     </app-input>
-                    
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
+            <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+                <label class="text-xs font-semibold text-slate-700 text-center">কোম্পানির নাম</label>
                 <app-input [type]="'text'" [control]="newCompanyForm.controls.companyNameBng" [isNumericOnly]="false">
                 </app-input>
             </div>
 
-            <div class="border-t border-slate-200 pt-5"></div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">Logo From Local Drive</label>
+            <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+                <label class="text-xs font-semibold text-slate-700 text-center">Logo From Local Drive</label>
                 @if(nameValue()){
-                    <app-file-upload [autoUpload]="true" [imgUrl]="'fds'" [receiveCompanyNameFromParent]="true" [maxHeight]="20000"
-                        [maxWidth]="20000" [payload]="imgUploadPayload() || {}" [imgUrl]="imageApiUrl" [fileUploadUrl]="'/'"
-                        (responseImgUp)="onImageResponse($event)">
-                    </app-file-upload>
+                <app-file-upload [autoUpload]="true" [imgUrl]="'fds'" [receiveCompanyNameFromParent]="true"
+                    [maxHeight]="20000" [maxWidth]="20000" [payload]="imgUploadPayload() || {}" [imgUrl]="imageApiUrl"
+                    [fileUploadUrl]="'/'" (responseImgUp)="onImageResponse($event)">
+                </app-file-upload>
                 }
             </div>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">Logo Source at Online</label>
+            <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+                <label class="text-xs font-semibold text-slate-700 text-center">Logo Source at Online</label>
                 <div class="flex flex-col gap-1">
-                    <app-input [type]="'text'" [control]="newCompanyForm.controls.logoSource" [isNumericOnly]="false">
+                    <app-input [type]="'textarea'" [control]="newCompanyForm.controls.logoSource"
+                        [isNumericOnly]="false">
                     </app-input>
                 </div>
             </div>
-
-            <div class="border-t border-slate-200 pt-5"></div>
-
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-                <label class="text-lg font-semibold text-slate-700">Logo size for Online</label>
+            <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+                <label class="text-xs font-semibold text-slate-700 text-center">Logo size for Online</label>
                 <app-input [type]="'number'" [control]="newCompanyForm.controls.logoSize" [isNumericOnly]="true">
                 </app-input>
             </div>
 
         </div>
 
-        <!-- Footer buttons now inside the form -->
         <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
             <button type="button"
-                class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
+                class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
                 Cancel
             </button>
             <button type="submit"
-                class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
                 Submit
             </button>
         </div>

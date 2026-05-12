@@ -9,6 +9,7 @@ export class StoreDataService {
   fileUploadUrls = signal<UploadHtmlResponse[]>([]);
   pdfUrls = signal<UploadHtmlResponse[]>([]);
   zipUrls = signal<UploadHtmlResponse[]>([]);
+  previousUploadedLinks = signal<{ link: string }[]>([]);
 
   SELECTED_COMPANY = signal<CompanySuggestion | null>(null);
 

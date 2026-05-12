@@ -16,7 +16,7 @@ export class NumericOnlyDirective {
   private allowedKeys: string[] = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
   previousValue = '';
 
-  @HostListener('keypress', ['$event']) 
+  @HostListener('keypress', ['$event'])
   onKeyPress(event: KeyboardEvent) {
     if (this.isForInputEvent()) {
       const isValidEntry = (event.keyCode == 8 || event.keyCode == 0) ? null : event.keyCode >= 48 && event.keyCode <= 57
@@ -24,7 +24,7 @@ export class NumericOnlyDirective {
         return false;
       }
     } else { // For input type text
-      if(this.isNumericOnly()) {
+      if (this.isNumericOnly()) {
         if (this.allowedKeys.indexOf(event.key) !== -1 || !this.isNumericOnly()) {
           return false;
         }
@@ -40,12 +40,12 @@ export class NumericOnlyDirective {
 
 
   @HostListener('input', ['$event'])
-   onInput(event: Event): boolean {
+  onInput(event: Event): boolean {
     const inputEvent = event as InputEvent;
     if (!this.isInputTypeNumber()) {
       const inputElement = inputEvent.target as HTMLInputElement;
       const value = inputElement.value;
-      if(this.isNumericOnly()) {
+      if (this.isNumericOnly()) {
         if ((inputEvent.data === null && inputEvent.inputType !== "insertText")) {
           return false;
         }
@@ -70,35 +70,36 @@ export class NumericOnlyDirective {
     }
   }
 
-  @HostListener('paste', ['$event'])
-  onPaste(event: ClipboardEvent) {
-    const clipboardData = event.clipboardData || (window as any).clipboardData;
-    const pastedText = clipboardData.getData('text');
-    const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
-    if (!pastedText.match(pattern)) {
-      event.preventDefault();
-    }
-  }
+  // @HostListener('paste', ['$event'])
+  // onPaste(event: ClipboardEvent) {
+  //   if (!this.isNumericOnly()) return;
+  //   const clipboardData = event.clipboardData || (window as any).clipboardData;
+  //   const pastedText = clipboardData.getData('text');
+  //   const pattern = this.isDecimalAllowed() ? /^[0-9\.]$/ : /^[0-9]$/
+  //   if (!pastedText.match(pattern)) {
+  //     event.preventDefault();
+  //   }
+  // }
 
   isValidRange(event: Event) {
-    if ((this.maxValue() >= +(event.target as HTMLInputElement).value &&  +(event.target as HTMLInputElement).value >= this.minValue())) {
+    if ((this.maxValue() >= +(event.target as HTMLInputElement).value && +(event.target as HTMLInputElement).value >= this.minValue())) {
       return true;
     }
     return false;
-  } 
+  }
   @HostListener('beforeinput', ['$event'])
-  handleBeforeInput(event: InputEvent):void {
+  handleBeforeInput(event: InputEvent): void {
     if (!this.isInputTypeNumber() && this.isNumericOnly()) {
-      const newChar = event.data; 
+      const newChar = event.data;
       const allowedPattern = this.isDecimalAllowed()
         ? /^[0-9.]$/
         : /^[0-9]$/;
-        
-        if (newChar !== null && newChar !== '' && !allowedPattern.test(newChar)) {
-          // if (event.cancelable) {
-            event.preventDefault();
-          // }
-        }
+
+      if (newChar !== null && newChar !== '' && !allowedPattern.test(newChar)) {
+        // if (event.cancelable) {
+        event.preventDefault();
+        // }
+      }
     }
   }
 }

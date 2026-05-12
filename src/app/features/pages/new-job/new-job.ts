@@ -2,14 +2,14 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { RadioComponent } from "../../../shared/components/radio/radio.component";
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
-import { HotJobType, HotJobCategory, priorities, deptId } from '../mis/utils/mis.data';
+import { HotJobType, HotJobCategory } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanyLogoData, CompanySuggestion, HotJobForm, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanySuggestion, HotJobFormControls } from '../mis/models/jobs.data';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { map, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap, tap } from 'rxjs';
 import { CompanyNameSuggestion } from '../mis/services/company-name-suggestion';
 import { StoreDataService } from '../mis/services/store-data-service';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -29,19 +29,15 @@ export class NewJob implements OnInit {
   protected storeData = inject(StoreDataService);
   protected misApi = inject(MisApi);
 
-  wantToAddHotJob = signal(false); 
+  wantToAddHotJob = signal(false);
   companyData = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
   query = signal('');
   isFocused = signal(false);
-  companyNameSuggestions = signal<CompanySuggestion[]>([]);
-  CompanyLogoData = signal<CompanyLogoData[]>([]);
-
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  CompanyLogoData = signal<any[]>([]);
 
   hotJobCategory = signal(HotJobCategory);
   hotJobsType = signal(HotJobType);
-  position = signal(priorities);
 
   PublishedDate = signal<DatepickerValue>(null);
   Deadline = signal<DatepickerValue>(null);
@@ -52,9 +48,10 @@ export class NewJob implements OnInit {
   displayLogoOptions = signal([
     { label: 'Yes', value: true },
     { label: 'No', value: false },
-  ]) ;
+  ]);
 
   ngOnInit(): void {
+    // window.scrollTo({ top: 200, behavior: 'smooth' });
     const sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentRoute.set(event.urlAfterRedirects);
@@ -62,13 +59,13 @@ export class NewJob implements OnInit {
     });
     this.destroyRef.onDestroy(() => sub.unsubscribe());
   }
-  
+
   newHotJobForm = new FormGroup<HotJobFormControls>({
-    companyId : new FormControl(0, {nonNullable: true,validators:[Validators.required]}),
+    companyId: new FormControl(0, { nonNullable: true, validators: [Validators.required] }),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
-    companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    companyNameBn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     jobTitle: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     hotJobsUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -79,32 +76,32 @@ export class NewJob implements OnInit {
     displayLogo: new FormControl(false, { nonNullable: true }),
     companyLogoId: new FormControl<null | string | number>(null),
 
-    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0),Validators.required] }),
+    numberOfJobs: new FormControl(0, { nonNullable: true, validators: [Validators.min(0), Validators.required] }),
 
     hotJobsType: new FormControl('Normal', { nonNullable: true, validators: [Validators.required] }),
 
     postedOptions: new FormControl<(string | boolean)[]>([], { nonNullable: true }),
 
-    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    displayPosition: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
-    publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
-    jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
+    publishedDate: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    jobDeadline: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
 
     PremiumStartOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
-    PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator  }),
+    PremiumEndOn: new FormControl('', { nonNullable: true, validators: this.premiumValidator }),
 
-    postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
-    sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required]  }),
+    postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
   });
 
-  
+
   onPublishedDateChange(val: DatepickerValue) {
     this.PublishedDate.set(val);
     const isoDate = this.datepickerToIso(val);
     this.newHotJobForm.controls.publishedDate.setValue(isoDate);
     console.log(isoDate)
   }
-  
+
   onJobDeadlineChange(val: DatepickerValue) {
     this.Deadline.set(val);
     const isoDate = this.datepickerToIso(val);
@@ -128,7 +125,7 @@ export class NewJob implements OnInit {
   private datepickerToIso(val: DatepickerValue): string {
     if (!val) return '';
     if (val instanceof Date) return val.toISOString();
-    
+
     // @ts-ignore - depends on your lib's actual type
     if (val?.start instanceof Date) return val.start.toISOString();
 
@@ -140,69 +137,74 @@ export class NewJob implements OnInit {
       this.newHotJobForm.markAllAsTouched();
       return;
     }
-  
+
     const raw = this.newHotJobForm.getRawValue();
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
-  
+
     const payload = {
-      companyId:               raw.companyId,
-      companyName:             raw.companyName,
-      alternativeCompanyName:  raw.showCompanyNameAs,       // renamed
+      companyId: raw.companyId,
+      companyName: raw.companyName,
+      alternativeCompanyName: raw.showCompanyNameAs,       // renamed
       alternativeCompanyNameBN: raw.companyNameBn,          // renamed
-      jobTitles:               raw.jobTitle,                // renamed (plural)
-      jobTitlesBN:             '',                          // add a form control for this
-      jobUrl:                  raw.hotJobsUrl,              // renamed
-      comments:                raw.comments ?? '',
-      categoryJobIds:          raw.categoryJobIds,
-      displayLogo:             raw.displayLogo,
-      logoSource:              String(raw.companyLogoId ?? ''), // renamed + string
-      totalJobs:               raw.numberOfJobs,            // renamed
-      whiteCollarCount:        0,                           // add form controls if needed
-      blueCollarCount:         0,
-      complementaryCount:      0,
-      hotjobCMCount:           0,
-      isPremium:               raw.hotJobsType === 'Premium',  // transformed
-      isBlueCollar:            opts.includes('BlueCollar'),    // extracted from array
-      isComplementary:         opts.includes('Complementary'),
-      isHotjobCM:              opts.includes('HotjobCM'),
-      PremiumStartOn:            raw.PremiumStartOn || null,   // renamed
-      PremiumEndOn:            raw.PremiumEndOn || null,     // renamed
-      publishedOn:             raw.publishedDate,              // renamed
-      deadline:                raw.jobDeadline,               // renamed
-      postedBy:                Number(raw.postedBy),           // ensure number
-      referredBy:              Number(raw.sourcePerson),       // renamed
-      serialNo:                Number(raw.displayPosition),    // renamed
-      hotJobId:                0,
-      pageMode:                'Add',
+      jobTitles: raw.jobTitle,                // renamed (plural)
+      jobTitlesBN: '',                          // add a form control for this
+      jobUrl: raw.hotJobsUrl,              // renamed
+      comments: raw.comments ?? '',
+      categoryJobIds: raw.categoryJobIds,
+      displayLogo: raw.displayLogo,
+      logoSource: String(raw.companyLogoId ?? ''), // renamed + string
+      totalJobs: raw.numberOfJobs,            // renamed
+      whiteCollarCount: 0,                           // add form controls if needed
+      blueCollarCount: 0,
+      complementaryCount: 0,
+      hotjobCMCount: 0,
+      isPremium: raw.hotJobsType === 'Premium',  // transformed
+      isBlueCollar: opts.includes('BlueCollar'),    // extracted from array
+      isComplementary: opts.includes('Complementary'),
+      isHotjobCM: opts.includes('HotjobCM'),
+      PremiumStartOn: raw.PremiumStartOn || null,   // renamed
+      PremiumEndOn: raw.PremiumEndOn || null,     // renamed
+      publishedOn: raw.publishedDate,              // renamed
+      deadline: raw.jobDeadline,               // renamed
+      postedBy: Number(raw.postedBy),           // ensure number
+      referredBy: Number(raw.sourcePerson),       // renamed
+      serialNo: Number(raw.displayPosition),    // renamed
+      hotJobId: 0,
+      pageMode: 'Add',
     };
-    console.log("payloiad",payload)
-  
+    console.log("payloiad", payload)
+
     this.misApi.addHotJob(payload).pipe(
       tap(d => console.log('response -->', d))
     ).subscribe();
   }
+  private readonly querySubject = new Subject<string>();
+
+  // remove: companyNameSuggestions = signal<CompanySuggestion[]>([]);
+  // remove: private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  companyNameSuggestions = toSignal(
+    this.querySubject.pipe(
+      map(v => v.trim()),
+      debounceTime(150),
+      distinctUntilChanged(),
+      switchMap(query =>
+        query.length >= 2
+          ? this.companyApi.companyNamesSuggestions(query).pipe(
+            tap(res => console.log('API call for suggestions with query:', res)),
+            map(list => list.slice(0, 8)),
+            catchError(() => of([] as CompanySuggestion[]))
+          )
+          : of([] as CompanySuggestion[])
+      )
+    ),
+    { initialValue: [] as CompanySuggestion[] }
+  );
 
   onQueryChange(value: string): void {
     this.wantToAddHotJob.set(false);
     this.query.set(value);
-
-    if (this.debounceTimer) clearTimeout(this.debounceTimer);
-
-    if (!value.trim()) {
-      this.companyNameSuggestions.set([]);
-      return;
-    }
-
-    this.debounceTimer = setTimeout(() => {
-      this.companyApi.companyNamesSuggestions(value.trim()).pipe(
-        tap((res) => {
-          console.log('API call for suggestions with query:', res);
-        })
-      ).subscribe({
-        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
-        error: () => this.companyNameSuggestions.set([]),
-      });
-    }, 150);
+    this.querySubject.next(value);
   }
 
   selectCompany(data: CompanySuggestion): void {
@@ -210,50 +212,45 @@ export class NewJob implements OnInit {
     this.storeData.SELECTED_COMPANY.set(data);
     this.query.set(data.companyName);
     this.isFocused.set(false);
-    this.companyNameSuggestions.set([]);
-    console.log("data", data)
-    console.log("selected company", this.storeData.SELECTED_COMPANY())
-    console.log("this.suggestions", this.companyNameSuggestions())
-
+    // this.companyNameSuggestions.set([]);
+    this.querySubject.next('');
+    this.addHotJob();
   }
 
   clearCompany(): void {
     localStorage.removeItem('SELECTED_COMPANY');
     this.storeData.SELECTED_COMPANY.set(null);
     this.query.set('');
-    this.companyNameSuggestions.set([]);
-    
+    // this.companyNameSuggestions.set([]);
+    this.querySubject.next('');
     this.wantToAddHotJob.set(false);
   }
 
   onFocus(): void {
     this.isFocused.set(true);
-    const q = this.query().trim();
-    if (q) {
-      this.companyApi.companyNamesSuggestions(q).subscribe({
-        next: list => this.companyNameSuggestions.set(list.slice(0, 8)),
-        error: () => this.companyNameSuggestions.set([]),
-      });
+    if (this.query().trim()) {
+      this.querySubject.next(this.query());
     }
   }
 
   onBlur(): void {
     setTimeout(() => this.isFocused.set(false), 120);
   }
-  
-  addHotJob():void{
+
+  addHotJob(): void {
     this.wantToAddHotJob.set(true);
     this.newHotJobForm.patchValue({
       companyId: this.companyData()?.comId,
-      companyName :  this.companyData()?.companyName,
-      showCompanyNameAs : this.companyData()?.displayCompanyName,
+      companyName: this.companyData()?.companyName,
+      showCompanyNameAs: this.companyData()?.displayCompanyName,
       companyNameBn: this.companyData()?.companyNameBng,
     })
 
     this.misApi.getCompanyLogo(this.companyData()?.comId.toString() || '').subscribe({
       next: (res) => {
         console.log("Company logo", res);
-        this.CompanyLogoData.set(res);
+        this.CompanyLogoData.set(res.data[0].logoSource);
+        console.log("Company logo data", this.CompanyLogoData());
       },
       error: (err) => {
         console.log("Error getting company logo", err);
@@ -265,11 +262,11 @@ export class NewJob implements OnInit {
     const type = group.get('hotJobsType')?.value;
     const start = group.get('premiumStartDate')?.value;
     const end = group.get('premiumEndDate')?.value;
-  
+
     if (type === 'Premium' && (!start || !end)) {
       return { premiumRequired: true };
     }
-  
+
     return null;
   }
   isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
@@ -285,22 +282,37 @@ export class NewJob implements OnInit {
           label: item.fullName,   // label = fullname
           value: item.userId      // value = userid
         }))
-      ),
-      tap((mapped) => {
-        // console.log("posted by", mapped);
-      })
+      )
     ),
     { initialValue: [] }
   );
-  
+
   sourcePerson = toSignal(
     this.misApi.getSourcePersons().pipe(
       map((res) =>
         res.map((person: any): DropdownOption => ({
-            label: person.fullName,
-            value: person.depSerial
-          }))
+          label: person.fullName,
+          value: person.depSerial
+        }))
       )
+    ),
+    { initialValue: [] }
+  );
+
+  totalActiveHotJobsCount = toSignal(
+    this.misApi.getTotalActiveHotJobsCount().pipe(
+      map((res) => {
+        const totalCount = res.data + 1;
+        const dropdownOptions: DropdownOption[] = [];
+        for (let i = 1; i <= totalCount; i++) {
+          dropdownOptions.push({
+            label: i.toString(),
+            value: i
+          });
+        }
+
+        return dropdownOptions;
+      })
     ),
     { initialValue: [] }
   );

@@ -4,8 +4,19 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CompanyNameSuggestion } from '../../services/company-name-suggestion';
 import { CompanySuggestion } from '../../models/jobs.data';
-import { tap } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  of,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { StoreDataService } from '../../services/store-data-service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MisApi } from '../../services/mis-api';
 
 @Component({
   selector: 'app-mis-nav',
@@ -19,6 +30,7 @@ export class MisNav {
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
+  private readonly misService = inject(MisApi);
 
   companyName = this.storeData.SELECTED_COMPANY ?? null;
   currentRoute = signal<string>(this.router.url);
@@ -26,37 +38,43 @@ export class MisNav {
   isFocused = signal(false);
   suggestions = signal<CompanySuggestion[]>([]);
 
-  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly querySubject = new Subject<string>();
 
   constructor() {
-    const sub = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.currentRoute.set(event.urlAfterRedirects);
-      }
-    });
-    this.destroyRef.onDestroy(() => sub.unsubscribe());
+    this.router.events
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          this.currentRoute.set(event.urlAfterRedirects);
+        }
+      });
+
+    this.querySubject
+      .pipe(
+        map(value => value.trim()),
+        debounceTime(150),
+        distinctUntilChanged(),
+        switchMap(query =>
+          query
+            ? this.companyApi.companyNamesSuggestions(query).pipe(
+                map(list => list.slice(0, 8)),
+                catchError(() => of([] as CompanySuggestion[]))
+              )
+            : of([] as CompanySuggestion[])
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(list => this.suggestions.set(list));
   }
 
   onQueryChange(value: string): void {
     this.query.set(value);
 
-    if (this.debounceTimer) clearTimeout(this.debounceTimer);
-
     if (!value.trim()) {
       this.suggestions.set([]);
-      return;
     }
 
-    this.debounceTimer = setTimeout(() => {
-      this.companyApi.companyNamesSuggestions(value.trim()).pipe(
-        tap((res) => {
-          // console.log('API call for suggestions with query:', res);
-        })
-      ).subscribe({
-        next: list => this.suggestions.set(list.slice(0, 8)),
-        error: () => this.suggestions.set([]),
-      });
-    }, 150);
+    this.querySubject.next(value);
   }
 
   selectCompany(data: CompanySuggestion): void {
@@ -65,10 +83,12 @@ export class MisNav {
     this.query.set(data.companyName);
     this.isFocused.set(false);
     this.suggestions.set([]);
-    console.log("data", data)
-    console.log("selected company", this.storeData.SELECTED_COMPANY())
-    console.log("this.suggestions", this.suggestions())
+    this.querySubject.next('');
 
+    this.misService.getPreviousUploadedLinks(middleSpacesToUnderscore(data.companyName)).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      tap(links => console.log('Previous uploaded links:', links))
+    ).subscribe(links => this.storeData.previousUploadedLinks.set(links));
   }
 
   clearCompany(): void {
@@ -76,16 +96,15 @@ export class MisNav {
     this.storeData.SELECTED_COMPANY.set(null);
     this.query.set('');
     this.suggestions.set([]);
+    this.querySubject.next('');
+    this.storeData.previousUploadedLinks.set([])
   }
 
   onFocus(): void {
     this.isFocused.set(true);
     const q = this.query().trim();
     if (q) {
-      this.companyApi.companyNamesSuggestions(q).subscribe({
-        next: list => this.suggestions.set(list.slice(0, 8)),
-        error: () => this.suggestions.set([]),
-      });
+      this.querySubject.next(q);
     }
   }
 
@@ -93,4 +112,21 @@ export class MisNav {
     setTimeout(() => this.isFocused.set(false), 120);
   }
 
+}
+
+export function middleSpacesToUnderscore(str: string): string {
+  // Track leading spaces
+  const leadingMatch = str.match(/^\s*/);
+  const leadingSpaces = leadingMatch ? leadingMatch[0] : '';
+
+  // Track trailing spaces
+  const trailingMatch = str.match(/\s*$/);
+  const trailingSpaces = trailingMatch ? trailingMatch[0] : '';
+
+  // Get middle content and replace spaces/dots with underscores
+  const middle = str.trim().replace(/[\s.]+/g, '-');
+
+  const result = (leadingSpaces + middle + trailingSpaces).toLowerCase();
+
+  return result;
 }
