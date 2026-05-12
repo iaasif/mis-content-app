@@ -1,4 +1,4 @@
-import { Component, computed, inject, NgZone, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, NgZone, OnInit, signal } from '@angular/core';
 import { HotJobCategory, HotJobType, priorities } from '../mis/utils/mis.data';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -33,6 +33,7 @@ export class EditCompany implements OnInit {
   private hotToast = inject(HotToastService);
   private storeDataService = inject(StoreDataService);
   private ngZone = inject(NgZone);
+  private destroyRef = inject(DestroyRef);
 
   isLoadingCompanies = signal(false);
 
@@ -152,7 +153,7 @@ export class EditCompany implements OnInit {
     };
 
     this.misApi.updateCompany(payload).pipe(
-      takeUntilDestroyed(),
+      takeUntilDestroyed(this.destroyRef),
       map(res=>{
         console.log('update company',res)
         if(res.message==="Company updated successfully!"){
@@ -173,6 +174,22 @@ export class EditCompany implements OnInit {
     console.log('variants', variants);
     this.editCompanyForm.controls.logoSource.setValue(variants[0]?.publicUrl || '');
   }
+
+  // have to work , api should be change
+  // onImageResponse(res: UploadImgApiResponse): void {
+  //   const variants = res.variants ?? [];
+  //   console.log('variants', variants);
+
+  //   // Get current array or initialize empty
+  //   const currentUrls = this.editCompanyForm.controls.logoSource.value || [];
+  //   const newUrl = variants[0]?.publicUrl || '';
+
+  //   // Append new URL to existing array using spread
+  //   this.editCompanyForm.controls.logoSource.setValue([
+  //     ...currentUrls,
+  //     newUrl
+  //   ]);
+  // }
 
   selectCompany(company: CompanySuggestion): void {
     console.log('selectCompany', company);
