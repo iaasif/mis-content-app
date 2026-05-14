@@ -28,27 +28,27 @@
   
    
       <!-- Form Content -->
-    <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
+    <form [formGroup]="editHotJobForm" (ngSubmit)="submit()">
       <div class="space-y-5 p-6">
         <!-- Company Name -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Company Name</label>
           <div class="text-xl font-semibold text-slate-900">
-            {{newHotJobForm.controls.companyName.value}}
+            {{editHotJobForm.controls.companyName.value}}
           </div>
         </div>
   
         <!-- Show Company Name As -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Show Company Name As</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
           </app-input>
         </div>
   
         <!-- Company Name (Bengali) -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
           </app-input>
         </div>
   
@@ -57,7 +57,7 @@
         <!-- Job Title -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Job Title</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.jobTitle" [isNumericOnly]="false">
           </app-input>
         </div>
   
@@ -66,14 +66,14 @@
         <!-- Hot Jobs URL -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Hot Jobs URL</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
           </app-input>
         </div>
   
         <!-- Comments -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Comments</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.comments" [isNumericOnly]="false">
+          <app-input [type]="'text'" [control]="editHotJobForm.controls.comments" [isNumericOnly]="false">
           </app-input>
         </div>
   
@@ -81,7 +81,7 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
           <label class="text-lg font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
           <div class="space-y-1">
-            <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
+            <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
             </app-input>
             <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
           </div>
@@ -92,21 +92,21 @@
         <!-- Display Logo -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Display Logo?</label>
-          <app-radio [control]="newHotJobForm.controls.displayLogo" [groupName]="'displayLogo'" [radioItems]="displayLogoOptions()">
+          <app-radio [control]="editHotJobForm.controls.displayLogo" [groupName]="'displayLogo'" [radioItems]="displayLogoOptions()">
           </app-radio>
         </div>
   
         <!-- Select company logo -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Select company logo</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.companyLogoId" [isNumericOnly]="true">
+          <app-input [type]="'text'" [control]="editHotJobForm.controls.companyLogoId" [isNumericOnly]="true">
           </app-input>
         </div>
   
         <!-- Number of Jobs -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">No of Job(s)</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
           </app-input>
           
         </div>
@@ -114,14 +114,14 @@
         <!-- Hot-Job Type -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Hot-Job Type</label>
-          <app-radio [control]="newHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'" [radioItems]="hotJobsType()">
+          <app-radio [control]="editHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'" [radioItems]="hotJobsType()">
           </app-radio>
         </div>
         
         <!-- Hot-Job Category -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Hot-Job Category</label>
-          <app-checkbox-new [checkboxItems]="hotJobCategory()" [(control)]="newHotJobForm.controls.postedOptions">
+          <app-checkbox-new [checkboxItems]="hotJobCategory()" [(control)]="editHotJobForm.controls.postedOptions">
           </app-checkbox-new>
         </div>
         
@@ -168,16 +168,16 @@
          <!-- Display Position -->
          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Display Position</label>
-          <app-dropdown-component class="w-2xl" [preselectedOption]="preSelectedPosition()" [options]="totalPositionCount()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
+          <app-dropdown-component class="w-2xl" [preselectedOption]="preSelectedPosition()" [options]="totalPositionCount()" [control]="editHotJobForm.controls.displayPosition" [isRequired]="true">
           </app-dropdown-component>
         </div>
         <!-- Posted By -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
           <label class="text-lg font-semibold text-slate-700">Posted By</label>
-          <!-- <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
+          <!-- <app-input [type]="'text'" [control]="editHotJobForm.controls.postedBy" [isNumericOnly]="false">
           </app-input> -->
           
-          <app-dropdown-component class="w-2xl" [preselectedOption]="preselectPostedBy()" [options]="postedBy()" [control]="newHotJobForm.controls.postedBy" [isRequired]="true">
+          <app-dropdown-component class="w-2xl" [preselectedOption]="preselectPostedBy()" [options]="postedBy()" [control]="editHotJobForm.controls.postedBy" [isRequired]="true">
           </app-dropdown-component>
         </div>
   
@@ -186,7 +186,7 @@
           <label class="text-lg font-semibold text-slate-700">Source Person</label>
           <app-dropdown-component 
           [preselectedOption]="preselectSourcePerson()"
-          class="w-2xl" [options]="sourcePerson()" [control]="newHotJobForm.controls.sourcePerson" [isRequired]="true">
+          class="w-2xl" [options]="sourcePerson()" [control]="editHotJobForm.controls.sourcePerson" [isRequired]="true">
           </app-dropdown-component>
         </div>
         
@@ -196,7 +196,7 @@
           <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
             Save
           </button>
-          <button type="button" (click)="newHotJobForm.reset()"
+          <button type="button" (click)="editHotJobForm.reset()"
           class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
             Reset
           </button>

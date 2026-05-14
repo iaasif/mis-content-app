@@ -31,7 +31,7 @@ export class EditJob {
   private readonly companyApi = inject(CompanyNameSuggestion);
   private readonly destroyRef = inject(DestroyRef);
   protected storeData = inject(StoreDataService);
-  protected misApi = inject(MisApi);
+  protected misApiService = inject(MisApi);
   private hottoasterService = inject(HotToastService)
 
 
@@ -62,6 +62,7 @@ export class EditJob {
   postedBy = signal<DropdownOption[]>([]);
   sourcePerson = signal<DropdownOption[]>([]);
   preSelectedPosition = signal<DropdownOption | null>(null);
+  isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
 
   ngOnInit(): void {
     this.router.events.pipe(
@@ -77,14 +78,14 @@ export class EditJob {
       switchMap(jobId => {
 
         return forkJoin({
-          hotJob: this.misApi.getHotJobDataById(jobId),
-          postedBy: this.misApi.getPostedBy().pipe(
+          hotJob: this.misApiService.getHotJobDataById(jobId),
+          postedBy: this.misApiService.getPostedBy().pipe(
             map(res => mapToDropdownOptions(res))
           ),
-          sourcePerson: this.misApi.getSourcePersons().pipe(
+          sourcePerson: this.misApiService.getSourcePersons().pipe(
             map(res => mapToDropdownOptions(res))
           ),
-          totalActiveHotJobsCount: this.misApi.getTotalActiveHotJobsCount().pipe(
+          totalActiveHotJobsCount: this.misApiService.getTotalActiveHotJobsCount().pipe(
             map(res => {
               const count = res.data;
 
@@ -118,7 +119,7 @@ export class EditJob {
     });
   }
 
-  newHotJobForm = new FormGroup<HotJobFormControls>({
+  editHotJobForm = new FormGroup<HotJobFormControls>({
     companyId: new FormControl(0, { nonNullable: true, validators: [Validators.required] }),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl<string | null>(null, { validators: [Validators.required] }),
@@ -155,22 +156,22 @@ export class EditJob {
 
   onPublishedDateChange(val: DatepickerValue): void {
     this.PublishedDate.set(val);
-    this.newHotJobForm.controls.publishedDate.setValue(this.datepickerToIso(val));
+    this.editHotJobForm.controls.publishedDate.setValue(this.datepickerToIso(val));
   }
 
   onJobDeadlineChange(val: DatepickerValue): void {
     this.Deadline.set(val);
-    this.newHotJobForm.controls.jobDeadline.setValue(this.datepickerToIso(val));
+    this.editHotJobForm.controls.jobDeadline.setValue(this.datepickerToIso(val));
   }
 
   onFromDateChange(val: DatepickerValue): void {
     this.FromDate.set(val);
-    this.newHotJobForm.controls.PremiumStartOn.setValue(this.datepickerToIso(val));
+    this.editHotJobForm.controls.PremiumStartOn.setValue(this.datepickerToIso(val));
   }
 
   onToDateChange(val: DatepickerValue): void {
     this.ToDate.set(val);
-    this.newHotJobForm.controls.PremiumEndOn.setValue(this.datepickerToIso(val));
+    this.editHotJobForm.controls.PremiumEndOn.setValue(this.datepickerToIso(val));
   }
 
   private datepickerToIso(val: DatepickerValue): string {
@@ -184,13 +185,13 @@ export class EditJob {
   }
 
   submit(): void {
-    if (this.newHotJobForm.invalid) {
-      this.newHotJobForm.markAllAsTouched();
+    if (this.editHotJobForm.invalid) {
+      this.editHotJobForm.markAllAsTouched();
       this.hottoasterService.error('Please fill all required fields');
       return;
     }
 
-    const raw = this.newHotJobForm.getRawValue();
+    const raw = this.editHotJobForm.getRawValue();
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
 
     const payload = {
@@ -228,7 +229,7 @@ export class EditJob {
 
     console.log("payload", payload);
 
-    this.misApi.updateHotJob(payload).pipe(
+    this.misApiService.updateHotJob(payload).pipe(
       tap((d) => {
         console.log('response update hotjob -->', d)
         this.hottoasterService.success('Hot-Job is up to date')
@@ -265,7 +266,7 @@ export class EditJob {
 
   addHotJob(): void {
     this.wantToAddHotJob.set(true);
-    this.newHotJobForm.patchValue({
+    this.editHotJobForm.patchValue({
       companyId: this.companyData()?.comId,
       companyName: this.companyData()?.companyName,
       showCompanyNameAs: this.companyData()?.displayCompanyName,
@@ -284,35 +285,37 @@ export class EditJob {
 
     return null;
   }
-  isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
+  
   hotJobsTypeSignal = toSignal(
-    this.newHotJobForm.get('hotJobsType')!.valueChanges,
-    { initialValue: this.newHotJobForm.get('hotJobsType')!.value }
+    this.editHotJobForm.get('hotJobsType')!.valueChanges,
+    { initialValue: this.editHotJobForm.get('hotJobsType')!.value }
   );
 
 
-  private populateForm(res: any): void {
+  private populateForm(d: any): void {
+    // console.log("populate form hit", d);
+    let res= d.data
 
     const opts: string[] = [];
     if (res.blueCollerJob) opts.push('BlueCollar');
     if (res.complementaryJob) opts.push('Complementary');
     if (res.hotJobsCM) opts.push('HotjobCM');
 
-    this.newHotJobForm.patchValue({
-      companyId: res.comId ?? this.newHotJobForm.value.companyId,
-      companyName: res.companyName ?? this.newHotJobForm.value.companyName,
-      showCompanyNameAs: res.displayCompanyName ?? this.newHotJobForm.value.showCompanyNameAs,
-      companyNameBn: res.displayCompanyNameBng ?? this.newHotJobForm.value.companyNameBn,
-      jobTitle: res.jobTitles ?? this.newHotJobForm.value.jobTitle,
-      hotJobsUrl: res.linkPage ?? this.newHotJobForm.value.hotJobsUrl,
+    this.editHotJobForm.patchValue({
+      companyId: res.comId ?? this.editHotJobForm.value.companyId,
+      companyName: res.companyName ?? this.editHotJobForm.value.companyName,
+      showCompanyNameAs: res.displayCompanyName ?? this.editHotJobForm.value.showCompanyNameAs,
+      companyNameBn: res.displayCompanyNameBng ?? this.editHotJobForm.value.companyNameBn,
+      jobTitle: res.jobTitles ?? this.editHotJobForm.value.jobTitle,
+      hotJobsUrl: res.linkPage ?? this.editHotJobForm.value.hotJobsUrl,
       comments: res.comments ?? null,
-      categoryJobIds: res.jP_Ids ?? this.newHotJobForm.value.categoryJobIds,
+      categoryJobIds: res.jP_Ids ?? this.editHotJobForm.value.categoryJobIds,
       displayLogo: res.showLogo ?? false,
       companyLogoId: res.jbLogoSource ?? null,
       numberOfJobs: res.totalJobs ?? 0,
       hotJobsType: res.premiumJob === 1 ? 'Premium' : 'Normal',
       postedOptions: opts,
-      displayPosition: res.serialNo != null ? res.serialNo : this.newHotJobForm.value.displayPosition,
+      displayPosition: res.serialNo != null ? res.serialNo : this.editHotJobForm.value.displayPosition,
       publishedDate: res.publishedOn ?? '',
       jobDeadline: res.deadLine ?? '',
       PremiumStartOn: res.startDate ?? '',

@@ -15,7 +15,7 @@ export const routes: Routes = [
         title: 'New Hotjob'
     },
     {
-        path: 'edit',
+        path: 'edit-hotjob',
         loadComponent: () => import('./features/pages/edit-job/edit-job').then(m => m.EditJob),
         title: 'Edit Hotjob'
 
