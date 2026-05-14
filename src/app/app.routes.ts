@@ -57,7 +57,7 @@ export const routes: Routes = [
         title: 'Search for Edit Hotjob'
     },
     {
-        path: 'sx',
+        path: 'sa',
         loadComponent: () => import('./shared/components/search-anything/search-anything').then(m => m.SearchAnything),
         title: 'Search Anything'
     },
