@@ -69,9 +69,9 @@ export class MisApi {
   }
 
 
-  getHotJobDataById(jobId: string | number): Observable<HotJob> {
+  getHotJobDataById(jobId: string | number): Observable<any> {
     const params = new HttpParams().set('Id', jobId.toString());
-    return this.http.get<HotJob>(`${environment.apiUrl}hotjobs/single-hotjob`, { params });
+    return this.http.get<any>(`${environment.apiUrl}hotjobs/single-hotjob`, { params });
   }
   
   updateHotJob(payload: any): Observable<any>{

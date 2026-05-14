@@ -4,9 +4,9 @@ import { RadioComponent } from "../../../shared/components/radio/radio.component
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
 import { HotJobType, HotJobCategory } from '../mis/utils/mis.data';
 import { CheckboxNew } from "../../../shared/components/checkbox-new/checkbox-new";
-import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl, FormControlName } from '@angular/forms';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { CompanySuggestion, HotJobFormControls } from '../mis/models/jobs.data';
+import { CompanySuggestion, EditHotJobFormControls, HotJobFormControls } from '../mis/models/jobs.data';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { catchError, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
@@ -63,7 +63,7 @@ export class EditJob {
   sourcePerson = signal<DropdownOption[]>([]);
   preSelectedPosition = signal<DropdownOption | null>(null);
   isPremium = computed(() => this.hotJobsTypeSignal() === 'Premium');
-
+  logoSource = signal<any[]>([]);
   ngOnInit(): void {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -76,7 +76,6 @@ export class EditJob {
       map(params => params.get('jobId')),
       filter((jobId): jobId is string => !!jobId),
       switchMap(jobId => {
-
         return forkJoin({
           hotJob: this.misApiService.getHotJobDataById(jobId),
           postedBy: this.misApiService.getPostedBy().pipe(
@@ -105,21 +104,25 @@ export class EditJob {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(({ hotJob, postedBy, sourcePerson, totalActiveHotJobsCount }) => {
       if (!hotJob) return;
-      console.log('hotJob', hotJob);
-      console.log('postedBy', postedBy);
-      console.log('sourcePerson', sourcePerson);
-      console.log('totalActiveHotJobsCount', totalActiveHotJobsCount);
+      console.log('hotJob--', hotJob);
+      // console.log('postedBy', postedBy);
+      // console.log('sourcePerson', sourcePerson);
+      // console.log('totalActiveHotJobsCount', totalActiveHotJobsCount);
+      this.logoSource.set(hotJob.data.logoList);
+      console.log(' logoSource', this.logoSource());
+
       this.hotJobId.set(hotJob.id);
       this.postedBy.set(postedBy);
       this.sourcePerson.set(sourcePerson);
-      this.totalPositionCount.set(totalActiveHotJobsCount);
+      this.totalPositionCount.set(totalActiveHotJobsCount as DropdownOption[]);
 
       this.populateForm(hotJob);
       this.setPreselectValue(postedBy, sourcePerson, hotJob);
     });
   }
 
-  editHotJobForm = new FormGroup<HotJobFormControls>({
+  editHotJobForm = new FormGroup<EditHotJobFormControls>({
+    Id: new FormControl(0),
     companyId: new FormControl(0, { nonNullable: true, validators: [Validators.required] }),
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     showCompanyNameAs: new FormControl<string | null>(null, { validators: [Validators.required] }),
@@ -151,6 +154,7 @@ export class EditJob {
 
     postedBy: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     sourcePerson: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    logoList: new FormControl<string[]>([], { nonNullable: false }),
   });
 
 
@@ -195,7 +199,7 @@ export class EditJob {
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
 
     const payload = {
-      Id: this.hotJobId(),
+      Id: raw.Id,
       pageMode: 'Edit',
       comId: raw.companyId,
       companyName: raw.companyName,
@@ -225,6 +229,7 @@ export class EditJob {
       referredBy: raw.sourcePerson,
       serialNo: Number(raw.displayPosition),
       updatedOn: new Date().toISOString(),
+      logoList: raw.logoList
     };
 
     console.log("payload", payload);
@@ -293,7 +298,7 @@ export class EditJob {
 
 
   private populateForm(d: any): void {
-    // console.log("populate form hit", d);
+    console.log("populate form hit", d);
     let res= d.data
 
     const opts: string[] = [];
@@ -302,6 +307,7 @@ export class EditJob {
     if (res.hotJobsCM) opts.push('HotjobCM');
 
     this.editHotJobForm.patchValue({
+      Id: res.id,
       companyId: res.comId ?? this.editHotJobForm.value.companyId,
       companyName: res.companyName ?? this.editHotJobForm.value.companyName,
       showCompanyNameAs: res.displayCompanyName ?? this.editHotJobForm.value.showCompanyNameAs,
@@ -322,6 +328,7 @@ export class EditJob {
       PremiumEndOn: res.endDate ?? '',
       postedBy: res.postedBy ?? 0,
       sourcePerson: res.referredBy ?? 0,
+      logoList: res.logoList
     });
 
     if (res.publishedOn) this.PublishedDate.set(new Date(res.publishedOn));

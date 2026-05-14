@@ -76,6 +76,30 @@ export type HotJobFormControls = {
   postedBy: FormControl<number>;
   sourcePerson: FormControl<number>;
 };
+export type EditHotJobFormControls = {
+  Id:FormControl<number|string |null>
+  companyId: FormControl<number | string>;
+  companyName: FormControl<string>;
+  showCompanyNameAs: FormControl<string | null>;
+  companyNameBn: FormControl<string | null>;
+  jobTitle: FormControl<string>;
+  hotJobsUrl: FormControl<string>;
+  comments: FormControl<string | null>;
+  categoryJobIds: FormControl<string>;
+  displayLogo: FormControl<boolean>;
+  companyLogoId: FormControl<null | string | number>;
+  numberOfJobs: FormControl<number>;
+  hotJobsType: FormControl<string>;
+  postedOptions: FormControl<(string | boolean)[]>;
+  displayPosition: FormControl<string | number | null>;
+  publishedDate: FormControl<string>;
+  jobDeadline: FormControl<string>;
+  PremiumStartOn: FormControl<string>;
+  PremiumEndOn: FormControl<string>;
+  postedBy: FormControl<number>;
+  sourcePerson: FormControl<number>;
+  logoList:FormControl<string[] | null>
+};
 
 export type newCompanyForm = {
   companyName: string;
@@ -114,6 +138,7 @@ export interface HotJob {
   jobTitleList:string[]
   newSerial: number
   jbLogoSource: string
+  
 }
 export interface SourcePerson {
   userId: number;
