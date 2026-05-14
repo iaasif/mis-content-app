@@ -199,12 +199,12 @@ export class EditJob {
     const opts: (string | boolean)[] = raw.postedOptions ?? [];
 
     const payload = {
-      Id: raw.Id,
-      pageMode: 'Edit',
+      id: raw.Id,
       comId: raw.companyId,
       companyName: raw.companyName,
       displayCompanyName: raw.showCompanyNameAs,
       displayCompanyNameBng: raw.companyNameBn,
+      logoList: raw.logoList ?? [],
       jobTitles: raw.jobTitle,
       jobTitlesBng: raw.jobTitle,
       linkPage: raw.hotJobsUrl,
@@ -225,11 +225,11 @@ export class EditJob {
       endDate: raw.PremiumEndOn || null,
       publishedOn: raw.publishedDate,
       deadLine: raw.jobDeadline,
+      postedOn: raw.publishedDate,
       postedBy: raw.postedBy,
       referredBy: raw.sourcePerson,
       serialNo: Number(raw.displayPosition),
       updatedOn: new Date().toISOString(),
-      logoList: raw.logoList
     };
 
     console.log("payload", payload);
@@ -357,4 +357,3 @@ export class EditJob {
   }
 
 }
-
