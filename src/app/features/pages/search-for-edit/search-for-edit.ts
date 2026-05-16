@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DropdownOption } from '../../../shared/models/models';
 import { DatepickerValue, NgxsmkDatepickerComponent } from 'ngxsmk-datepicker';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DropdownComponent } from "../../../shared/components/dropdown-component/dropdown-component";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MisApi } from '../mis/services/mis-api';
@@ -42,7 +42,7 @@ export class SearchForEdit {
   form = new FormGroup({
     companyName: new FormControl(''),
     companyId:   new FormControl(0),
-    jobType:     new FormControl(''),
+    jobType:     new FormControl('', { validators: [Validators.required] }),
     fromDate:    new FormControl<Date | null>(null),
     toDate:      new FormControl<Date | null>(null),
   });
@@ -105,14 +105,18 @@ export class SearchForEdit {
   submit(): void {
     this.isLoading.set(true);
     
-
     const payload: CompanyHotJobsPayload = {
       companyId: this.form.value.companyId ?? 0,
       jobType:   this.form.value.jobType   ?? null,
       fromDate:  this.form.value.fromDate  ?? null,
       toDate:    this.form.value.toDate    ?? null,
     };
-
+    if(this.form.invalid){
+      this.form.markAllAsTouched();
+      this.hotToaster.error('Please fill all required fields');
+      this.isLoading.set(false);
+      return;
+    }
     this.misApiService.getCompanyHotJobs(payload)
     .pipe(finalize(() => {
       this.isLoading.set(false)
@@ -133,7 +137,7 @@ export class SearchForEdit {
 
   onEdit(item: CompanyHotJob): void {
     console.log('Edit:', item);
-    this.router.navigate(['/edit'],{
+    this.router.navigate(['/edit-hotjob'],{
       queryParams:{jobId:item.id}
     })
   }

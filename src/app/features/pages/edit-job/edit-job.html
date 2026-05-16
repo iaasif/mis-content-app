@@ -1,219 +1,212 @@
-<div class="rounded-2xl border border-amber-200 bg-white/90 shadow-sm backdrop-blur">
-    <!-- Header -->
-    <div class="flex items-start justify-between gap-4 border-b border-amber-200 px-6 py-4">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
-          <h3 class="text-xl font-semibold tracking-wide text-slate-900">Edit Hot Job !!</h3>
-        </div>
-        <p class="mt-1 text-xs text-slate-600">Edit hot job listings</p>
+<div class="rounded-2xl border border-amber-200 bg-white shadow-sm backdrop-blur max-w-3xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-start justify-between gap-4 border-b border-amber-200 px-3 py-2">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+        <h3 class="text-sm font-semibold tracking-wide text-slate-900">Edit Hot Job</h3>
       </div>
-      <div class="flex gap-2">
-        <button [routerLink]="'/add-company'" type="button"
-          class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-lg font-semibold text-emerald-700 transition hover:bg-emerald-100">
-          Add Company
-        </button>
-        <button [routerLink]="'/edit-company'" type="button"
-          class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-lg font-semibold text-blue-700 transition hover:bg-blue-100">
-          Edit
-        </button>
-        <button [routerLink]="'/delete-company'" type="button"
-          class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-lg font-semibold text-red-700 transition hover:bg-red-100">
-          Delete Company
-        </button>
-      </div>
+      <p class="mt-1 text-xs text-slate-600">Edit hot job listings</p>
     </div>
-  
-    
-  
+    <div class="flex gap-2">
+      <button [routerLink]="'/add-company'" type="button"
+        class="cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100">
+        Add Company
+      </button>
+      <button [routerLink]="'/edit-company'" type="button"
+        class="cursor-pointer rounded-lg border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
+        Edit
+      </button>
+      <button [routerLink]="'/delete-company'" type="button"
+        class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 transition hover:bg-red-100">
+        Delete Company
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <form [formGroup]="editHotJobForm" (ngSubmit)="submit()">
+    <div class="flex flex-col gap-2 p-2 border border-slate-300 rounded-md">
+      <!-- Company Name -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Company Name</label>
+        <div class="text-xl font-semibold text-slate-900">
+          {{editHotJobForm.controls.companyName.value}}
+        </div>
+      </div>
+
+      <!-- Show Company Name As -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Show Company Name As</label>
+        <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.showCompanyNameAs"
+          [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Company Name (Bengali) -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">কোম্পানির নাম</label>
+        <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.companyNameBn"
+          [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Job Title -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Job Title</label>
+        <app-input [type]="'textarea'" [isRequired]="true" [control]="editHotJobForm.controls.jobTitle"
+          [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Hot Jobs URL -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Hot Jobs URL</label>
+        <app-input [type]="'textarea'" [isRequired]="true" [control]="editHotJobForm.controls.hotJobsUrl"
+          [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Comments -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Comments</label>
+        <app-input [type]="'textarea'" [control]="editHotJobForm.controls.comments" [isNumericOnly]="false">
+        </app-input>
+      </div>
+
+      <!-- Category Job IDs -->
+      <div class="grid grid-cols-[30%_70%] items-center border border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center sm:pt-2">Category Job IDs</label>
+        <div class="space-y-1">
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.categoryJobIds"
+            [isNumericOnly]="false">
+          </app-input>
+          <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
+        </div>
+      </div>
+
+      <!-- Display Logo and Number of Jobs -->
+      <div class="grid grid-cols-[50%_50%] items-center px-20 border border-slate-200 rounded-lg p-1">
+        <div>
+          <label class="text-xs font-semibold text-slate-700 text-center">Display Logo?</label>
+          <app-radio [control]="editHotJobForm.controls.displayLogo" [groupName]="'displayLogo'"
+            [radioItems]="displayLogoOptions()">
+          </app-radio>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-700 text-center">No of Job(s)</label>
+          <app-input [type]="'text'" [isRequired]="true" [control]="editHotJobForm.controls.numberOfJobs"
+            [isNumericOnly]="true">
+          </app-input>
+        </div>
+      </div>
+
+      <!-- Select company logo -->
    
-      <!-- Form Content -->
-    <form [formGroup]="newHotJobForm" (ngSubmit)="submit()">
-      <div class="space-y-5 p-6">
-        <!-- Company Name -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Company Name</label>
-          <div class="text-xl font-semibold text-slate-900">
-            {{newHotJobForm.controls.companyName.value}}
-          </div>
+      <div
+        class="grid grid-cols-1 gap-1 sm:grid-cols-[30%_70%] sm:gap-x-0 sm:items-start border border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center ">Select company logo</label>
+      
+        <div class="flex flex-wrap gap-3">
+          @if (logoSource()?.length) {
+          @for (logo of logoSource(); track $index) {
+          <button type="button" class="rounded-lg border p-2 transition"
+            [class.border-blue-500]="editHotJobForm.controls.companyLogoId.value === logo"
+            [class.ring-4]="editHotJobForm.controls.companyLogoId.value === logo"
+            [class.ring-blue-300]="editHotJobForm.controls.companyLogoId.value === logo"
+            (click)="editHotJobForm.controls.companyLogoId.setValue(logo)">
+            <img [src]="logo" alt="Company Logo" class="h-8 w-8 object-contain" />
+          </button>
+          }
+          }
         </div>
-  
-        <!-- Show Company Name As -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Show Company Name As</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.showCompanyNameAs" [isNumericOnly]="false">
-          </app-input>
-        </div>
-  
-        <!-- Company Name (Bengali) -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">কোম্পানির নাম</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.companyNameBn" [isNumericOnly]="false" >
-          </app-input>
-        </div>
-  
-        <div class="border-t border-slate-200 pt-5"></div>
-  
-        <!-- Job Title -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Job Title</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.jobTitle" [isNumericOnly]="false">
-          </app-input>
-        </div>
-  
-        <div class="border-t border-slate-200 pt-5"></div>
-  
-        <!-- Hot Jobs URL -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Hot Jobs URL</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.hotJobsUrl" [isNumericOnly]="false">
-          </app-input>
-        </div>
-  
-        <!-- Comments -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Comments</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.comments" [isNumericOnly]="false">
-          </app-input>
-        </div>
-  
-        <!-- Category Job IDs -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
-          <label class="text-lg font-semibold text-slate-700 sm:pt-2">Category Job IDs</label>
-          <div class="space-y-1">
-            <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.categoryJobIds" [isNumericOnly]="false">
-            </app-input>
-            <p class="text-xs text-slate-500">Separate multiple IDs with commas</p>
-          </div>
-        </div>
-  
-        <div class="border-t border-slate-200 pt-5"></div>
-  
-        <!-- Display Logo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Display Logo?</label>
-          <app-radio [control]="newHotJobForm.controls.displayLogo" [groupName]="'displayLogo'" [radioItems]="displayLogoOptions()">
+      </div>
+
+      <!-- Hot-Job Type and Category -->
+      <div class="grid grid-cols-[50%_50%] items-center px-20">
+        <div>
+          <label class="text-xs font-semibold text-slate-700">Hot-Job Type</label>
+          <app-radio [control]="editHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'"
+            [radioItems]="hotJobsType()">
           </app-radio>
         </div>
-  
-        <!-- Select company logo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Select company logo</label>
-          <app-input [type]="'text'" [control]="newHotJobForm.controls.companyLogoId" [isNumericOnly]="true">
-          </app-input>
-        </div>
-  
-        <!-- Number of Jobs -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">No of Job(s)</label>
-          <app-input [type]="'text'" [isRequired]="true" [control]="newHotJobForm.controls.numberOfJobs" [isNumericOnly]="true">
-          </app-input>
-          
-        </div>
-  
-        <!-- Hot-Job Type -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Hot-Job Type</label>
-          <app-radio [control]="newHotJobForm.controls.hotJobsType" [groupName]="'hotJobsType'" [radioItems]="hotJobsType()">
-          </app-radio>
-        </div>
-        
-        <!-- Hot-Job Category -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Hot-Job Category</label>
-          <app-checkbox-new [checkboxItems]="hotJobCategory()" [(control)]="newHotJobForm.controls.postedOptions">
+
+        <div>
+          <label class="text-xs font-semibold text-slate-700">Hot-Job Category</label>
+          <app-checkbox-new [checkboxItems]="hotJobCategory()" [(control)]="editHotJobForm.controls.postedOptions">
           </app-checkbox-new>
         </div>
-        
-        
-  
-        <div class="border-t border-slate-200 pt-5"></div>
-  
-        <!-- Published Date -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Published Date</label>
-          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="PublishedDate()"
+      </div>
+
+      <!-- Published Date and Job Deadline -->
+      <div class="grid grid-cols-[50%_50%] items-center px-20 gap-x-8">
+        <div>
+          <label class="text-xs font-semibold text-slate-700 text-center">Published Date</label>
+          <ngxsmk-datepicker class="w-full" mode="single" [showRanges]="true" [value]="PublishedDate()"
             (valueChange)="onPublishedDateChange($event)">
           </ngxsmk-datepicker>
         </div>
-  
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Job Deadline</label>
-          <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="Deadline()"
+        <div>
+          <label class="text-xs font-semibold text-slate-700 text-center">Job Deadline</label>
+          <ngxsmk-datepicker class="w-full" mode="single" [showRanges]="true" [value]="Deadline()"
             (valueChange)="onJobDeadlineChange($event)">
           </ngxsmk-datepicker>
-          </div>
-          
-          
-          @if(isPremium()){
-          <!-- Premium Start Date -->
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-            <label class="text-lg font-semibold text-slate-700">Premium Start Date</label>
-            <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="FromDate()"
-              (valueChange)="onFromDateChange($event)">
-            </ngxsmk-datepicker>
-          </div>
-          
-          <!-- Premium End Date -->
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-            <label class="text-lg font-semibold text-slate-700">Premium End Date</label>
-            <ngxsmk-datepicker class="w-2xl" mode="single" [showRanges]="true" [value]="ToDate()"
-              (valueChange)="onToDateChange($event)">
-            </ngxsmk-datepicker>
-          </div>
-          }
-  
-        <div class="border-t border-slate-200 pt-5"></div>
-  
-         <!-- Display Position -->
-         <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Display Position</label>
-          <app-dropdown-component class="w-2xl" [preselectedOption]="preSelectedPosition()" [options]="totalPositionCount()" [control]="newHotJobForm.controls.displayPosition" [isRequired]="true">
-          </app-dropdown-component>
-        </div>
-        <!-- Posted By -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Posted By</label>
-          <!-- <app-input [type]="'text'" [control]="newHotJobForm.controls.postedBy" [isNumericOnly]="false">
-          </app-input> -->
-          
-          <app-dropdown-component class="w-2xl" [preselectedOption]="preselectPostedBy()" [options]="postedBy()" [control]="newHotJobForm.controls.postedBy" [isRequired]="true">
-          </app-dropdown-component>
-        </div>
-  
-        <!-- Source Person -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-[200px_1fr] sm:items-center">
-          <label class="text-lg font-semibold text-slate-700">Source Person</label>
-          <app-dropdown-component 
-          [preselectedOption]="preselectSourcePerson()"
-          class="w-2xl" [options]="sourcePerson()" [control]="newHotJobForm.controls.sourcePerson" [isRequired]="true">
-          </app-dropdown-component>
-        </div>
-        
-       
-        <!-- Inline Submit/Reset Buttons (Inside Form) -->
-        <div class="pt-4 flex gap-3">
-          <button type="submit" class="rounded-md bg-slate-900 px-4 py-2 text-white hover:bg-slate-800 transition">
-            Save
-          </button>
-          <button type="button" (click)="newHotJobForm.reset()"
-          class="rounded-md border px-4 py-2 hover:bg-slate-50 transition">
-            Reset
-          </button>
         </div>
       </div>
-    </form>
-    <!-- Footer Actions -->
-    <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
-      <button type="button"
-      class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-lg font-semibold text-slate-700 transition hover:bg-slate-50">
-      Cancel
-      </button>
-      <button type="button" (click)="submit()" 
-        class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-lg font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
-        Save Changes
-      </button>
+
+      @if(isPremium()){
+      <!-- Premium Start Date -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Premium Start Date</label>
+        <ngxsmk-datepicker class="w-full" mode="single" [showRanges]="true" [value]="FromDate()"
+          (valueChange)="onFromDateChange($event)">
+        </ngxsmk-datepicker>
+      </div>
+
+      <!-- Premium End Date -->
+      <div class="grid grid-cols-[30%_70%] items-center border-2 border-slate-200 rounded-lg p-1">
+        <label class="text-xs font-semibold text-slate-700 text-center">Premium End Date</label>
+        <ngxsmk-datepicker class="w-full" mode="single" [showRanges]="true" [value]="ToDate()"
+          (valueChange)="onToDateChange($event)">
+        </ngxsmk-datepicker>
+      </div>
+      }
+
+      <!-- Display Position -->
+      <div class="grid grid-cols-[30%_70%] items-center">
+        <label class="text-xs font-semibold text-slate-700 text-center">Display Position</label>
+        <app-dropdown-component class="w-full" [preselectedOption]="preSelectedPosition()"
+          [options]="totalPositionCount()" [control]="editHotJobForm.controls.displayPosition" [isRequired]="true">
+        </app-dropdown-component>
+      </div>
+
+      <!-- Posted By -->
+      <div class="grid grid-cols-[30%_70%] items-center">
+        <label class="text-xs font-semibold text-slate-700 text-center">Posted By</label>
+        <app-dropdown-component class="w-full" [preselectedOption]="preselectPostedBy()" [options]="postedBy()"
+          [control]="editHotJobForm.controls.postedBy" [isRequired]="true">
+        </app-dropdown-component>
+      </div>
+
+      <!-- Source Person -->
+      <div class="grid grid-cols-[30%_70%] items-center">
+        <label class="text-xs font-semibold text-slate-700 text-center">Source Person</label>
+        <app-dropdown-component [preselectedOption]="preselectSourcePerson()" class="w-full"
+          [options]="sourcePerson()" [control]="editHotJobForm.controls.sourcePerson" [isRequired]="true">
+        </app-dropdown-component>
+      </div>
     </div>
-  
-    
+  </form>
+
+  <!-- Footer Actions -->
+  <div class="flex justify-end gap-3 border-t border-amber-200 bg-slate-50/50 px-6 py-4">
+    <button type="button"
+      class="rounded-lg border border-slate-300 bg-white px-5 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">
+      Cancel
+    </button>
+    <button type="button" (click)="submit()"
+      class="rounded-lg border border-amber-500 bg-amber-500 px-5 py-2 text-xs font-semibold text-white transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed">
+      Save Changes
+    </button>
   </div>
+</div>

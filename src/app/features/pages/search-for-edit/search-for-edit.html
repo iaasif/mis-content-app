@@ -48,6 +48,7 @@
             <span class="text-sm font-semibold text-slate-700">Job Type</span>
           </div>
           <app-dropdown-component
+            [isRequired]="true"
             [options]="jobType()"
             [control]="form.controls.jobType"
             class="w-2xl">
