@@ -1,13 +1,25 @@
-<div class="w-full h-screen bordrer">
+<div class="w-full h-screen">
     <div class="max-w-md mx-auto">
-        <div class="flex flex-col items-center justify-center h-screen gap-2">
-            <div class="text-2xl font-medium text-center w-full ">Username</div>
-            <input class="border rounded-md p-2 w-full" type="text" placeholder="Username">
-            <div class="text-2xl font-medium text-center w-full">Password</div>
-            <input class="border rounded-md p-2 w-full" type="password" placeholder="Password">
-            <button
-                class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer w-full mt-6 hover:bg-blue-600 hover:scale-105 transition ">Login</button>
-        </div>
-    </div>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()"
+            class="flex flex-col items-center justify-center h-screen gap-2">
 
+            <div class="text-2xl font-medium text-center w-full">Username yo yo</div>
+            <input formControlName="username" class="border rounded-md p-2 w-full" type="text" autocomplete="username" placeholder="Username" />
+            @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
+            <p class="text-red-500 text-sm w-full">Username is required.</p>
+            }
+
+            <div class="text-2xl font-medium text-center w-full">Password</div>
+            <input formControlName="password" class="border rounded-md p-2 w-full" type="password" autocomplete="current-password"
+                placeholder="Password" />
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <p class="text-red-500 text-sm w-full">Password is required.</p>
+            }
+
+            <button type="submit" [disabled]="loginForm.invalid"
+                class="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer w-full mt-6 hover:bg-blue-600 hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Login
+            </button>
+        </form>
+    </div>
 </div>

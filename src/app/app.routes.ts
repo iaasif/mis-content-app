@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 import { checkRefGuard } from './features/pages/mis/guards/check-ref-guard';
 import { HotJobPreview } from './features/pages/hot-job-preview/hot-job-preview';
-
+import { checkAuthCookieGuard } from './core/guards/check-auth-cookie-guard';
 
 export const routes: Routes = [
     {
         path: '',
         loadComponent: () => import('./features/pages/mis/components/mis-home/mis-home').then(m => m.MisHome),
         title: 'Hotjob & Tender manager',
+        canActivate: [checkAuthCookieGuard]
 
     },
     {
