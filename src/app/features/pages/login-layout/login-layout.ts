@@ -21,17 +21,29 @@ export class LoginLayout {
     password: ['', [Validators.required]],
   });
 
+  // onSubmit(): void {
+  //   if (this.loginForm.valid) {
+  //     console.log(this.loginForm.value);
+  //     // call your auth service here
+  //     this.loginServices.login(this.loginForm.value).subscribe({
+  //       next: (response) => {
+  //         console.log('login success', response);
+  //         this.router.navigate(['']);
+  //       },
+  //       error: (error) => {
+  //         console.log('login error', error);
+  //       }
+  //     });
+  //   }
+  // }
   onSubmit(): void {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
-      // call your auth service here
       this.loginServices.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          console.log('login success', response);
-          this.router.navigate(['']);
+        next: () => {
+          this.router.navigateByUrl('/'); // 👈 here
         },
         error: (error) => {
-          console.log('login error', error);
+          console.error('login error', error);
         }
       });
     }
