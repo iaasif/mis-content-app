@@ -15,7 +15,7 @@ export const routes: Routes = [
         title: 'New Hotjob'
     },
     {
-        path: 'edit',
+        path: 'edit-hotjob',
         loadComponent: () => import('./features/pages/edit-job/edit-job').then(m => m.EditJob),
         title: 'Edit Hotjob'
 
@@ -56,4 +56,24 @@ export const routes: Routes = [
         loadComponent: () => import('./features/pages/search-for-edit/search-for-edit').then(m => m.SearchForEdit),
         title: 'Search for Edit Hotjob'
     },
+    {
+        path: 'sa',
+        loadComponent: () => import('./shared/components/search-anything/search-anything').then(m => m.SearchAnything),
+        title: 'Search Anything'
+    },
+    {
+        path: 'new-tender',
+        loadComponent: () => import('./features/pages/new-tender/new-tender').then(m => m.NewTender),
+        title: 'New Tender'
+    },
+    {
+        path: 'edit-tender',
+        loadComponent: () => import('./features/pages/edit-tender/edit-tender').then(m => m.EditTender),
+        title: 'Edit Tender'
+    },
+    {
+        path: 'search-for-edit-tender',
+        loadComponent: () => import('./features/pages/search-for-edit-tender/search-for-edit-tender').then(m => m.SearchForEditTender),
+        title: 'Search for Edit Tender'
+    }
 ];

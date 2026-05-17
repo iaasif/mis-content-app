@@ -55,7 +55,7 @@ export const Tenders = [
   {
     id: 1,
     title: 'New Tender',
-    url: 'new',
+    url: 'new-tender',
     enUrl: '',
     bnUrl: '',
     isnew: false,
@@ -63,7 +63,7 @@ export const Tenders = [
   {
     id: 2,
     title: 'Edit Tender',
-    url: 'https://mis.bdjobs.com/mis/hotjobmanager/TenderList.asp?id=',
+    url: 'search-for-edit-tender',
     enUrl: '',
     bnUrl: '',
     isnew: false,
