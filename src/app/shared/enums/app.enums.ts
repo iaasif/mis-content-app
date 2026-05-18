@@ -3,51 +3,12 @@ import { isDevMode } from '@angular/core';
 export enum Cookies {
   AUTH = 'AUTHTOKEN',
   REFTOKEN = 'REFTOKEN',
+  MISAUTH = 'AuthTokenMIS',
 }
 
 export const RecruiterPanelUrl = 'https://recruiter.bdjobs.com/';
 
-export enum MultiSelectType {
-  IndustryLabel = 'Industry',
-  IndustryFormField = 'industry',
-  SkillsLabel = 'Expertise/Skills',
-  SkillsformField = 'skills',
-  InstitutesLabel = 'Institutes(You can select at most 5 Institutes)',
-  InstitutesFormField = 'institutes',
-  LocationFormField = 'location',
-}
 
-export enum FilterFormEnums {
-  RequirementMatching = 'requirementMatching',
-  SalaryRange = 'salaryRange',
-  AgeRange = 'ageRange',
-  ExpRange = 'expRange',
-  Industry = 'industry',
-  Skills = 'skills',
-  Institutes = 'institutes',
-  Degree = 'degree',
-  Course = 'course',
-  Result = 'result',
-  Major = 'major',
-  Location = 'location',
-  IsPresent = 'isPresent',
-  IsPermanent = 'isPermanent',
-  Keywords = 'keywords',
-  ApplicantName = 'applicantName',
-  IsMale = 'isMale',
-  IsFemale = 'isFemale',
-  IsEntry = 'isEntry',
-  IsMid = 'isMid',
-  IsTop = 'isTop',
-  AllGender = 'allGender',
-  AllJobLevel = 'allJobLevel',
-  AllClear = 'allClear',
-  isVideoCv = 'isVideoCv',
-  TriggerOnly = 'triggerOnly',
-  GradeMax = 'gradeMax',
-  GradeMin = 'gradeMin',
-  LinkedinSearch = 'linkedinSearch',
-}
 
 export enum ResponseType {
   Success = 'Success',
@@ -59,12 +20,6 @@ export enum ResponseType {
 export enum ResponseCode {
   success = 1,
   Error = 0,
-}
-
-export enum Step {
-  All = '0',
-  Shortlist = '1',
-  FinalSelection = '20',
 }
 
 export enum PageType {
@@ -108,20 +63,7 @@ export type CustomActivityType =
   | 'record'
   | 'facetoface';
 
-export enum OrderTypeEnums {
-  LatestApplied = 'DD',
-  EarlyApplied = 'DA',
-  EarlyShortlisted = 'PA',
-  LatestShortlisted = 'PD',
-  ApplicantName = 'NA',
-  ApplicantsResponse = 'APPRES',
-  Matching = 'OMP',
-  Attendance = 'ATD',
-  NotNotified = 'NTF',
-  ScheduleDate = 'SDUD',
-  VideoCV = 'VR',
-  Score = 'SCR',
-}
+
 
 export const CompanyIdLocalStorage = 'CompanyId';
 export const JobNoLocalStorage = 'jobno';
@@ -132,56 +74,3 @@ export const IsAdminUser = 'IsAdminUser';
 export const Domain = isDevMode() ? 'test' : 'gateway';
 export const ReviewQuesBeforeVideoInvite = 'ReviewQuesBeforeVideoInvite';
 
-export enum ComponentName {
-  JobTitle = 'job-title',
-  LeftPanel = 'left-filter-panel',
-  ApplicantCard = 'applicant-card',
-  Tabs = 'tabs',
-  Overview = 'overview',
-  BarCharts = 'bar-charts',
-  PieCharts = 'pie-charts',
-}
-
-export enum MainTabsEnums {
-  AllApplicants = 'All Applicants',
-  Shortlist = 'Shortlist',
-  FinalSelection = 'Final Selection',
-  Online = 'onlinetest',
-  AiAssessment = 'aiasmnt',
-  Written = 'written',
-  VideoRecord = 'record',
-  FacetoFace = 'facetoface',
-  HiringList = 'Hiring List',
-  Hired = 'Hired',
-  NotView = 'Not Viewed',
-  view = 'Viewed',
-  Rejected = 'Rejected',
-  All = 'All',
-  NotAssignedActivity = 'Not Assigned',
-  AssignedActivity = 'Assigned',
-  RejectedActivity = 'Rejected',
-  Remove = 'Remove',
-  Restore = 'Restore',
-  Reschedule = 'Reschedule',
-  Viewed = 'Viewed'
-}
-
-export enum ActivityEnums {
-  Online = 'ot',
-  AiAssessment = 'asmnt',
-  Written = 'w',
-  VideoRecord = 'vdo',
-  FacetoFace = 'ftf',
-  Shortlist = 'sltyp',
-  Rejected = 'rej',
-  FinalSelection = 'flh',
-  Restore = 'restore',
-}
-
-export enum Activity {
-  OnlineTest = 'onlinetest',
-  AiAssesment = 'aiasmnt',
-  Written = 'written',
-  VideoInterview = 'record',
-  FaceToFace = 'facetoface',
-}
